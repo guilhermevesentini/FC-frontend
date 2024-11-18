@@ -7,8 +7,6 @@ import axiosInstance from "./axiosInstance";
 @injectable()
 export class AxiosHttpClientAdapter implements HttpClient {
 
-    private baseUrl = import.meta.env.BASE_URL
-
     async get<T>(params: GetHttpClientParams): Promise<IHttpResponse<T>> {
         const response = await axiosInstance.get<T>(params.url, {
             params: params.queryParams,

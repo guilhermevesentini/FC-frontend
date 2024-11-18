@@ -1,14 +1,12 @@
 import axios from "axios";
 
-// Criação da instância do Axios
 const axiosAdapater = axios.create({
-    baseURL: import.meta.env.VITE_API_URL, // Variável de ambiente
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Interceptor para adicionar token de autorização (opcional)
 axiosAdapater.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {

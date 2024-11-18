@@ -6,14 +6,13 @@ export const DespesaDi = Symbol("DespesaDi")
 
 export interface IDespesaHandler {
     buildDespesa(despesasList: IDespesas, despesaId: string): IDespesasModel
-    //buildDespesaToSave(despesas: IDespesasModel, id: string): IDespesas
 }
 
 @injectable()
 export default class DespesaHandler implements IDespesaHandler {
     constructor(
         @inject(criarDespesaUseCaseDi) private readonly despesaUseCase: ICriarDespesaUseCase
-      ) {}
+    ) {}
 
     buildDespesa(despesasList: IDespesas, despesaId: string): IDespesasModel {
         const findMes = despesasList.meses.find((mes) => mes.despesaId == despesaId);
