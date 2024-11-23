@@ -26,8 +26,25 @@ export default defineConfig({
   test: vitestConfig.test,
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('../frontend/src/', import.meta.url)),
       public: fileURLToPath(new URL("./public", import.meta.url)),
     }
-  }
-})
+  },
+  define: {
+    'console.log': 'console.log', // Isso disponibiliza o `log` globalmente
+  },
+  css: {
+    preprocessorOptions: {
+      sass: {
+        // Adicionar configurações globais para Sass, se necessário
+        additionalData: `@import "@/styles/variables.scss";`,
+        api: 'modern-compiler',
+        silenceDeprecations: ["legacy-js-api"],
+      },
+      scss: {
+        silenceDeprecations: ["legacy-js-api"],
+      },
+    },
+  },
+});
+

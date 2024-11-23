@@ -1,7 +1,7 @@
 
 import { Container } from "inversify";
-import { axiosContainer } from "./container";
-import { loginContainer } from "./shared/Login/container/loginContainer";
+import { axiosContainer } from "./core/container";
+import { loginContainer } from "./domains/login/container/loginContainer";
 
 const container = new Container()
 
