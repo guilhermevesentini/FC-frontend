@@ -1,33 +1,37 @@
 <template>
-  <el-row class="login_page" v-loading="loading">
-    <el-col :xs="22" :sm="12" :md="8" :xl="6" class="login_page__form">
-      <div class="header">
-        <img :src="logo">
-        <h1>Finance Control</h1>
-      </div>
-      <el-form ref="ruleFormRef" :model="formulario" :rules="rules" label-width="auto" style="max-width: 600px"
-        label-position="top" class="login_page-form" status-icon>
-        <el-form-item label="Usuario" prop="username">
-          <el-input v-model="formulario.username" />
-        </el-form-item>
-        <el-form-item label="Senha" prop="password">
-          <el-input v-model="formulario.password" show-password />
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="lembrar" label="Lembrar email e senha" size="small" />
-        </el-form-item>
-        <el-form-item class="login_page__form-esqueci">
-          <el-link @click="handleCriar">Criar novo usuário</el-link>
-          <el-link @click="handleEsqueciSenha">Esqueci minha senha</el-link>
-        </el-form-item>
-        <el-form-item>
-          <el-button :loading="loading" class="login_page__form-button" type="primary"
-            @keyup.enter="onSubmit(ruleFormRef)" @click="onSubmit(ruleFormRef)">Entrar</el-button>
-        </el-form-item>
-      </el-form>
-      <h5>&copy; 2024 - Guilherme Vesentini</h5>
-    </el-col>
-  </el-row>
+  <LoginFrame>
+    <template #body>
+      <el-row class="login_form" v-loading="loading">
+        <el-col :xs="22" :sm="12" :md="8" :xl="6" class="login_form__form">
+          <div class="header">
+            <img :src="logo">
+            <h1>Finance Control</h1>
+          </div>
+          <el-form ref="ruleFormRef" :model="formulario" :rules="rules" label-width="auto" style="max-width: 600px"
+            label-position="top" class="login_form-form" status-icon>
+            <el-form-item label="Usuario" prop="username">
+              <el-input v-model="formulario.username" />
+            </el-form-item>
+            <el-form-item label="Senha" prop="password">
+              <el-input v-model="formulario.password" show-password />
+            </el-form-item>
+            <el-form-item>
+              <el-checkbox v-model="lembrar" label="Lembrar email" size="small" />
+            </el-form-item>
+            <el-form-item class="login_form__form-esqueci">
+              <el-link @click="handleCriar">Criar novo usuário</el-link>
+              <el-link @click="handleEsqueciSenha">Esqueci minha senha</el-link>
+            </el-form-item>
+            <el-form-item>
+              <el-button :loading="loading" class="login_form__form-button" type="primary"
+                @keyup.enter="onSubmit(ruleFormRef)" @click="onSubmit(ruleFormRef)">Entrar</el-button>
+            </el-form-item>
+          </el-form>
+          <h5>&copy; 2024 - Guilherme Vesentini</h5>
+        </el-col>
+      </el-row>
+    </template>
+  </LoginFrame>
 </template>
 
 <script setup lang="ts">
@@ -36,8 +40,9 @@ import { useRouter } from 'vue-router';
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import logo from "@/shared/assets/images/logo-sem-fundo.png";
 import { container } from '@/inversify.config';
-import { LoginPageGatewayDi, type ILoginPageGateway } from './services/ILoginPageHttpRequest';
 import type { ILoginUser, IRuleLoginForm } from '@/domains/login/types';
+import { LoginPageGatewayDi, type ILoginPageGateway } from '../../services/login/LoginPageHttpRequest';
+import LoginFrame from '../LoginFrame.vue';
 
 const ruleFormRef = ref<FormInstance>()
 const router = useRouter()
@@ -105,52 +110,31 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
 
     const result = await LoginPageGateway.validarUsuario(formulario);
 
-    if (!result) {
+    if (result && result.statusCode != 200) {
       ElNotification({
         title: 'Error',
-        message: 'Usuário não encontrado.',
+        message: result.error || 'Usuário não encontrado.',
         type: 'error',
         duration: 4000
       })
 
+      loading.value = false;
+
       return
     }
 
-    const token = result.result;
+    const token = result?.result || undefined;
 
     if (token) {
-      localStorage.setItem('token', token);
+      localStorage.setItem('fctoken', token);
     }
 
     const responseUsuario = await LoginPageGateway.obterUsuario(formulario.username);
 
-    if (responseUsuario?.statusCode != 200) {
 
-      ElNotification({
-        title: 'Erro',
-        message: 'Usuário não encontrado',
-        type: 'error',
-        duration: 5000
-      })
-
-      loading.value = false;
-
-      return
-    } else if (responseUsuario?.statusCode == 200 && responseUsuario.error) {
-      ElNotification({
-        title: 'Erro',
-        message: responseUsuario.error || 'Usuário não encontrado',
-        type: 'error',
-        duration: 5000
-      })
-
-      loading.value = false;
-    }
-
-
-    if (responseUsuario.result) {
+    if (responseUsuario && responseUsuario.result != undefined) {
       const usuario: ILoginUser = {
-        _id: responseUsuario.result?._id,
+        _id: responseUsuario.result._id,
         id: responseUsuario.result?.id,
         username: responseUsuario.result?.username,
       }
@@ -160,8 +144,7 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
 
     if (lembrar.value) {
       const info = {
-        username: formulario?.username,
-        password: formulario?.password,
+        username: formulario?.username
       }
       localStorage.setItem('login', JSON.stringify(info));
     }
@@ -196,7 +179,6 @@ onMounted(() => {
     const info = JSON.parse(hasEmail);
 
     formulario.username = info.username || '';
-    formulario.password = info.password || '';
 
     lembrar.value = true;
   }
@@ -208,18 +190,16 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
-.login_page {
+.login_form {
   width: 100%;
   height: 100vh;
   margin: 0 auto;
-  overflow: hidden;
-  padding: 0;
   display: flex;
   align-content: center;
   justify-content: center;
   align-items: center;
 
-  .login_page__form {
+  .login_form__form {
     padding: 2em;
     display: flex;
     flex-direction: column;
@@ -270,7 +250,7 @@ onBeforeUnmount(() => {
       justify-content: space-between;
     }
 
-    .login_page__form-button {
+    .login_form__form-button {
       width: 100%;
       height: 40px;
     }
@@ -282,7 +262,7 @@ onBeforeUnmount(() => {
     width: 100%;
     margin: 0;
 
-    .login_page__form {
+    .login_form__form {
       width: 100%;
     }
   }

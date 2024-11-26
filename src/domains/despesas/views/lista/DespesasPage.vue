@@ -62,19 +62,14 @@
 <script lang="ts" setup>
 import { onMounted, ref, computed, onUnmounted, reactive } from "vue";
 import { formatCurrency, formatDate } from "@/shared/utils/utils";
-import BreadCrumb from "@/components/BreadCrumb.vue";
-import DatePeriodoPicker from "@/components/DatePeriodoPicker.vue";
-import TableFilterableFrame from "@/components/TableFilterableFrame.vue";
 import IconInsideTable from "./../../components/IconInsideTable.vue";
 import { container } from "@/inversify.config";
 import { DespesasGatewayDi, type IDespesasGateway } from "../../services/ports/DespesasGateway";
 import {
   Plus
 } from '@element-plus/icons-vue';
-import FCButtonIcon from "@/components/buttons/Criar/FCButtonIcon.vue";
 import AdicionarDespesasWidget from "../../widgets/adicionar/AdicionarDespesasWidget.vue";
 import EditarDespesasWidget from "../../widgets/editar/EditarDespesasWidget.vue";
-import ResumoLateral from "@/components/ResumoLateral.vue";
 import { despesasContainer } from "../../container/despesasContainer";
 import { DespesaInitialState, type IDespesas, type IDespesasModel } from "../../types";
 import useFinanceHandler from "../../../../domains/despesas/composables/useFinanceHandler";

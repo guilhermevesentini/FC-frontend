@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import FCDrawer from '@/components/FCDrawer.vue';
+import FCDrawer from '@/shared/components/FCDrawer.vue';
 import { onMounted, reactive, ref } from 'vue';
 import { DespesasGatewayDi, type IDespesasGateway } from '../../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';

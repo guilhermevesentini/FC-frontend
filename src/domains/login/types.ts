@@ -8,7 +8,6 @@ export interface IResponseLoginValidation {
 
 export interface IResponseLoginValidation {
   id: number
-  password: string
   token: string
   username: string
   _id: string
