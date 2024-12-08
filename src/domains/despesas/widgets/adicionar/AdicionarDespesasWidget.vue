@@ -135,7 +135,7 @@ const emits = defineEmits<{
 }>();
 
 const salvarDespesas = async (novaDespesa: IDespesas) => {
-  const response = despesasGateway.criarDespesa(novaDespesa);
+  const response = await despesasGateway.criarDespesa(novaDespesa);
 
   if (!response) return
 

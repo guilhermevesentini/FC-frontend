@@ -146,7 +146,7 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
       const info = {
         username: formulario?.username
       }
-      localStorage.setItem('login', JSON.stringify(info));
+      localStorage.setItem('user', JSON.stringify(info));
     }
 
     setTimeout(() => {
@@ -173,7 +173,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
 onMounted(() => {
   window.addEventListener('keydown', handleKeyPress);
 
-  const hasEmail = localStorage.getItem('login');
+  const hasEmail = localStorage.getItem('user');
 
   if (hasEmail) {
     const info = JSON.parse(hasEmail);

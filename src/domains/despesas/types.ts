@@ -1,18 +1,19 @@
 export interface IDespesasModel {
-  status: string
-  valor: string
+  id: string
   nome: string
-  descricao: string  
-  vencimento: Date | string | undefined
   recorrente: string | null
+  vencimento: Date | string | undefined
   frequencia: string
   replicar: boolean
-  observacao: string
-  ano: number
-  mes: number
   customerId: string
+  mes: number
+  ano: number
+  valor: string
+  status: string
+  descricao: string  
+  observacao: string    
   despesaId: string
-  id: string
+
 }
 
 export interface IDespesaMeses {

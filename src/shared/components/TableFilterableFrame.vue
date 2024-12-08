@@ -3,9 +3,11 @@
     <el-table :data="produtosFiltrados" style="width: 100%; margin-top: 10px;" empty-text="Sem Valores"
         v-loading="isLoading" :default-sort="{ prop: 'vencimento', order: 'ascending' }">
         <slot name="tableCollumn"></slot>
-        <el-table-column align="right" width="80" fixed="right">
+        <el-table-column align="right" width="200" fixed="right">
             <template #default="scope">
                 <el-button small title="editar" :icon="Edit" link @click="handleEditar(scope.row)" />
+                <el-button small type="danger" title="Deletar todos" :icon="Brush" link
+                    @click="handleDeletar(scope.row, true)" />
                 <el-button small type="danger" title="Deletar" :icon="Delete" link @click="handleDeletar(scope.row)" />
             </template>
         </el-table-column>
@@ -14,16 +16,21 @@
         <el-pagination v-model:current-page="currentPage" :page-size="itemsPerPage" layout="prev, pager, next"
             :total="produtos?.length" @current-change="handlePageChange" />
     </el-col>
+
+    <ConfirmationDialog v-model="showConfirmation" @handle-confirmar="handleDeletar"
+        @handle-cancelar="showConfirmation = false" />
 </template>
 
 <script lang="ts" setup>
 import {
     Edit,
-    Delete
+    Delete,
+    Brush
 } from '@element-plus/icons-vue'
 import { filtrarItems } from '@/shared/utils/utils';
 import { Search } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue';
+import ConfirmationDialog from './ConfirmationDialog.vue';
 
 const props = defineProps<{
     produtos: unknown[] | undefined;
@@ -35,6 +42,7 @@ export interface ICadastroItem {
     nome?: string;
     despesaId?: string
 }
+const showConfirmation = ref(false);
 
 const isLoading = computed(() => props.Loading)
 
@@ -52,14 +60,14 @@ const handlePageChange = (newPage: number) => {
 
 const emits = defineEmits<{
     (event: "handleEditar", params: unknown): unknown;
-    (event: "handleDeletar", item: any): string;
+    (event: "handleDeletar", item: any, multiplos?: boolean): string;
 }>();
 
 
 const handleEditar = (params: unknown) => {
     emits('handleEditar', params);
 }
-const handleDeletar = (row: any) => {
-    emits('handleDeletar', row);
+const handleDeletar = (row: any, multiplos?: boolean) => {
+    emits('handleDeletar', row, multiplos);
 }
 </script>

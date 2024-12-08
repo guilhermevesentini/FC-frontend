@@ -8,7 +8,7 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
     @inject(httpClientDI) private readonly httpClient!: HttpClient
     async editarDespesas(despesa: IDespesasModel): Promise<boolean> {
         const response = await this.httpClient.post<boolean>({
-            url: `/editarDespesa`,
+            url: `/edit-expense`,
             body: despesa
         });
 
@@ -29,7 +29,7 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
 
     async criarDespesa(despesa: IDespesas): Promise<boolean> {        
         const response = await this.httpClient.post<boolean>({
-            url: `/criarDespesa`,
+            url: `/create-expense`,
             body: despesa
         });
 
@@ -38,14 +38,13 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
         return true
     }
     
-    async excluirDespesa(params: IDespesasModel): Promise<boolean> {
-        const despesaId = params.id;
-        const mesId = params.despesaId;
+    async excluirDespesa(id: string, mes?: number): Promise<boolean> {
+        const despesaId = id;
     
         // Fazendo a requisição POST com o corpo contendo os parâmetros
         const response = await this.httpClient.post<boolean>({
-            url: `/delete-despesa`,
-            body: { despesaId: despesaId, mesId: mesId }
+            url: `/delete-expense`,
+            body: { despesaId: despesaId, mes: mes }
         });
     
         // Verificando se a resposta foi bem-sucedida
@@ -68,7 +67,7 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
 
     async obterDespesasPorMes(mes: number, ano: number): Promise<IDefaultHttpResponse<IDespesas[] | undefined> | undefined> {
         const response = await this.httpClient.get<IDefaultHttpResponse<IDespesas[] | undefined>>({
-            url: `/despesasPorMes`,
+            url: `/get-expense-per-month`,
             queryParams: {mes: mes, ano: ano}
         });
 

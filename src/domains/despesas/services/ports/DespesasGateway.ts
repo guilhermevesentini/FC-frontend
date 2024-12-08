@@ -5,7 +5,7 @@ export interface IDespesasGateway {
     editarDespesas(despesa: IDespesasModel): Promise<boolean>
     obterDespesaById(id: string):  Promise<IDespesas | undefined>
     obterDespesas(): Promise<IDefaultHttpResponse<IDespesas[]> | undefined>
-    excluirDespesa(params: IDespesasModel): Promise<boolean>
+    excluirDespesa(id: string, mes?: number): Promise<boolean>
     criarDespesa(despesa: IDespesas): Promise<boolean>
     obterDespesasPorMes(mes: number, ano: number): Promise<IDefaultHttpResponse<IDespesas[] | undefined> | undefined>
 }

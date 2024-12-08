@@ -93,7 +93,6 @@ const props = defineProps<IProps>()
 const formRef = ref<FormInstance>();
 
 const despesa = ref<IDespesasModel>(props.despesa || DespesaInitialState);
-const editarDespesaHandler = container.get<IEditarDespesaHandler>(editarDespesaHandlerDi);
 
 const config = {
   masked: false,

@@ -11,9 +11,9 @@ export interface ICriarMesDespesaHandler {
 export default class criarMesDespesaHandler implements ICriarMesDespesaHandler {  
   criar(despesa: IDespesasModel): IDespesaMeses[] {
     const ano = new Date(despesa.vencimento as Date).getFullYear();
-
+    const mes = new Date(despesa.vencimento as Date).getMonth() + 1;
     return [{
-      mes: despesa.mes,
+      mes: despesa.mes || mes,
       valor: despesa.valor || '0.00',
       ano: ano,
       status: despesa.status || '2',

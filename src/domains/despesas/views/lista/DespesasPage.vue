@@ -37,7 +37,7 @@
                 </template>
               </el-table-column>
               <el-table-column label="Nome" prop="nome" width="auto" />
-              <el-table-column label="Descrição" prop="descricao" width="150" />
+              <el-table-column label="Descrição" prop="descricao" width="300" />
               <el-table-column label="Vencimento" prop="vencimento" width="150" sortable>
                 <template v-slot="scope">
                   {{ formatDate(scope.row.vencimento) }}
@@ -75,6 +75,11 @@ import { DespesaInitialState, type IDespesas, type IDespesasModel } from "../../
 import useFinanceHandler from "../../../../domains/despesas/composables/useFinanceHandler";
 import { ElNotification } from "element-plus";
 import { DespesaFactoryDi, type IDespesaFactory } from "./DespesaFactory";
+import DatePeriodoPicker from "@/shared/components/DatePeriodoPicker.vue";
+import BreadCrumb from "@/shared/components/BreadCrumb.vue";
+import FCButtonIcon from "@/shared/components/buttons/Criar/FCButtonIcon.vue";
+import TableFilterableFrame from "@/shared/components/TableFilterableFrame.vue";
+import ResumoLateral from "@/shared/components/ResumoLateral.vue";
 
 container.load(despesasContainer)
 
@@ -148,11 +153,11 @@ const handleFecharDrawer = (async () => {
   await obterDespesas()
 })
 
-const deletarDespesa = async (row: IDespesasModel) => {
+const deletarDespesa = async (row: IDespesasModel, multiplos?: boolean) => {
   try {
     loading.value = true
 
-    const response = await despesasGateway.excluirDespesa(row);
+    const response = await despesasGateway.excluirDespesa(row.id, multiplos ? undefined : row.mes);
 
     if (!response) return ElNotification({
       title: 'Erro',
