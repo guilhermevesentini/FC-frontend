@@ -75,8 +75,7 @@ import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaInitialState, type IDespesas, type IDespesasModel } from '../../types';
-import { criarDespesaUseCaseDi, type ICriarDespesaUseCase } from '../../handlers/criar/criarDespesaUseCase';
+import { DespesaInitialState, type IDespesasModel } from '../../types';
 
 const formRef = ref<FormInstance>();
 
@@ -89,7 +88,6 @@ const despesasDetails = reactive<IDespesasModel>({
   nome: '',
   frequencia: '1',
   descricao: '',
-  customerId: '',
   observacao: '',
   recorrente: '2',
   status: '2',
@@ -120,8 +118,6 @@ const EFrequenciaOptions = [
 const despesaDetails: IDespesasModel = reactive(DespesaInitialState);
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
 
-const despesaUseCase = container.get<ICriarDespesaUseCase>(criarDespesaUseCaseDi);
-
 const rules = reactive<FormRules<IDespesasModel>>({
   nome: [{ required: true, message: '', trigger: 'blur' }],
   valor: [{ required: true, message: '', trigger: 'blur', min: 1 }],
@@ -134,8 +130,8 @@ const emits = defineEmits<{
   (event: "handleFechar"): void;
 }>();
 
-const salvarDespesas = async (novaDespesa: IDespesas) => {
-  const response = await despesasGateway.criarDespesa(novaDespesa);
+const salvarDespesas = async () => {
+  const response = await despesasGateway.criarDespesa(despesasDetails);
 
   if (!response) return
 
@@ -152,18 +148,11 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (valid) {
-      const novaDespesa = despesaUseCase.handleDespesa(despesasDetails);
+      await salvarDespesas()
 
-      if (novaDespesa) {
-
-        await salvarDespesas(novaDespesa)
-
-        Voltar()
-      }
+      Voltar()
     }
   });
-
-
 }
 
 const Limpar = (() => {
@@ -171,7 +160,6 @@ const Limpar = (() => {
   despesaDetails.nome = ''
   despesaDetails.frequencia = '1'
   despesaDetails.descricao = ''
-  despesaDetails.customerId = ''
   despesaDetails.observacao = ''
   despesaDetails.recorrente = '2'
   despesaDetails.status = '2'

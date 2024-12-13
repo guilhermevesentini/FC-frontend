@@ -58,7 +58,7 @@ const internalValue = ref(props.modelValue)
 const handleUpdateValue = (newValue: string | number) => {
   internalValue.value = newValue;
   // Emite o novo valor para o modelo
-  emit('update:modelValue', newValue);
+  //emit('update:modelValue', newValue);
 }
 
 const hasError = (valor: number) => {

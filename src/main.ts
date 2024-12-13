@@ -13,7 +13,8 @@ import '../src/shared/assets/styles/scss/main.scss'
 import '../src/shared/assets/styles/scss/theme/element-variables.scss';
 import '../src/shared/assets/styles/scss/Variables.scss';
 import '../src/shared/assets/styles/scss/base.scss';
-
+import 'dayjs/locale/pt-br';  // Importando a localização do português
+import dayjs from 'dayjs'
 import ptbr from 'element-plus/dist/locale/pt-br';
 
 const app = createApp(App)
@@ -28,6 +29,8 @@ app.config.globalProperties.$globalLoading = (options = {}) => {
     ...options,
   });
 };
+
+dayjs.locale('pt-br');  // Configurando o idioma globalmente
 
 app.use(money)
 

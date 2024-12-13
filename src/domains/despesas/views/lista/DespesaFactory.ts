@@ -28,7 +28,6 @@ export default class DespesaFactory implements IDespesaFactory {
           replicar: despesa.replicar ?? false,
           despesaId: mes.despesaId ?? '',
           observacao: mes.observacao ?? '',
-          customerId: despesa.customerId,
           id: despesa.id ?? '',
         })) || []
     );

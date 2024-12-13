@@ -30,7 +30,6 @@ export default class DespesaHandler implements IDespesaHandler {
             ano: findMes?.ano || 0,
             despesaId: findMes?.despesaId || '',
             observacao: findMes?.observacao || '',
-            customerId: despesasList.customerId,
             id: despesasList.id || '',
         }
 
@@ -54,8 +53,7 @@ export default class DespesaHandler implements IDespesaHandler {
                 status: despesa.status || '2',
                 valor: despesa.valor || '0.00',
                 vencimento: despesa.vencimento || new Date(),
-            }],
-            customerId: despesa?.customerId            
+            }]         
         }
 
         return despesaEditada
@@ -76,8 +74,7 @@ export default class DespesaHandler implements IDespesaHandler {
             observacao: despesasList.observacao || '',
             despesaId: despesasList.despesaId || '',
             mes: despesasList.mes || 0,
-            meses: despesasList.recorrente == '1' ? this.despesaUseCase.handleMes(despesasList) : this.despesaUseCase.handleMeses(despesasList),
-            customerId: despesasList?.customerId            
+            meses: despesasList.recorrente == '1' ? this.despesaUseCase.handleMes(despesasList) : this.despesaUseCase.handleMeses(despesasList)        
         }
 
         return despesa

@@ -15,19 +15,9 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
         if (response.status != 200) return false
 
         return true  
-    }   
+    } 
 
-    async obterDespesaById(id: string): Promise<IDespesas | undefined> {
-        const response = await this.httpClient.get<IDespesas>({
-            url: `/despesas/${id}`
-        });
-        
-        if(response.status != 200) return
-
-        return response.body
-    }
-
-    async criarDespesa(despesa: IDespesas): Promise<boolean> {        
+    async criarDespesa(despesa: IDespesasModel): Promise<boolean> {        
         const response = await this.httpClient.post<boolean>({
             url: `/create-expense`,
             body: despesa
@@ -41,13 +31,11 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
     async excluirDespesa(id: string, mes?: number): Promise<boolean> {
         const despesaId = id;
     
-        // Fazendo a requisição POST com o corpo contendo os parâmetros
         const response = await this.httpClient.post<boolean>({
             url: `/delete-expense`,
             body: { despesaId: despesaId, mes: mes }
         });
     
-        // Verificando se a resposta foi bem-sucedida
         if (response.status !== 200) {
             return false;
         }
@@ -55,19 +43,9 @@ export default class DespesasGatewayAdapters implements IDespesasGateway {
         return true;
     }
     
-    async obterDespesas(): Promise<IDefaultHttpResponse<IDespesas[]> | undefined> {
-        const response = await this.httpClient.get<IDefaultHttpResponse<IDespesas[]> | undefined>({
-            url: `/despesas`
-        });
-
-        if (response.status != 200) return
-
-        return response.body
-    }
-
-    async obterDespesasPorMes(mes: number, ano: number): Promise<IDefaultHttpResponse<IDespesas[] | undefined> | undefined> {
+    async obterDespesas(mes: number, ano: number): Promise<IDefaultHttpResponse<IDespesas[] | undefined> | undefined> {
         const response = await this.httpClient.get<IDefaultHttpResponse<IDespesas[] | undefined>>({
-            url: `/get-expense-per-month`,
+            url: `/get-expense`,
             queryParams: {mes: mes, ano: ano}
         });
 

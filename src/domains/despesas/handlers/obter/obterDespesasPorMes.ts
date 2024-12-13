@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import type { IDespesas, IDespesasModel } from "../../types";
-import { ObterDespesaPorUsuarioDi, type IObterDespesaPorUsuario } from "@/core/controller/Despesas/obter/usuarios/ObterDespesaPorUsuario";
 
 export const obterDespesasPorMesDi = Symbol("obterDespesasPorMes")
 
@@ -10,7 +9,6 @@ export interface IObterDespesasPorMes {
 
 @injectable()
 export default class obterDespesasPorMes implements IObterDespesasPorMes {
-	@inject(ObterDespesaPorUsuarioDi) private readonly obterUsuario!: IObterDespesaPorUsuario
 
 	async obter(despesasList: IDespesas[], periodo: number): Promise<IDespesasModel[]> {
 		if (!despesasList) return []
@@ -35,7 +33,6 @@ export default class obterDespesasPorMes implements IObterDespesasPorMes {
 								replicar: despesa.replicar || false,                                
 								despesaId: mes.despesaId || '',
 								observacao: mes.observacao || '',
-								customerId: despesa?.customerId,
 								id: despesa.id || '',
 							});
 						}

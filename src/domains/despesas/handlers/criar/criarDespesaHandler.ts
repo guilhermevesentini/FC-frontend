@@ -25,8 +25,7 @@ export default class criarDespesaHandler implements ICriarDespesaHandler {
       recorrente: despesa.recorrente,
       frequencia: despesa.frequencia,
       replicar: despesa.replicar,
-      meses: despesa.recorrente == '1' ? this.criarMeses.criar(despesa) : this.criarMes.criar(despesa),            
-      customerId: despesa.customerId || obterIdUsuario() || ''
+      meses: despesa.recorrente == '1' ? this.criarMeses.criar(despesa) : this.criarMes.criar(despesa)
     }
 
     return novaDespesa;

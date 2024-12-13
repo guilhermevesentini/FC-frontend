@@ -1,20 +1,18 @@
 <template>
   <div class="container_date_range">
     <div class="container_date_range_item mes">
-      <el-icon>
-        <ArrowLeft @click="prevMonth" v-if="showLeftIcon" />
-      </el-icon>
-      <el-button type="secondary" round>{{ currentDate }}</el-button>
-      <el-icon>
-        <ArrowRight @click="nextMonth" v-if="showRightIcon" />
-      </el-icon>
-    </div>
-    <div class="container_date_range_item">
-      <el-icon>
+      <el-icon style="font-size: 12px;">
         <ArrowLeft @click="prevYear" />
       </el-icon>
-      <el-button type="secondary" round>{{ currentYear }}</el-button>
-      <el-icon>
+      <el-icon style="font-size: 20px;">
+        <ArrowLeft @click="prevMonth" />
+      </el-icon>
+      <el-date-picker v-model="date" :clearable="false" type="month" @change="updateSelectedDate"
+        :format="monthYearFormat" :locale="ptBr" :editable="false" class="custom-date-picker" />
+      <el-icon style="font-size: 20px;">
+        <ArrowRight @click="nextMonth" />
+      </el-icon>
+      <el-icon style="font-size: 12px;">
         <ArrowRight @click="nextYear" />
       </el-icon>
     </div>
@@ -22,93 +20,87 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ArrowLeft,
-  ArrowRight
-} from '@element-plus/icons-vue';
 import { computed, ref } from 'vue';
-import dayjs from 'dayjs'
-
-interface IMonthsNames {
-  [key: number]: string;
-}
-
-const months: IMonthsNames = {
-  1: 'Janeiro',
-  2: 'Fevereiro',
-  3: 'Março',
-  4: 'Abril',
-  5: 'Maio',
-  6: 'Junho',
-  7: 'Julho',
-  8: 'Agosto',
-  9: 'Setembro',
-  10: 'Outubro',
-  11: 'Novembro',
-  12: 'Dezembro'
-}
+import { ptBr } from 'element-plus/es/locales.mjs';
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
+import { dayjs } from 'element-plus';
 
 const currentMonth = ref(dayjs().month() + 1);
-const showLeftIcon = ref(true);
-const showRightIcon = ref(true);
+const currentYear = ref(dayjs().year());
 
-const currentYear = ref(dayjs().year())
+const date = ref(dayjs().toDate());
+
+const updateSelectedDate = (newDate: Date) => {
+  const mes = dayjs(newDate).month() + 1;
+  const ano = dayjs(newDate).year();
+
+  currentMonth.value = mes;
+  currentYear.value = ano;
+
+  emits('update:monthChange', mes, ano);
+};
 
 const emits = defineEmits<{
   (event: "update:monthChange", mes: number, ano: number): number;
 }>();
 
-const handleMonthName = (value: number) => {
-  return months[value]
-}
-
-const showArrowsIcons = (month: number) => {
-  if (month == 12) {
-    showRightIcon.value = false
-  } else {
-    showRightIcon.value = true
-  }
-
-  if (month == 1) {
-    showLeftIcon.value = false
-  } else {
-    showLeftIcon.value = true
-  }
-}
-
-const currentDate = computed(() => {
-  const month = currentMonth.value;
-  return handleMonthName(month)
+const monthYearFormat = computed(() => {
+  return 'MMMM YYYY';
 });
 
+const updateDate = (month: number) => {
+  currentMonth.value = month;
+  date.value = dayjs().year(currentYear.value).month(month - 1).toDate();
+  emits('update:monthChange', month, currentYear.value);
+}
+
 const nextMonth = () => {
-  const newDate = currentMonth.value + 1;
-  showArrowsIcons(newDate)
-  emits('update:monthChange', newDate, currentYear.value);
-  return currentMonth.value = newDate
-}
+  let newMonth = currentMonth.value;
+  if (newMonth == 12) {
+    newMonth = 1;
+    currentYear.value += 1;
+    updateDate(newMonth)
+  } else {
+    newMonth = newMonth + 1
+    updateDate(newMonth)
+  }
+};
+
 const prevMonth = () => {
-  const newDate = currentMonth.value - 1;
-  showArrowsIcons(newDate)
-  emits('update:monthChange', newDate, currentYear.value);
-  return currentMonth.value = newDate
-}
+  let newMonth = currentMonth.value;
+  if (newMonth == 1) {
+    newMonth = 12;
+    currentYear.value -= 1;
+    updateDate(newMonth)
+  } else {
+    newMonth = newMonth - 1
+    updateDate(newMonth)
+  }
+};
+
 
 const nextYear = () => {
   const newYear = currentYear.value + 1;
+  currentYear.value = newYear;
+  date.value = dayjs(date.value).year(newYear).toDate();
   emits('update:monthChange', currentMonth.value, newYear);
-  return currentYear.value = newYear
-}
+};
+
 const prevYear = () => {
   const newYear = currentYear.value - 1;
+  currentYear.value = newYear;
+  date.value = dayjs(date.value).year(newYear).toDate();
   emits('update:monthChange', currentMonth.value, newYear);
-  return currentYear.value = newYear
-}
+};
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .container_date_range {
   display: flex;
+
+  .el-date-editor {
+    --el-date-editor-width: 140px;
+  }
 
   &_item {
     display: flex;
@@ -140,6 +132,27 @@ const prevYear = () => {
 
   .el-icon {
     cursor: pointer;
+  }
+
+  .custom-date-picker .el-input {
+    border: none !important;
+    box-shadow: none !important;
+    text-align: center !important;
+  }
+
+  .el-input__wrapper {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .custom-date-picker .el-input__inner {
+    text-transform: capitalize;
+    font-size: 1rem !important;
+    text-align: center;
+  }
+
+  .custom-date-picker .el-input__icon {
+    display: none !important;
   }
 }
 </style>

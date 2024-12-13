@@ -15,7 +15,7 @@
 <script setup lang="ts">
 const emits = defineEmits<{
   (event: "handleCancelar"): unknown;
-  (event: "handleConfirmar"): boolean;
+  (event: "handleConfirmar", value: boolean): boolean;
 }>();
 
 const handleCancelar = () => {
@@ -23,7 +23,7 @@ const handleCancelar = () => {
 }
 
 const handleConfirmar = () => {
-  emits("handleCancelar")
+  emits("handleConfirmar", true)
 }
 </script>
 

@@ -80,9 +80,7 @@ import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaDi, type IDespesaHandler } from '../../../../domains/despesas/handlers/DespesaHandler';
-import { DespesaInitialState, type IDespesas, type IDespesasModel } from '../../types';
-import { editarDespesaHandlerDi, type IEditarDespesaHandler } from '../../handlers/editar/editarDespesaHandler';
+import { DespesaInitialState, type IDespesasModel } from '../../types';
 
 interface IProps {
   despesa: IDespesasModel
@@ -115,7 +113,6 @@ const EFrequenciaOptions = [
 ];
 
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
-const despesaHandler = container.get<IDespesaHandler>(DespesaDi);
 
 const rules = reactive<FormRules<IDespesasModel>>({
   nome: [{ required: true, message: '', trigger: 'blur' }],

@@ -185,7 +185,7 @@ const obterDespesas = async () => {
   try {
     loading.value = true
 
-    const response = await despesasGateway.obterDespesasPorMes(periodo.mes, periodo.ano);
+    const response = await despesasGateway.obterDespesas(periodo.mes, periodo.ano);
 
     if (response?.statusCode != 200) {
 
@@ -213,6 +213,8 @@ const obterDespesas = async () => {
 }
 
 const handlePeriodo = async (mes: number, ano: number) => {
+  console.log(mes, ano);
+
   periodo.mes = mes
   periodo.ano = ano
 
