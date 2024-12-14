@@ -1,5 +1,5 @@
 <template>
-  <FCDrawer title="Adicionar despesas">
+  <FCDrawer title="Adicionar despesas" :on-before-close="Limpar()">
     <template #body>
       <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
@@ -9,14 +9,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="Descrição" prop="descricao">
-              <el-input v-model="despesasDetails.descricao" placeholder="Digite aqui" />
+            <el-form-item label="Categoria" prop="categoria">
+              <el-select v-model="despesasDetails.categoria" placeholder="Selecione...">
+                <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="Valor" prop="valor">
               <el-input v-model="despesasDetails.valor" :formatter="(value: string) => format(value, config)"
                 :parser="(value: string) => unformat(value, config)"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="Descrição" prop="descricao">
+              <el-input v-model="despesasDetails.descricao" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -69,13 +77,13 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { DespesasGatewayDi, type IDespesasGateway } from '../../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaInitialState, type IDespesasModel } from '../../types';
+import { DespesaInitialState, ECategoriaOptions, EFrequenciaOptions, ESelectOptions, type IDespesasModel } from '../../types';
 
 const formRef = ref<FormInstance>();
 
@@ -86,6 +94,7 @@ const despesasDetails = reactive<IDespesasModel>({
   mes: 0,
   id: '',
   nome: '',
+  categoria: '',
   frequencia: '1',
   descricao: '',
   observacao: '',
@@ -103,17 +112,6 @@ const config = {
   prefix: 'R$ ',
   suffix: '',
 };
-
-const ESelectOptions = [
-  { label: 'Sim', value: '1' },
-  { label: 'Não', value: '2' }
-];
-
-const EFrequenciaOptions = [
-  { label: 'Mensal', value: '1' },
-  { label: 'Semanal', value: '2' },
-  { label: 'Semestral', value: '3' },
-];
 
 const despesaDetails: IDespesasModel = reactive(DespesaInitialState);
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
@@ -141,6 +139,8 @@ const salvarDespesas = async () => {
     type: 'success',
     duration: 2000
   })
+
+  Limpar()
 }
 
 const handleCriar = async (formEl: FormInstance | undefined) => {
@@ -174,6 +174,10 @@ const Voltar = (() => {
 });
 
 onMounted(() => {
+  Limpar()
+})
+
+onUnmounted(() => {
   Limpar()
 })
 </script>

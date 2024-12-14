@@ -14,6 +14,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="Categoria" prop="categoria">
+              <el-select v-model="despesa.categoria" placeholder="Selecione...">
+                <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="Valor" prop="valor">
               <el-input v-model="despesa.valor" :formatter="(value: string) => format(value, config)"
                 :parser="(value: string) => unformat(value, config)"></el-input>
@@ -80,7 +88,7 @@ import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaInitialState, type IDespesasModel } from '../../types';
+import { DespesaInitialState, ECategoriaOptions, EFrequenciaOptions, ESelectOptions, type IDespesasModel } from '../../types';
 
 interface IProps {
   despesa: IDespesasModel
@@ -100,17 +108,6 @@ const config = {
   prefix: 'R$ ',
   suffix: '',
 };
-
-const ESelectOptions = [
-  { label: 'Sim', value: '1' },
-  { label: 'Não', value: '2' }
-];
-
-const EFrequenciaOptions = [
-  { label: 'Mensal', value: '1' },
-  { label: 'Semanal', value: '2' },
-  { label: 'Semestral', value: '3' },
-];
 
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
 

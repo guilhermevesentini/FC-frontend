@@ -36,8 +36,14 @@
                   {{ formatCollumnNumber(scope.row) }}
                 </template>
               </el-table-column>
+              <el-table-column label="Categoria" prop="categoria" width="150" header-align="center" sortable>
+                <template #default="{ row }">
+                  <span class="custom-label" :style="{ backgroundColor: getCategoryColor(row.categoria) }">
+                    {{ getCategoryLabel(row.categoria) }}
+                  </span>
+                </template>
+              </el-table-column>
               <el-table-column label="Nome" prop="nome" width="auto" />
-              <el-table-column label="Descrição" prop="descricao" width="300" />
               <el-table-column label="Vencimento" prop="vencimento" width="150" sortable>
                 <template v-slot="scope">
                   {{ formatDate(scope.row.vencimento) }}
@@ -71,7 +77,7 @@ import {
 import AdicionarDespesasWidget from "../../widgets/adicionar/AdicionarDespesasWidget.vue";
 import EditarDespesasWidget from "../../widgets/editar/EditarDespesasWidget.vue";
 import { despesasContainer } from "../../container/despesasContainer";
-import { DespesaInitialState, type IDespesas, type IDespesasModel } from "../../types";
+import { DespesaInitialState, ECategoriaOptions, type IDespesas, type IDespesasModel } from "../../types";
 import useFinanceHandler from "../../../../domains/despesas/composables/useFinanceHandler";
 import { ElNotification } from "element-plus";
 import { DespesaFactoryDi, type IDespesaFactory } from "./DespesaFactory";
@@ -101,6 +107,15 @@ const periodo = reactive({
   mes: new Date().getMonth() + 1,
   ano: new Date().getFullYear()
 })
+
+const getCategoryColor = (value: string) => {
+  return ECategoriaOptions[Number(value)].color || "#ccc";
+}
+
+const getCategoryLabel = (value: string) => {
+  const option = ECategoriaOptions.find((item) => item.value === value);
+  return option ? option.label : "Desconhecido";
+}
 
 const formatCollumnNumber = (row: IDespesasModel) => {
   const valor = row.valor;
@@ -134,6 +149,7 @@ const totalPendente = computed(() => {
 })
 
 const adicionarDespesa = () => {
+  Despesa.value = DespesaInitialState
   showDrawerAdicionar.value = true;
 }
 
@@ -149,7 +165,7 @@ const editarDespesa = ((produto: unknown) => {
 const handleFecharDrawer = (async () => {
   showDrawerAdicionar.value = false;
   showDrawerEditar.value = false;
-
+  Despesa.value = DespesaInitialState
   await obterDespesas()
 })
 
@@ -248,5 +264,14 @@ onUnmounted(() => {
   align-items: center;
   cursor: pointer;
   margin-left: 4px;
+}
+
+.custom-label {
+  padding: 0 5px;
+  text-align: center;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  color: #fff;
 }
 </style>

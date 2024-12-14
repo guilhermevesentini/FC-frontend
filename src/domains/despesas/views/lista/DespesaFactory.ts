@@ -21,6 +21,7 @@ export default class DespesaFactory implements IDespesaFactory {
           valor: Number(mes.valor).toFixed(2) ?? '0.00',
           nome: despesa.nome ?? '',
           descricao: mes.descricao ?? '',
+          categoria: mes.categoria ?? '',
           vencimento: mes.vencimento,
           recorrente: despesa.recorrente ?? '1',
           frequencia: despesa.frequencia,

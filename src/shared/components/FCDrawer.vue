@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-bind="$attrs" :size="widgetSize" class="FC-Drawer">
+  <el-drawer v-bind="$attrs" :size="widgetSize" class="FC-Drawer" destroy-on-close>
     <template #header="{ close, titleId, titleClass }">
       <h4>{{ title }}</h4>
     </template>
