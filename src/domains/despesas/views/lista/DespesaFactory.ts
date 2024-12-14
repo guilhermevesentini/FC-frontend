@@ -18,7 +18,7 @@ export default class DespesaFactory implements IDespesaFactory {
         .map((mes) => ({
           mes: mes.mes ?? 0,
           status: mes.status ?? '2',
-          valor: mes.valor ?? '0.00',
+          valor: Number(mes.valor).toFixed(2) ?? '0.00',
           nome: despesa.nome ?? '',
           descricao: mes.descricao ?? '',
           vencimento: mes.vencimento,
@@ -31,9 +31,6 @@ export default class DespesaFactory implements IDespesaFactory {
           id: despesa.id ?? '',
         })) || []
     );
-
-
-    console.log('despesasDoMes', despesasDoMes);
 
     return despesasDoMes.length ? despesasDoMes : [];
   }
