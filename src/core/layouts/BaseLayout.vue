@@ -5,7 +5,7 @@
         <NavbarMenu />
       </el-header>
       <el-container class="full-height-aside">
-        <SidebarMenu />
+        <!-- <SidebarMenu /> -->
         <el-container>
           <el-main>
             <MainContainer />
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import MainContainer from './MainContainer.vue';
 import NavbarMenu from './NavbarMenu.vue';
-import SidebarMenu from './SidebarMenu.vue';
+//import SidebarMenu from './SidebarMenu.vue';
 
 
 </script>

@@ -16,6 +16,7 @@ import '../src/shared/assets/styles/scss/base.scss';
 import 'dayjs/locale/pt-br';  // Importando a localização do português
 import dayjs from 'dayjs'
 import ptbr from 'element-plus/dist/locale/pt-br';
+import VueApexCharts from "vue3-apexcharts";
 
 const app = createApp(App)
 
@@ -33,5 +34,7 @@ app.config.globalProperties.$globalLoading = (options = {}) => {
 dayjs.locale('pt-br');  // Configurando o idioma globalmente
 
 app.use(money)
+
+app.use(VueApexCharts);
 
 app.mount('#app')

@@ -12,9 +12,21 @@ export const despesasPaths = [{
       meta: { requiresAuth: true },
     },
     {
-      path: "/Despesas/lista",
+      path: "/Despesas/receitas",
+      name: "Lista de Receitas",
+      component: () => import('@/domains/despesas/views/receitas/ReceitasPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/Despesas/despesas",
       name: "Lista de Despesas",
-      component: () => import('@/domains/despesas/views/lista/DespesasPage.vue'),
+      component: () => import('@/domains/despesas/views/despesas/DespesasPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/Despesas/contas",
+      name: "Contas",
+      component: () => import('@/domains/despesas/views/contas/ContasPage.vue'),
       meta: { requiresAuth: true },
     },
     {

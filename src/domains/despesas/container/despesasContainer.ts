@@ -3,7 +3,7 @@ import { ContainerModule } from "inversify";
 import DespesasGatewayAdapters from "../services/adapters/DespesasGateway";
 import { DespesasGatewayDi, type IDespesasGateway } from "../services/ports/DespesasGateway";
 import obterDespesasPorMes, { obterDespesasPorMesDi, type IObterDespesasPorMes } from "../handlers/obter/obterDespesasPorMes";
-import DespesaFactory, { DespesaFactoryDi, type IDespesaFactory } from "../views/lista/DespesaFactory";
+import DespesaFactory, { DespesaFactoryDi, type IDespesaFactory } from "../views/despesas/DespesaFactory";
 
 
 export const despesasContainer = new ContainerModule((bind) => {

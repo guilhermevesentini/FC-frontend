@@ -3,7 +3,7 @@
     <div>
       <FCNavbar :navbar-items="navItemsDespesas" />
     </div>
-    <div>
+    <div class="main-despesas">
       <router-view />
     </div>
   </div>

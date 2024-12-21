@@ -65,12 +65,14 @@ onMounted(() => {
 <style lang="scss" scoped>
 .navbar {
   width: 100%;
-  height: 100%;
+  height: 60px;
   background-color: #466ff5;
   padding: 1rem 0;
   display: flex;
   align-items: center;
   color: #fff;
+  position: fixed;
+  z-index: 5;
 
   .el-menu-item:first-child:hover {
     background-color: transparent;

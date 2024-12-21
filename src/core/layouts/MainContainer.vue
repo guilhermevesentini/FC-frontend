@@ -9,9 +9,11 @@
 
 <style scoped>
 .main {
-  height: calc(100vh - 60px);
-  width: 100%;
+  height: 100%;
+  width: auto;
   background-color: #e2e2e2;
   padding: 7px;
+  position: relative;
+  /* margin-left: 60px; */
 }
 </style>

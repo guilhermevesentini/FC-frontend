@@ -13,10 +13,12 @@ import { ref } from 'vue'
 import type { TabPaneName } from 'element-plus'
 
 let tabIndex = 2
+
 const editableTabsValue = ref('2')
+
 const editableTabs = ref([
   {
-    title: 'Tab 1',
+    title: 'Contas',
     name: '1',
     content: 'Tab 1 content',
   },
@@ -29,7 +31,7 @@ const editableTabs = ref([
 
 const handleTabsEdit = (
   targetName: TabPaneName | undefined,
-  action: 'remove' | 'add'
+  action: 'add'
 ) => {
   if (action === 'add') {
     const newTabName = `${++tabIndex}`
@@ -59,14 +61,18 @@ const handleTabsEdit = (
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .container_page {
   background-color: #fff;
   padding: 10px;
   height: auto;
   overflow: hidden;
   border-radius: 5px;
-  max-height: calc(100vh - 40px);
+  min-height: calc(100vh - 60px);
+
+  .is-icon-close {
+    display: none;
+  }
 
   .demo-tabs>.el-tabs__content {
     padding: 32px;

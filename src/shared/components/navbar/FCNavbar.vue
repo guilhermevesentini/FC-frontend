@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useNavbar, type PageItems } from './useFCNavbar';
+import { type PageItems } from './useFCNavbar';
 import type { TabsPaneContext } from 'element-plus';
 
 type IProps = {
@@ -30,7 +30,7 @@ const handleTabClick = (tab: TabsPaneContext) => {
   currentRoute.value = String(tab.props.name);
 };
 
-watch(() => route.name, (newVal) => {
+watch(() => route.name, () => {
   currentRoute.value = route.path as string;
 }, { deep: true, immediate: true });
 

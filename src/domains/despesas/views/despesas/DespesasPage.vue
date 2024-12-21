@@ -1,7 +1,7 @@
 <template>
   <el-row>
-    <el-col :xs="24" :md="20">
-      <el-row class="container_page" v-loading="loading">
+    <el-col class="container_page" :xs="24" :md="20">
+      <el-row class="body" v-loading="loading">
         <el-col class="hidden-sm-and-up" :span="24"
           style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center;    justify-content: center;">
           <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
@@ -78,7 +78,7 @@ import AdicionarDespesasWidget from "../../widgets/adicionar/AdicionarDespesasWi
 import EditarDespesasWidget from "../../widgets/editar/EditarDespesasWidget.vue";
 import { despesasContainer } from "../../container/despesasContainer";
 import { DespesaInitialState, ECategoriaOptions, type IDespesas, type IDespesasModel } from "../../types";
-import useFinanceHandler from "../../../../domains/despesas/composables/useFinanceHandler";
+import useFinanceHandler from "../../composables/useFinanceHandler";
 import { ElNotification } from "element-plus";
 import { DespesaFactoryDi, type IDespesaFactory } from "./DespesaFactory";
 import DatePeriodoPicker from "@/shared/components/DatePeriodoPicker.vue";
@@ -250,12 +250,16 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .container_page {
-  background-color: #fff;
-  padding: 10px;
   height: auto;
-  overflow: hidden;
-  border-radius: 5px;
-  max-height: calc(100vh - 40px);
+  min-height: 100vh;
+
+  .body {
+    min-height: auto;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
 }
 
 .table-icon-status {

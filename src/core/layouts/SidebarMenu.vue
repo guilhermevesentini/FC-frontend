@@ -62,8 +62,10 @@ const ClickNoLink = (path: string) => {
 
 <style lang="scss" scoped>
 .sidebar {
-  height: 100%;
+  height: 100vh;
   padding: 0;
+  position: fixed;
+  width: 60px;
 
   .full-height {
     height: 100%;

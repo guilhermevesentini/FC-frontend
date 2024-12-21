@@ -60,8 +60,16 @@ export const navItemsDespesas = [
     name: '/Despesas/overview'    
   },
   {
+    label: "Receitas",
+    name: '/Despesas/receitas'    
+  },
+  {
     label: "Despesas",
-    name: '/Despesas/lista'    
+    name: '/Despesas/despesas'    
+  },
+  {
+    label: "Contas",
+    name: '/Despesas/contas'    
   },
   {
     label: "Config",

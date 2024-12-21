@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { breakpoints } = useBreakpointsElement();
 
 const isMobile = computed(() => {
-  return breakpoints.smallerOrEqual("md").value;
+  return breakpoints.smallerOrEqual("sm").value;
 });
 
 const widgetSize = computed(() => isMobile ? '100%' : props.size)
