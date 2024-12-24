@@ -55,8 +55,18 @@
       </el-row>
     </el-col>
     <el-col class="hidden-sm-and-down" :span="4">
-      <ResumoLateral v-loading="loading" label="Total despesas" :totalDeDespesas="totalDeDespesas"
-        :totalPago="totalPago" :totalPendente="totalPendente" />
+      <ResumoLateral v-loading="loading" label="Total despesas" :total="totalDeDespesas" :totalPago="totalPago"
+        :totalPendente="totalPendente">
+        <template #header_total>
+          <h4>Total Despesas</h4>
+        </template>
+        <template #header_pago>
+          <h4>Total Pago</h4>
+        </template>
+        <template #header_pendente>
+          <h4>Total Pendente</h4>
+        </template>
+      </ResumoLateral>
     </el-col>
   </el-row>
 
@@ -66,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed, onUnmounted, reactive } from "vue";
+import { onMounted, ref, computed, reactive } from "vue";
 import { formatCurrency, formatDate } from "@/shared/utils/utils";
 import IconInsideTable from "./../../components/IconInsideTable.vue";
 import { container } from "@/inversify.config";
@@ -86,8 +96,6 @@ import BreadCrumb from "@/shared/components/BreadCrumb.vue";
 import FCButtonIcon from "@/shared/components/buttons/Criar/FCButtonIcon.vue";
 import TableFilterableFrame from "@/shared/components/TableFilterableFrame.vue";
 import ResumoLateral from "@/shared/components/ResumoLateral.vue";
-
-container.load(despesasContainer)
 
 const loading = ref(false);
 const showDrawerAdicionar = ref(false);
@@ -122,6 +130,7 @@ const formatCollumnNumber = (row: IDespesasModel) => {
 
   return formatCurrency(valor)
 }
+
 const totalDeDespesas = computed(() => {
   return financeHandler.obterTotal(perPeriodlistaDeDespesas?.value || [])
 })
@@ -241,10 +250,6 @@ const handlePeriodo = async (mes: number, ano: number) => {
 
 onMounted(() => {
   obterDespesas();
-})
-
-onUnmounted(() => {
-  container.unload(despesasContainer)
 })
 </script>
 

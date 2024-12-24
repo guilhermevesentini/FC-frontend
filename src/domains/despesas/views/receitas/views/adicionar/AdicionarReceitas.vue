@@ -1,57 +1,62 @@
 <template>
-  <FCDrawer title="Adicionar despesas" :on-before-close="Limpar()">
+  <FCDrawer title="Adicionar receitas" :on-before-close="Limpar()">
     <template #body>
-      <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%">
+      <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
           <el-col :span="8">
             <el-form-item label="Nome" prop="nome">
-              <el-input v-model="despesasDetails.nome" placeholder="Digite aqui" />
+              <el-input v-model="receitaDetails.nome" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="Categoria" prop="categoria">
-              <el-select v-model="despesasDetails.categoria" placeholder="Selecione...">
-                <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
+              <el-select v-model="receitaDetails.categoria" placeholder="Selecione...">
+                <el-option v-for="item in ECategoriaReceitasOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="Valor" prop="valor">
-              <el-input v-model="despesasDetails.valor" :formatter="(value: string) => format(value, config)"
+              <el-input v-model="receitaDetails.valor" :formatter="(value: string) => format(value, config)"
                 :parser="(value: string) => unformat(value, config)"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="Conta" prop="contaId">
+              <FCSelectContas v-model="receitaDetails.contaId" @update:model-value="updateConta" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="Descrição" prop="descricao">
-              <el-input v-model="despesasDetails.descricao" placeholder="Digite aqui" />
+              <el-input v-model="receitaDetails.descricao" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="Recorrente?" prop="recorrente">
-              <el-select v-model="despesasDetails.recorrente" :options="ESelectOptions" placeholder="Selecione...">
+              <el-select v-model="receitaDetails.recorrente" :options="ESelectOptions" placeholder="Selecione...">
                 <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8" v-if="despesasDetails.recorrente == '1'">
+          <el-col :span="8" v-if="receitaDetails.recorrente == '1'">
             <el-form-item label="Frequência" prop="frequencia">
-              <el-select v-model="despesasDetails.frequencia" placeholder="Selecione...">
+              <el-select v-model="receitaDetails.frequencia" placeholder="Selecione...">
                 <el-option v-for="item in EFrequenciaOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="Vencimento" prop="vencimento">
-              <el-date-picker v-model="despesasDetails.vencimento" format="DD/MM/YYYY" type="date" style="width: 100%"
+            <el-form-item label="Recebimento" prop="recebimento">
+              <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="Pago" prop="status">
-              <el-select v-model="despesasDetails.status" :options="ESelectOptions" placeholder="Selecione...">
+              <el-select v-model="receitaDetails.status" :options="ESelectOptions" placeholder="Selecione...">
                 <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -59,7 +64,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="Observação" prop="observacao">
-              <el-input v-model="despesasDetails.observacao" type="textarea" />
+              <el-input v-model="receitaDetails.observacao" type="textarea" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -78,19 +83,21 @@
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { DespesasGatewayDi, type IDespesasGateway } from '../../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaInitialState, ECategoriaOptions, EFrequenciaOptions, ESelectOptions, type IDespesasModel } from '../../types';
+import { ReceitasGatewayDi, type ReceitaInputDto, type ReceitasGateway } from '../../services/ports/ReceitasGateway';
+import { ECategoriaReceitasOptions, ReceitasInitialState } from '../../types';
+import { EFrequenciaOptions, ESelectOptions } from '@/domains/despesas/types';
+import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 
 const formRef = ref<FormInstance>();
 
-const despesasDetails = ref<IDespesasModel>({
+const receitaDetails = ref<ReceitaInputDto>({
   replicar: false,
   ano: 0,
-  despesaId: '',
+  incomeId: '',
   mes: 0,
   id: '',
   nome: '',
@@ -101,7 +108,8 @@ const despesasDetails = ref<IDespesasModel>({
   recorrente: '2',
   status: '2',
   valor: '0.00',
-  vencimento: new Date()
+  recebimento: new Date(),
+  contaId: ''
 });
 
 const config = {
@@ -113,14 +121,15 @@ const config = {
   suffix: '',
 };
 
-const despesaDetails: IDespesasModel = reactive(DespesaInitialState);
-const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
+const despesaDetails: ReceitaInputDto = reactive(ReceitasInitialState);
 
-const rules = reactive<FormRules<IDespesasModel>>({
+const receitasGateway = container.get<ReceitasGateway>(ReceitasGatewayDi);
+
+const rules = reactive<FormRules<ReceitaInputDto>>({
   nome: [{ required: true, message: '', trigger: 'blur' }],
   valor: [{ required: true, message: '', trigger: 'blur', min: 1 }],
   recorrente: [{ required: true, message: '', trigger: 'blur' }],
-  vencimento: [{ required: true, message: '', trigger: 'blur' }],
+  recebimento: [{ required: true, message: '', trigger: 'blur' }],
   status: [{ required: true, message: '', trigger: 'blur' }]
 });
 
@@ -128,17 +137,21 @@ const emits = defineEmits<{
   (event: "handleFechar"): void;
 }>();
 
-const salvarDespesas = async () => {
-  const mes = new Date(despesasDetails.value.vencimento as string).getMonth()
-  const ano = new Date(despesasDetails.value.vencimento as string).getFullYear()
+const updateConta = (id: string) => {
+  receitaDetails.value.contaId = id
+}
 
-  const response = await despesasGateway.criarDespesa({ ...despesasDetails.value, mes: mes, ano: ano });
+const salvarReceitas = async () => {
+  const mes = new Date(receitaDetails.value.recebimento).getMonth()
+  const ano = new Date(receitaDetails.value.recebimento).getFullYear()
+
+  const response = await receitasGateway.criar({ ...receitaDetails.value, mes: mes, ano: ano });
 
   if (!response) return
 
   ElNotification({
     title: 'success',
-    message: 'Despesa criada com sucesso.',
+    message: 'Receita criada com sucesso.',
     type: 'success',
     duration: 2000
   })
@@ -151,7 +164,7 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (valid) {
-      await salvarDespesas()
+      await salvarReceitas()
 
       Voltar()
     }
@@ -159,20 +172,20 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
 }
 
 const Limpar = (() => {
-  despesasDetails.value.id = ''
-  despesasDetails.value.nome = ''
-  despesasDetails.value.frequencia = '1'
-  despesasDetails.value.descricao = ''
-  despesasDetails.value.observacao = ''
-  despesasDetails.value.recorrente = '2'
-  despesasDetails.value.status = '2'
-  despesasDetails.value.valor = '0.00'
-  despesasDetails.value.vencimento = new Date()
+  receitaDetails.value.id = ''
+  receitaDetails.value.nome = ''
+  receitaDetails.value.frequencia = '1'
+  receitaDetails.value.descricao = ''
+  receitaDetails.value.observacao = ''
+  receitaDetails.value.recorrente = '2'
+  receitaDetails.value.status = '2'
+  receitaDetails.value.valor = '0.00'
+  receitaDetails.value.recebimento = new Date()
 })
 
 const Voltar = (() => {
   Limpar()
-  router.push('/Despesas/despesas')
+  router.push('/Despesas/receitas')
   emits('handleFechar');
 });
 

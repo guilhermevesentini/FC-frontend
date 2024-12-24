@@ -6,16 +6,13 @@
     <el-form ref="formRef" :model="contaDetails" :rules="rules" label-position="top" style="width: 100%">
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="Banco" prop="nome">
-            <el-select v-model="contaDetails.nome" placeholder="Selecione...">
-              <el-option v-for="item in EListaBancosOpt" :key="item.value" :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
+          <el-form-item label="Banco" prop="banco">
+            <FCSelectBancos v-model="contaDetails.banco" @update:model-value="updateBanco" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Proprietário" prop="usuario">
-            <el-input v-model="contaDetails.usuario" placeholder="Digite aqui" />
+          <el-form-item label="Nome" prop="nome">
+            <el-input v-model="contaDetails.nome" placeholder="Digite aqui" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -34,6 +31,11 @@
               :parser="(value: string) => unformat(value, config)"></el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-form-item prop="contaPrincipal">
+            <el-checkbox v-model="contaDetails.contaPrincipal" label="Definir como conta principal?" size="small" />
+          </el-form-item>
+        </el-col>
       </el-row>
     </el-form>
     <template #footer>
@@ -48,7 +50,8 @@ import { onMounted, reactive, ref } from 'vue';
 import { unformat, format } from 'v-money3';
 import type { FormInstance, FormRules } from 'element-plus';
 import { container } from '@/inversify.config';
-import { ContasGatewayDi, type ContaOutputto, type ContasGateway } from '../../services/ports/ContasGateway';
+import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '../../services/ports/ContasGateway';
+import FCSelectBancos from '@/shared/components/FCSelectBancos.vue';
 
 const contasGateway = container.get<ContasGateway>(ContasGatewayDi);
 
@@ -61,28 +64,24 @@ const config = {
   suffix: '',
 };
 
-const EListaBancosOpt = [
-  { label: 'Nubank', value: '1', color: "#7a3be1" },
-  { label: 'Banco do Brasil', value: '2', color: "#006bb3" },
-];
-
-const contaDetails = reactive<ContaOutputto>({
+const contaDetails = reactive<ContaOutputDto>({
   agencia: '',
+  contaPrincipal: false,
   conta: '',
   id: '',
   nome: '',
-  saldo: '',
-  usuario: ''
+  banco: undefined,
+  nomeBanco: '',
+  saldo: ''
 })
 
 const formRef = ref<FormInstance>();
 
-const rules = reactive<FormRules<ContaOutputto>>({
+const rules = reactive<FormRules<ContaOutputDto>>({
+  banco: [{ required: true, message: '', trigger: 'blur' }],
   nome: [{ required: true, message: '', trigger: 'blur' }],
   agencia: [{ required: true, message: '', trigger: 'blur', min: 3 }],
-  conta: [{ required: true, message: '', trigger: 'blur' }],
-  usuario: [{ required: true, message: '', trigger: 'blur' }],
-  saldo: [{ required: true, message: '', trigger: 'blur' }]
+  conta: [{ required: true, message: '', trigger: 'blur' }]
 });
 
 const emits = defineEmits<{
@@ -93,9 +92,17 @@ const handleLimpar = () => {
   contaDetails.agencia = ''
   contaDetails.conta = ''
   contaDetails.nome = ''
+  contaDetails.banco = undefined
+  contaDetails.contaPrincipal = false
   contaDetails.saldo = ''
-  contaDetails.usuario = ''
   contaDetails.id = ''
+}
+
+const updateBanco = (params: { banco: number, name: string }) => {
+  console.log(params);
+
+  contaDetails.banco = Number(params.banco)
+  contaDetails.nomeBanco = params.name
 }
 
 const handleCriar = async (formEl: FormInstance | undefined) => {
@@ -105,13 +112,11 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const response = await contasGateway.criar(contaDetails);
 
-      console.log(response)
+      if (response) {
+        emits('handleFechar');
+      }
     }
   });
-}
-
-const handleFechar = () => {
-
 }
 
 const handleVoltar = (() => {

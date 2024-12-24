@@ -154,7 +154,7 @@ const handleSalvar = async (formEl: FormInstance | undefined) => {
 }
 
 const Voltar = (() => {
-  router.push('/Despesas/lista')
+  router.push('/Despesas/despesas')
   emits('handleFechar');
 });
 

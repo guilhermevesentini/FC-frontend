@@ -11,15 +11,11 @@
   --danger: #f56c6c;
 }
 
-[data-theme="dark"] {
+[data-theme="light"] {
   /* Tema Escuro */
-  --background: #1E1E1E;
-  --text-primary: #E0E0E0;
+  --background: #E0E0E0;
+  --text-primary: #1E1E1E;
   --text-secondary: #A0A0A0;
-  --primary: #3A6EA5;
-  --success: #1F8A54;
-  --warning: #D9A021;
-  --danger: #D14343;
 }
 
 [data-theme="dark"] {
@@ -27,8 +23,4 @@
   --background: #e0e0e0;
   --text-primary: #1E1E1E;
   --text-secondary: #A0A0A0;
-  --primary: #3A6EA5;
-  --success: #1F8A54;
-  --warning: #D9A021;
-  --danger: #D14343;
 }

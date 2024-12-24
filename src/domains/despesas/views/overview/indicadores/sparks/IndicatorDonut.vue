@@ -1,13 +1,19 @@
 <template>
-  <div>
-    <apexchart ref="chart" width="100%" type="donut" :options="options" :series="series" />
+  <div style="height: 100%;">
+    <div v-if="showNodata" style="height: 100%;">
+      <Empty image-size="200px" />
+    </div>
+    <apexchart ref="chart" width="100%" type="donut" :options="options" :series="series" :key="seriesKey" v-else />
   </div>
+
 </template>
 
 <script setup lang="ts">
 import { ECategoriaOptions } from '@/domains/despesas/types';
 import { computed, reactive, watch, ref, nextTick } from 'vue';
 import ApexCharts from 'apexcharts';
+import Empty from '@/shared/components/Empty.vue';
+import { EcolorsPalette } from '@/core/@types/enums';
 
 type IProps = {
   labels: string[];
@@ -16,7 +22,11 @@ type IProps = {
 
 const props = defineProps<IProps>();
 
-const series = computed(() => props.values);
+const series = ref(props.values);
+
+const seriesKey = ref(Date.now());
+
+const showNodata = ref(false)
 
 const labels = computed(() =>
   props.labels.map((item) => {
@@ -26,8 +36,6 @@ const labels = computed(() =>
 );
 
 const chart = ref<ApexCharts | null>(null);
-
-const colorPalette = ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0'];
 
 const options = reactive({
   chart: {
@@ -50,7 +58,7 @@ const options = reactive({
   fill: {
     type: 'gradient',
   },
-  colors: colorPalette,
+  colors: EcolorsPalette,
   labels: [],
   legend: {
     position: 'left',
@@ -65,6 +73,13 @@ watch([labels, series], async () => {
       labels: labels.value,
     });
   }
+});
+
+watch(() => props.values, (newSeries) => {
+  series.value = newSeries;
+  seriesKey.value = Date.now();
+  if (!newSeries.length) showNodata.value = true
+  else showNodata.value = false
 });
 </script>
 

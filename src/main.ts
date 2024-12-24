@@ -17,6 +17,7 @@ import 'dayjs/locale/pt-br';  // Importando a localização do português
 import dayjs from 'dayjs'
 import ptbr from 'element-plus/dist/locale/pt-br';
 import VueApexCharts from "vue3-apexcharts";
+import './shared/assets/styles/scss/Variables.scss';  
 
 const app = createApp(App)
 

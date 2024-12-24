@@ -4,13 +4,17 @@
       <h3>{{ title }}</h3>
       <h4>{{ formatCurrency(valor) }}</h4>
     </div>
-    <apexchart width="100%" type="line" :options="options" :series="series" :key="seriesKey" />
+    <div v-if="showNoContent">
+      <Empty class="no-content" :only-icon="true" image-size="50px" />
+    </div>
+    <apexchart width="100%" height="150px" type="line" :options="options" :series="series" :key="seriesKey" v-else />
   </el-col>
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { formatCurrency } from "@/shared/utils/utils";
+import Empty from '@/shared/components/Empty.vue';
 
 type IProps = {
   title: string;
@@ -27,10 +31,12 @@ const series = ref([{ data: props.series }]);
 // Add a key to force the re-render of the chart when data changes
 const seriesKey = ref(Date.now());
 
+const showNoContent = ref(false)
+
 const options = reactive({
   chart: {
     type: 'line',
-    height: 50,
+    height: '100%',
     sparkline: {
       enabled: true,
     },
@@ -84,6 +90,12 @@ const gradientClass = computed(() => gradientMap[props.gradientType] || 'gradien
 watch(() => props.series, (newSeries) => {
   series.value = [{ data: newSeries }];
   seriesKey.value = Date.now();  // Forçar re-renderizando o gráfico
+
+  if (newSeries.every(value => value === 0)) {
+    showNoContent.value = true;
+  } else {
+    showNoContent.value = false;
+  }
 });
 </script>
 
@@ -99,6 +111,7 @@ watch(() => props.series, (newSeries) => {
   position: relative;
   border-radius: 5px;
   height: 50px;
+  max-height: 50px;
 
   .details {
     position: absolute;
@@ -108,12 +121,25 @@ watch(() => props.series, (newSeries) => {
     justify-content: center;
     align-items: flex-start;
     font-size: 1rem;
+    height: 50px;
+    max-height: 50px;
+  }
+
+  .no-content {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    align-content: center;
+    height: 47px;
+    position: absolute;
+    right: 35px;
+    top: -23px;
   }
 }
 
 .box1 {
   height: auto;
-  height: 50px;
+  height: 100px;
   min-height: 100px;
 }
 

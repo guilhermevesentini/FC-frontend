@@ -46,5 +46,15 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      // Redireciona todas as requisições para /api para a API externa
+      '/api': {
+        target: 'https://brasilapi.com.br',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api da URL ao enviar a requisição
+      },
+    },
+  },
 });
 

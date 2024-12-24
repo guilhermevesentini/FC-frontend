@@ -1,3 +1,5 @@
+import { EcolorsPaletteMapper } from "@/core/@types/enums"
+
 export interface IDespesasModel {
   id: string
   nome: string
@@ -71,10 +73,10 @@ export const navItemsDespesas = [
     label: "Contas",
     name: '/Despesas/contas'    
   },
-  {
-    label: "Config",
-    name: '/Despesas/config'    
-  }
+  // {
+  //   label: "Config",
+  //   name: '/Despesas/config'    
+  // }
 ];
 
 
@@ -95,15 +97,15 @@ export const EFrequenciaOptions = [
 ];
 
 export const ECategoriaOptions = [
-  { label: 'Casa', value: '1', color: "#007bb5" },         // Azul Escuro
-  { label: 'Educação', value: '2', color: "#006bb3" },     // Azul mais escuro
-  { label: 'Cartão', value: '3', color: "#1e7e34" },       // Verde Escuro
-  { label: 'Carro', value: '4', color: "#e0a800" },        // Amarelo Escuro
-  { label: 'Família', value: '5', color: "#d1006c" },      // Rosa Escuro
-  { label: 'Eletrônicos', value: '6', color: "#7a3be1" },   // Roxo Escuro
-  { label: 'Viagens', value: '7', color: "#e67e22" },      // Laranja Escuro
-  { label: 'Financiamentos', value: '8', color: "#1abc9c" }, // Verde Escuro Claro
-  { label: 'Parcelado', value: '9', color: "#e74c3c" },     // Vermelho Escuro
+  { label: 'Casa', value: '1', color: EcolorsPaletteMapper.AzulEletrico },         // Azul Escuro
+  { label: 'Educação', value: '2', color: EcolorsPaletteMapper.AzulIntenso },     // Azul mais escuro
+  { label: 'Cartão', value: '3', color: EcolorsPaletteMapper.VerdeEscuro },       // Verde Escuro
+  { label: 'Carro', value: '4', color: EcolorsPaletteMapper.AmareloDourado },        // Amarelo Escuro
+  { label: 'Família', value: '5', color: EcolorsPaletteMapper.Rosa },      // Rosa Escuro
+  { label: 'Eletrônicos', value: '6', color: EcolorsPaletteMapper.Roxo },   // Roxo Escuro
+  { label: 'Viagens', value: '7', color: EcolorsPaletteMapper.Laranja },      // Laranja Escuro
+  { label: 'Financiamentos', value: '8', color: EcolorsPaletteMapper.VerdeAzulado }, // Verde Escuro Claro
+  { label: 'Parcelado', value: '9', color: EcolorsPaletteMapper.VermelhoClaro },     // Vermelho Escuro
 ];
 
 

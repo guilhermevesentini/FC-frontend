@@ -1,15 +1,15 @@
 <template>
   <div class="FC-Resumo">
     <div class="FC-Resumo_item">
-      <h4>Total Despesas</h4>
-      <span>{{ totalDeDespesas }}</span>
+      <slot name="header_total"></slot>
+      <span>{{ total }}</span>
     </div>
     <div class="FC-Resumo_item">
-      <h4>Total Pago</h4>
+      <slot name="header_pago"></slot>
       <span>{{ totalPago }}</span>
     </div>
     <div class="FC-Resumo_item">
-      <h4>Total Pendente</h4>
+      <slot name="header_pendente"></slot>
       <span>{{ totalPendente }}</span>
     </div>
   </div>
@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 interface IProps {
-  totalDeDespesas: string
+  total: string
   totalPago: string
   totalPendente: string
 }
