@@ -1,10 +1,17 @@
 <template>
   <div class="main">
-    <RouterView />
+    <div>
+      <FCNavbar :navbar-items="navItemsDespesas" />
+    </div>
+    <div>
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { navItemsDespesas } from '@/domains/despesas/types';
+import FCNavbar from '@/shared/components/navbar/FCNavbar.vue';
 </script>
 
 <style scoped>

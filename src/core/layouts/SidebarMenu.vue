@@ -40,7 +40,7 @@ const collapsed = ref(true);
 
 const routeIndexMapping: { [key: string]: string } = {
   '/Dashboard': '1',
-  '/Despesas/overview': '2',
+  '/Overview': '2',
   '/Cadastros': '8',
 };
 

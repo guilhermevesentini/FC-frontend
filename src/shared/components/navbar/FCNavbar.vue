@@ -24,7 +24,7 @@ const router = useRouter();
 const route = useRoute();
 
 const routername = computed<string>(() => router.currentRoute.value.name as string);
-const currentRoute = ref<string>(routername.value || '/Despesas/overview');
+const currentRoute = ref<string>(routername.value || '/Overview');
 
 const handleTabClick = (tab: TabsPaneContext) => {
   currentRoute.value = String(tab.props.name);

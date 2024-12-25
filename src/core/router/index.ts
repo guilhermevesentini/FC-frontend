@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '@/domains/login/views/logar/LoginPage.vue';
-import { dashboardPaths } from '../../domains/dashboard/router/dashboard/dashboardPath';
-import { despesasPaths } from '../../domains/despesas/router/despesas/despesasPath';
+import { despesasPaths } from '../../domains/despesas/router/despesasPath';
 import ResgistrarUsuario from '@/domains/login/views/registrar/ResgistrarUsuario.vue';
 import BaseLayout from '../layouts/BaseLayout.vue';
 import { isAuthenticated } from '@/shared/composables/auth';
+import { contasPaths } from '@/domains/contas/routes/contasPaths';
+import { receitasPaths } from '@/domains/receitas/routes/receitasPaths';
+import { overviewPaths } from '@/domains/overview/router/overviewPaths';
 
 const routes: Array<RouteRecordRaw> = [
   { path: '/login', component: Login },
@@ -15,8 +17,10 @@ const routes: Array<RouteRecordRaw> = [
     component: BaseLayout,
     meta: { requiresAuth: true },
     children: [
-      ...dashboardPaths,
-      ...despesasPaths
+      ...overviewPaths,
+      ...receitasPaths,
+      ...despesasPaths,
+      ...contasPaths,
     ]
   }
 ];

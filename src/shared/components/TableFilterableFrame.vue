@@ -59,13 +59,13 @@ const handlePageChange = (newPage: number) => {
 };
 
 const emits = defineEmits<{
-    (event: "handleEditar", params: unknown): unknown;
+    (event: "handleEditar", id: string): string;
     (event: "handleDeletar", item: any, multiplos?: boolean): string;
 }>();
 
 
-const handleEditar = (params: unknown) => {
-    emits('handleEditar', params);
+const handleEditar = (params: { id: string }) => {
+    emits('handleEditar', params.id);
 }
 const handleDeletar = (row: any, multiplos?: boolean) => {
     emits('handleDeletar', row, multiplos);

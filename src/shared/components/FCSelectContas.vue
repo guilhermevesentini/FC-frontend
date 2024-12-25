@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '@/domains/despesas/views/contas/services/ports/ContasGateway';
+import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '@/domains/contas/services/ports/ContasGateway';
 import { container } from '@/inversify.config';
 import { onMounted, ref, watch } from 'vue';
 

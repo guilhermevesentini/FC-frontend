@@ -2,10 +2,10 @@
 import { Container } from "inversify";
 import { axiosContainer } from "./core/container";
 import { loginContainer } from "./domains/login/container/loginContainer";
-import { receitasContainer } from "./domains/despesas/views/receitas/container/receitasContainer";
-import { contasContainer } from "./domains/despesas/views/contas/container/contasContainer";
+import { receitasContainer } from "./domains/receitas/container/receitasContainer";
 import { despesasContainer } from "./domains/despesas/container/despesasContainer";
-import { overviewContainer } from "./domains/despesas/views/overview/container/overviewContainer";
+import { overviewContainer } from "./domains/overview/container/overviewContainer";
+import { contasContainer } from "./domains/contas/container/contasContainer";
 
 const container = new Container()
 

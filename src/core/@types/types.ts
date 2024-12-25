@@ -43,8 +43,16 @@ export enum ETipoProduto {
 }
 
 export interface ICadastro {
-
     id: number,
     nome: string,
 }
+
+export const configInputMask = {
+  masked: false,
+  precision: 2,
+  decimal: ',',
+  thousands: '.',
+  prefix: 'R$ ',
+  suffix: '',
+};
   

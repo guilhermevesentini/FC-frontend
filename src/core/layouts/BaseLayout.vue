@@ -20,8 +20,6 @@
 import MainContainer from './MainContainer.vue';
 import NavbarMenu from './NavbarMenu.vue';
 //import SidebarMenu from './SidebarMenu.vue';
-
-
 </script>
 
 <style scoped></style>

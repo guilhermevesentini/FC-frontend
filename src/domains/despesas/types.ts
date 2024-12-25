@@ -7,6 +7,7 @@ export interface IDespesasModel {
   vencimento: Date | string | undefined
   frequencia: string
   replicar: boolean
+  contaId: string
   mes: number
   ano: number
   categoria: string
@@ -22,6 +23,7 @@ export interface IDespesaMeses {
   ano: number
   valor: string
   status: string
+  contaId: string
   categoria: string
   descricao: string  
   despesaId: string | null
@@ -46,6 +48,7 @@ export const DespesaInitialState: IDespesasModel = {
   nome: '',
   mes: 0,
   descricao: '',
+  contaId: '',
   categoria: '',
   replicar: false,
   valor: '0.00',
@@ -59,23 +62,23 @@ export const DespesaInitialState: IDespesasModel = {
 export const navItemsDespesas = [
   {
     label: "Overview",
-    name: '/Despesas/overview'    
+    name: '/overview'    
   },
   {
     label: "Receitas",
-    name: '/Despesas/receitas'    
+    name: '/receitas'    
   },
   {
     label: "Despesas",
-    name: '/Despesas/despesas'    
+    name: '/despesas'    
   },
   {
     label: "Contas",
-    name: '/Despesas/contas'    
+    name: '/contas'    
   },
   // {
   //   label: "Config",
-  //   name: '/Despesas/config'    
+  //   name: '/Config'    
   // }
 ];
 

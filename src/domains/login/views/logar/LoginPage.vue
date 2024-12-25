@@ -150,7 +150,7 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
     }
 
     setTimeout(() => {
-      router.push({ path: `/Despesas/overview` });
+      router.push({ path: `/overview` });
     }, 2000)
   } catch (err) {
     console.log(err)

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContasGatewayDi, type ContasGateway } from '@/domains/despesas/views/contas/services/ports/ContasGateway';
+import { ContasGatewayDi, type ContasGateway } from '@/domains/contas/services/ports/ContasGateway';
 import { container } from '@/inversify.config';
 import { defineProps, defineEmits, ref, watch, onMounted } from 'vue';
 
@@ -50,11 +50,13 @@ onMounted(async () => {
 })
 
 watch(selectedValue, (newVal) => {
-  const findName = EListaBancosOpt.value.filter((banco: { label: string, value: string | undefined, name: string }) => banco.value == newVal)
+  if (newVal) {
+    const findName = EListaBancosOpt.value.filter((banco: { label: string, value: string, name: string }) => banco.value == newVal.toString())
 
-  console.log(findName[0].name);
-
-  emit('update:modelValue', { banco: newVal, name: findName[0].name })
+    emit('update:modelValue', { banco: newVal, name: findName[0].name || '' })
+  } else {
+    emit('update:modelValue', { banco: undefined, name: '' })
+  }
 })
 </script>
 
