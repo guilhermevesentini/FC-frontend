@@ -21,10 +21,13 @@ export default class ReceitaFactory implements IReceitasFactory {
           valor: Number(mes.valor).toFixed(2) ?? '0.00',
           nome: receita.nome ?? '',
           descricao: mes.descricao ?? '',
+          tipoLancamento: receita.tipoLancamento ?? '1',
           categoria: mes.categoria ?? '',
+          range: {
+            inicio: receita.range?.inicio ?? undefined,
+            fim: receita.range?.fim ?? undefined
+          },
           recebimento: mes.recebimento,
-          recorrente: receita.recorrente ?? '1',
-          frequencia: receita.frequencia,
           ano: mes.ano ?? 0,
           contaId: receita.contaId,
           replicar: receita.replicar ?? false,

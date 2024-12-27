@@ -99,6 +99,12 @@ export const EFrequenciaOptions = [
   { label: 'Semestral', value: '3' },
 ];
 
+export const ETipoOptions = [
+  { label: 'Único', value: '1' },
+  { label: 'Parcelado', value: '2' },
+  { label: 'Recorrente', value: '3' },
+];
+
 export const ECategoriaOptions = [
   { label: 'Casa', value: '1', color: EcolorsPaletteMapper.AzulEletrico },         // Azul Escuro
   { label: 'Educação', value: '2', color: EcolorsPaletteMapper.AzulIntenso },     // Azul mais escuro

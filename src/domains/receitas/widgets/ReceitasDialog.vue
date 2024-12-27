@@ -3,12 +3,12 @@
     <template #body>
       <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Nome" prop="nome">
               <el-input v-model="receitaDetails.nome" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Categoria" prop="categoria">
               <el-select v-model="receitaDetails.categoria" placeholder="Selecione...">
                 <el-option v-for="item in ECategoriaReceitasOptions" :key="item.value" :label="item.label"
@@ -16,45 +16,43 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Valor" prop="valor">
               <el-input v-model="receitaDetails.valor" :formatter="(value: string) => format(value, configInputMask)"
                 :parser="(value: string) => unformat(value, configInputMask)"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Conta" prop="contaId">
               <FCSelectContas v-model="receitaDetails.contaId" @update:model-value="updateConta" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
+            <el-form-item label="Lançamento" prop="tipoLancamento">
+              <el-select v-model="receitaDetails.tipoLancamento" placeholder="Selecione...">
+                <el-option v-for="item in ETipoOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="receitaDetails.tipoLancamento == '2'">
+            <el-form-item label="Meses" prop="range">
+              <el-date-picker v-model="receitaDetails.range" type="monthrange" start-placeholder="Início"
+                end-placeholder="fim" format="MM/YYYY" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="Descrição" prop="descricao">
               <el-input v-model="receitaDetails.descricao" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="Recorrente?" prop="recorrente">
-              <el-select v-model="receitaDetails.recorrente" :options="ESelectOptions" placeholder="Selecione...">
-                <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8" v-if="receitaDetails.recorrente == '1'">
-            <el-form-item label="Frequência" prop="frequencia">
-              <el-select v-model="receitaDetails.frequencia" placeholder="Selecione...">
-                <el-option v-for="item in EFrequenciaOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Recebimento" prop="recebimento">
               <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Pago" prop="status">
               <el-select v-model="receitaDetails.status" :options="ESelectOptions" placeholder="Selecione...">
                 <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
@@ -75,23 +73,30 @@
       <el-button @click="Voltar">Cancel</el-button>
     </template>
     <template #FRight>
-      <el-button type="primary" @click="handleCriar(formRef)">Salvar</el-button>
+      <el-button type="primary" @click="handleReceita(formRef)">Salvar</el-button>
     </template>
   </FCDrawer>
 </template>
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
 import { ReceitasGatewayDi, type ReceitaInputDto, type ReceitasGateway } from '../services/ports/ReceitasGateway';
-import { EFrequenciaOptions, ESelectOptions } from '@/domains/despesas/types';
+import { ESelectOptions, ETipoOptions } from '@/domains/despesas/types';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
-import { ECategoriaReceitasOptions, ReceitasInitialState } from '../types';
+import { ECategoriaReceitasOptions, ETipoReceitaDrawer } from '../types';
 import { configInputMask } from '@/core/@types/types';
+
+interface IProps {
+  receita: ReceitaInputDto | undefined
+  tipo: ETipoReceitaDrawer
+}
+
+const props = defineProps<IProps>()
 
 const formRef = ref<FormInstance>();
 
@@ -103,10 +108,9 @@ const receitaDetails = ref<ReceitaInputDto>({
   id: '',
   nome: '',
   categoria: '',
-  frequencia: '1',
+  tipoLancamento: '1',
   descricao: '',
   observacao: '',
-  recorrente: '2',
   status: '2',
   valor: '0.00',
   recebimento: new Date(),
@@ -118,7 +122,6 @@ const receitasGateway = container.get<ReceitasGateway>(ReceitasGatewayDi);
 const rules = reactive<FormRules<ReceitaInputDto>>({
   nome: [{ required: true, message: '', trigger: 'blur' }],
   valor: [{ required: true, message: '', trigger: 'blur', min: 1 }],
-  recorrente: [{ required: true, message: '', trigger: 'blur' }],
   recebimento: [{ required: true, message: '', trigger: 'blur' }],
   status: [{ required: true, message: '', trigger: 'blur' }]
 });
@@ -131,7 +134,7 @@ const updateConta = (id: string) => {
   receitaDetails.value.contaId = id
 }
 
-const salvarReceitas = async () => {
+const criarReceita = async () => {
   const mes = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getMonth() : 0
   const ano = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getFullYear() : 0
 
@@ -149,12 +152,34 @@ const salvarReceitas = async () => {
   Limpar()
 }
 
-const handleCriar = async (formEl: FormInstance | undefined) => {
+const editarReceita = async () => {
+  const response = await receitasGateway.editar(receitaDetails.value)
+
+  if (response?.statusCode != 200) return ElNotification({
+    title: 'error',
+    message: 'Erro ao editar receita',
+    type: 'success',
+    duration: 2000
+  })
+
+  ElNotification({
+    title: 'success',
+    message: 'Receita editada com sucesso.',
+    type: 'success',
+    duration: 2000
+  })
+
+  Limpar()
+}
+
+const handleReceita = async (formEl: FormInstance | undefined) => {
   if (!formEl?.validate()) return
 
   await formEl.validate(async (valid) => {
     if (valid) {
-      await salvarReceitas()
+      if (props.tipo == ETipoReceitaDrawer.criar) await criarReceita()
+
+      if (props.tipo == ETipoReceitaDrawer.editar) await editarReceita()
 
       Voltar()
     }
@@ -164,11 +189,9 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
 const Limpar = (() => {
   receitaDetails.value.id = ''
   receitaDetails.value.nome = ''
-  receitaDetails.value.frequencia = '1'
   receitaDetails.value.descricao = ''
   receitaDetails.value.observacao = ''
   receitaDetails.value.contaId = ''
-  receitaDetails.value.recorrente = '2'
   receitaDetails.value.status = '2'
   receitaDetails.value.valor = '0.00'
   receitaDetails.value.recebimento = new Date()
@@ -178,6 +201,32 @@ const Voltar = (() => {
   Limpar()
   router.push('/receitas')
   emits('handleFechar');
+});
+
+const preencher = (data: ReceitaInputDto | undefined) => {
+  if (!data) return;
+  receitaDetails.value.id = data.id || '';
+  receitaDetails.value.status = data.status || '2';
+  receitaDetails.value.ano = data.ano || 0;
+  receitaDetails.value.nome = data.nome || '';
+  receitaDetails.value.mes = data.mes || 0;
+  receitaDetails.value.descricao = data.descricao || '';
+  receitaDetails.value.categoria = data.categoria || '';
+  receitaDetails.value.replicar = data.replicar || false;
+  receitaDetails.value.valor = data.valor || '0.00';
+  receitaDetails.value.recebimento = data.recebimento || undefined;
+  receitaDetails.value.contaId = data.contaId || '';
+  receitaDetails.value.incomeId = data.incomeId || '';
+  receitaDetails.value.observacao = data.observacao || '';
+  receitaDetails.value.tipoLancamento = data.tipoLancamento || '1'
+  receitaDetails.value.range && receitaDetails.value.range.inicio ? receitaDetails.value.range.inicio = data.range?.inicio || undefined : {}
+  receitaDetails.value.range && receitaDetails.value.range.fim ? receitaDetails.value.range.fim = data.range?.fim || undefined : {}
+};
+
+watchEffect(() => {
+  if (props.receita) {
+    preencher(props.receita);
+  }
 });
 
 onMounted(() => {

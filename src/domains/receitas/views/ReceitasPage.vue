@@ -70,8 +70,7 @@
     </el-col>
   </el-row>
 
-  <AdicionarReceitas v-model="showAdicionar" v-on:handle-fechar="handleFecharDrawer" />
-  <EditarReceitaDialog v-model="showEditar" v-on:handle-fechar="handleFecharDrawer" :receita="receita" />
+  <ReceitasDialog v-model="showDrawer" v-on:handle-fechar="handleFecharDrawer" :tipo="tipoDrawer" :receita="receita" />
 </template>
 
 <script setup lang="ts">
@@ -90,15 +89,16 @@ import useFinanceHandler from '../../despesas/composables/useFinanceHandler';
 import { formatCurrency, formatDate } from '@/shared/utils/utils';
 import ResumoLateral from '@/shared/components/ResumoLateral.vue';
 import { ReceitasFactoryDi, type IReceitasFactory } from '../ReceitasFactory';
-import { ECategoriaReceitasOptions, ReceitasInitialState } from '../types';
-import AdicionarReceitas from '../widgets/AdicionarReceitas.vue';
+import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } from '../types';
+import AdicionarReceitas from '../widgets/ReceitasDialog.vue';
 import IconInsideTable from '@/domains/despesas/components/IconInsideTable.vue';
-import EditarReceitaDialog from '../widgets/EditarReceitaDialog.vue';
+import ReceitasDialog from '../widgets/ReceitasDialog.vue';
 
-const showAdicionar = ref(false);
-const showEditar = ref(false);
+const showDrawer = ref(false);
 
 const loading = ref(false);
+
+const tipoDrawer = ref<ETipoReceitaDrawer>(ETipoReceitaDrawer.criar);
 
 const receita = ref<ReceitaInputDto | undefined>(ReceitasInitialState);
 
@@ -138,10 +138,14 @@ const totalPendente = computed(() => {
 const financeHandler = useFinanceHandler();
 
 const handleAdicionar = () => {
-  showAdicionar.value = true
+  tipoDrawer.value = ETipoReceitaDrawer.criar
+  receita.value = undefined
+  showDrawer.value = true
 }
 
 const handleEditar = (id: string) => {
+  tipoDrawer.value = ETipoReceitaDrawer.editar
+
   receita.value = undefined
 
   const receitaSelecionada = listaDeReceitas.value?.find((receita) => receita.id === id);
@@ -159,7 +163,7 @@ const handleEditar = (id: string) => {
     ...getMonth
   }
 
-  showEditar.value = true
+  showDrawer.value = true
 }
 
 const periodo = reactive({
@@ -222,8 +226,7 @@ const handlePeriodo = async (mes: number, ano: number) => {
 }
 
 const handleFecharDrawer = (async () => {
-  showEditar.value = false;
-  showAdicionar.value = false;
+  showDrawer.value = false;
   await obterReceitas()
 })
 

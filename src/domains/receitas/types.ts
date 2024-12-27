@@ -1,6 +1,11 @@
 import { EcolorsPaletteMapper } from "@/core/@types/enums";
 import type { ReceitaInputDto } from "./services/ports/ReceitasGateway";
 
+export enum ETipoReceitaDrawer {
+  criar = '1',
+  editar = '2'
+}
+
 export const ReceitasInitialState: ReceitaInputDto = {
   id: '',
   status: '',
@@ -11,11 +16,11 @@ export const ReceitasInitialState: ReceitaInputDto = {
   categoria: '',
   replicar: false,
   valor: '0.00',
-  recorrente: '',
   recebimento: new Date(),
   contaId: '',
   incomeId: '',
-  frequencia: '',
+  tipoLancamento: '1',
+  range: undefined,
   observacao: ''
 }
 

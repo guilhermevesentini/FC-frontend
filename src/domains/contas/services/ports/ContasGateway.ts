@@ -20,6 +20,8 @@ export type ContaOutputDto = {
   agencia: string
   saldo: string
   contaPrincipal: boolean
+  label?: string; // Opcional, se necessário
+  value?: string; // Opcional, se necessário
 }
 
 export interface ContasGateway {

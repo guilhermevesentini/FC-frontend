@@ -3,10 +3,13 @@ import type { IDefaultHttpResponse } from "@/core/@types/httpClient"
 export type ReceitaInputDto = {
   id: string
   nome: string
-  recorrente: string 
-  frequencia: string
   recebimento: Date | undefined
   replicar: boolean
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   meses?: ReceitaMesOutputDto[]
 } & ReceitaMesOutputDto;
 
@@ -24,14 +27,8 @@ export type ReceitaMesOutputDto = {
 }
 
 export type ReceitaModelDto = {
-  id: string
-  nome: string
-  recorrente: string 
-  frequencia: string
-  recebimento: Date | undefined
-  replicar: boolean
   meses?: ReceitaMesOutputDto[]
-} & ReceitaMesOutputDto;
+} & ReceitaInputDto & ReceitaMesOutputDto;
 
 export type ReceitaOutputDto = ReceitaInputDto[]
 

@@ -20,7 +20,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const selectedValue = ref(props.modelValue)
 
-const EListaContasOpt = ref()
+const EListaContasOpt = ref<ContaOutputDto[]>()
 
 const obterBancos = async () => {
   try {
@@ -28,12 +28,19 @@ const obterBancos = async () => {
 
     EListaContasOpt.value = response?.result?.map((conta: ContaOutputDto, i: number) => {
       return {
+        ...conta,
         label: conta.nomeBanco,
-        value: conta.id
+        value: conta.id,
+        isContaPrincipal: conta.contaPrincipal
       }
     })
+
   } catch (error) {
     console.error('Erro ao buscar as contas:', error);
+  } finally {
+    const hasPrincipal = EListaContasOpt.value?.filter(item => item.contaPrincipal)[0]?.id;
+
+    if (hasPrincipal) selectedValue.value = hasPrincipal
   }
 }
 
