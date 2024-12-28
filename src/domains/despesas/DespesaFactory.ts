@@ -23,8 +23,11 @@ export default class DespesaFactory implements IDespesaFactory {
           descricao: mes.descricao ?? '',
           categoria: mes.categoria ?? '',
           vencimento: mes.vencimento,
-          recorrente: despesa.recorrente ?? '1',
-          frequencia: despesa.frequencia,
+          tipoLancamento: despesa.tipoLancamento ?? '1',
+          range: {
+            inicio: despesa.range?.inicio ?? undefined,
+            fim: despesa.range?.fim ?? undefined
+          },
           ano: mes.ano ?? 0,
           contaId: mes.contaId ?? '',
           replicar: despesa.replicar ?? false,

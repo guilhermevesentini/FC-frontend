@@ -26,14 +26,14 @@
         </el-col>
         <el-col :span="24">
           <el-row class="sparkboxes">
-            <IndicatorSpark title="Total" :valor="sparks.total.value.toString()" :series="sparks.total.values.slice(-5)"
-              :gradient-type="1" />
+            <IndicatorSpark title="Despesas" :valor="sparks.totalDespesas.value.toString()"
+              :series="sparks.totalDespesas.values.slice(-5)" :gradient-type="1" />
 
-            <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()"
+            <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()"
+              :series="sparks.totalReceitas.values.slice(-5)" :gradient-type="3" />
+
+            <IndicatorSpark title="Despesas Pendentes" :valor="sparks.pendente.value.toString()"
               :series="sparks.pendente.values.slice(-5)" :gradient-type="2" />
-
-            <IndicatorSpark title="Pagos" :valor="sparks.pago.value.toString()" :series="sparks.pago.values.slice(-5)"
-              :gradient-type="3" />
 
             <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)"
               :series="sparks.balanco.values.slice(-5)" :gradient-type="4" />
@@ -70,11 +70,15 @@ import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, 
 const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi)
 
 const sparks = ref<OverviewSparkTotalOutputDto>({
-  balanco: {
+  totalDespesas: {
     value: 0,
     values: []
   },
-  pago: {
+  totalReceitas: {
+    value: 0,
+    values: []
+  },
+  balanco: {
     value: 0,
     values: []
   },
@@ -82,10 +86,7 @@ const sparks = ref<OverviewSparkTotalOutputDto>({
     value: 0,
     values: []
   },
-  total: {
-    value: 0,
-    values: []
-  }
+
 })
 
 const donut = ref<OverviewDonutOutputDto>({
@@ -118,21 +119,21 @@ const obterSparks = async (inicio: string, fim: string) => {
   if (!response?.result) return
 
   sparks.value = {
-    total: {
-      value: response?.result?.total?.value || 0,
-      values: response?.result?.total?.values || []
+    totalDespesas: {
+      value: response?.result?.totalDespesas?.value || 0,
+      values: response?.result?.totalDespesas?.values || []
     },
-    balanco: {
-      value: response?.result?.balanco?.value || 0,
-      values: response?.result?.balanco?.values || []
+    totalReceitas: {
+      value: response?.result?.totalReceitas?.value || 0,
+      values: response?.result?.totalReceitas?.values || []
     },
     pendente: {
       value: response?.result?.pendente?.value || 0,
       values: response?.result?.pendente?.values || []
     },
-    pago: {
-      value: response?.result?.pago?.value || 0,
-      values: response?.result?.pago?.values || []
+    balanco: {
+      value: response?.result?.balanco?.value || 0,
+      values: response?.result?.balanco?.values || []
     }
   };
 }

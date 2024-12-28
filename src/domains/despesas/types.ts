@@ -1,12 +1,20 @@
 import { EcolorsPaletteMapper } from "@/core/@types/enums"
 
+export enum ETipoDespesaDrawer {
+  criar = '1',
+  editar = '2'
+}
+
 export interface IDespesasModel {
-  id: string
+  id: string | null
   nome: string
-  recorrente: string | null
   vencimento: Date | string | undefined
-  frequencia: string
   replicar: boolean
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   contaId: string
   mes: number
   ano: number
@@ -15,7 +23,7 @@ export interface IDespesasModel {
   status: string
   descricao: string  
   observacao: string    
-  despesaId: string
+  despesaId: string  | null
 }
 
 export interface IDespesaMeses {
@@ -33,10 +41,13 @@ export interface IDespesaMeses {
 
 export interface IDespesas {
   id: string | null;
-  nome: string;
-  recorrente: string | null
+  nome: string
   vencimento: Date | string | undefined
-  frequencia: string
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   replicar: boolean
   meses: IDespesaMeses[] | [];
 }
@@ -52,11 +63,10 @@ export const DespesaInitialState: IDespesasModel = {
   categoria: '',
   replicar: false,
   valor: '0.00',
-  recorrente: null,
   vencimento: new Date(),
-  frequencia: '',
   observacao: '',
-  despesaId: ''
+  despesaId: '',
+  tipoLancamento: '1'
 }
 
 export const navItemsDespesas = [

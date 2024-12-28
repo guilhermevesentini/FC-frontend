@@ -69,9 +69,7 @@
       </ResumoLateral>
     </el-col>
   </el-row>
-  <AdicionarDespesasWidget v-model="showDrawerAdicionar" v-on:handle-fechar="handleFecharDrawer" />
-  <EditarDespesasWidget v-model="showDrawerEditar" v-if="showDrawerEditar" v-on:handle-fechar="handleFecharDrawer"
-    :despesa="Despesa" />
+  <DespesasDialog v-model="showDrawer" v-on:handle-fechar="handleFecharDrawer" :despesa="Despesa" :tipo="tipoDrawer" />
 </template>
 
 <script lang="ts" setup>
@@ -88,18 +86,18 @@ import BreadCrumb from "@/shared/components/BreadCrumb.vue";
 import FCButtonIcon from "@/shared/components/buttons/Criar/FCButtonIcon.vue";
 import TableFilterableFrame from "@/shared/components/TableFilterableFrame.vue";
 import ResumoLateral from "@/shared/components/ResumoLateral.vue";
-import { DespesaInitialState, ECategoriaOptions, type IDespesas, type IDespesasModel } from "../types";
+import { DespesaInitialState, ECategoriaOptions, ETipoDespesaDrawer, type IDespesas, type IDespesasModel } from "../types";
 import useFinanceHandler from "../composables/useFinanceHandler";
 import { DespesasGatewayDi, type IDespesasGateway } from "../services/ports/DespesasGateway";
-import AdicionarDespesasWidget from "../widgets/AdicionarDespesasWidget.vue";
-import EditarDespesasWidget from "../widgets/EditarDespesasWidget.vue";
 import IconInsideTable from "../components/IconInsideTable.vue";
+import DespesasDialog from "../widgets/DespesasDialog.vue";
 
 const loading = ref(false);
-const showDrawerAdicionar = ref(false);
-const showDrawerEditar = ref(false);
+const showDrawer = ref(false);
 
-const Despesa = ref<IDespesasModel>(DespesaInitialState);
+const Despesa = ref<IDespesasModel | undefined>(DespesaInitialState);
+
+const tipoDrawer = ref<ETipoDespesaDrawer>(ETipoDespesaDrawer.criar);
 
 const listaDeDespesas = ref<IDespesas[]>([]);
 
@@ -156,22 +154,36 @@ const totalPendente = computed(() => {
 })
 
 const adicionarDespesa = () => {
-  Despesa.value = DespesaInitialState
-  showDrawerAdicionar.value = true;
+  tipoDrawer.value = ETipoDespesaDrawer.criar
+  Despesa.value = undefined
+  showDrawer.value = true
 }
 
-const editarDespesa = ((produto: unknown) => {
-  Despesa.value = DespesaInitialState
+const editarDespesa = ((id: unknown) => {
+  tipoDrawer.value = ETipoDespesaDrawer.editar
 
-  if (produto) {
-    Despesa.value = produto as IDespesasModel
-    showDrawerEditar.value = true;
+  Despesa.value = undefined
+
+  const despesaSelecionada = listaDeDespesas.value?.find((receita) => receita.id === id);
+
+  if (!despesaSelecionada) return alert('erro ao selecionar')
+
+  if (despesaSelecionada.meses && despesaSelecionada.meses?.length <= 0) return alert('erro ao selecionar')
+
+  const getMonth = despesaSelecionada.meses && despesaSelecionada.meses[0] || undefined;
+
+  if (!getMonth) return alert('erro ao selecionar')
+
+  Despesa.value = {
+    ...despesaSelecionada,
+    ...getMonth
   }
+
+  showDrawer.value = true
 })
 
 const handleFecharDrawer = (async () => {
-  showDrawerAdicionar.value = false;
-  showDrawerEditar.value = false;
+  showDrawer.value = false;
   Despesa.value = DespesaInitialState
   await obterDespesas()
 })
@@ -179,6 +191,13 @@ const handleFecharDrawer = (async () => {
 const deletarDespesa = async (row: IDespesasModel, multiplos?: boolean) => {
   try {
     loading.value = true
+
+    if (!row.id) return ElNotification({
+      title: 'Erro',
+      message: 'Erro ao selecionar a despesa',
+      type: 'error',
+      duration: 5000
+    })
 
     const response = await despesasGateway.excluirDespesa(row.id, multiplos ? undefined : row.mes);
 

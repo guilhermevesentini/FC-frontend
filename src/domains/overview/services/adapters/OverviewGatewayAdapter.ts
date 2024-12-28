@@ -8,7 +8,7 @@ export default class OverviewGatewayAdapter implements IOverviewGateway {
   
   async sparkTotal(input: OverviewSparkTotalInputDto): Promise<IDefaultHttpResponse<OverviewSparkTotalOutputDto | undefined> | undefined> {
     const response = await this.httpClient.get<IDefaultHttpResponse<OverviewSparkTotalOutputDto>>({
-      url: `/expense/overview/spark?inicio=${input.inicio}&fim=${input.fim}`
+      url: `/overview/spark?inicio=${input.inicio}&fim=${input.fim}`
     });
 
     if (response.status != 200 || !response.body) return
@@ -17,7 +17,7 @@ export default class OverviewGatewayAdapter implements IOverviewGateway {
   }
   async obterDonut(input: OverviewDonutInputDto): Promise<IDefaultHttpResponse<OverviewDonutOutputDto | undefined> | undefined> {
     const response = await this.httpClient.get<IDefaultHttpResponse<OverviewDonutOutputDto>>({
-      url: `/expense/overview/donut?inicio=${input.inicio}&fim=${input.fim}`
+      url: `/overview/donut?inicio=${input.inicio}&fim=${input.fim}`
     });
   
     if (response.status != 200 || !response.body) return

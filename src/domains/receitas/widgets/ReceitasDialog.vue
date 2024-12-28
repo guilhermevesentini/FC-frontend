@@ -1,5 +1,5 @@
 <template>
-  <FCDrawer title="Adicionar receitas" :on-before-close="Limpar()">
+  <FCDrawer :title="tituloDrawer" :on-before-close="Limpar" destroy-on-close>
     <template #body>
       <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
@@ -98,6 +98,8 @@ interface IProps {
 
 const props = defineProps<IProps>()
 
+const tituloDrawer = computed(() => props.tipo == ETipoReceitaDrawer.criar ? 'Adicionar receita' : 'Editar receita')
+
 const formRef = ref<FormInstance>();
 
 const receitaDetails = ref<ReceitaInputDto>({
@@ -109,6 +111,7 @@ const receitaDetails = ref<ReceitaInputDto>({
   nome: '',
   categoria: '',
   tipoLancamento: '1',
+  range: undefined,
   descricao: '',
   observacao: '',
   status: '2',
@@ -204,28 +207,29 @@ const Voltar = (() => {
 });
 
 const preencher = (data: ReceitaInputDto | undefined) => {
-  if (!data) return;
-  receitaDetails.value.id = data.id || '';
-  receitaDetails.value.status = data.status || '2';
-  receitaDetails.value.ano = data.ano || 0;
-  receitaDetails.value.nome = data.nome || '';
-  receitaDetails.value.mes = data.mes || 0;
-  receitaDetails.value.descricao = data.descricao || '';
-  receitaDetails.value.categoria = data.categoria || '';
-  receitaDetails.value.replicar = data.replicar || false;
-  receitaDetails.value.valor = data.valor || '0.00';
-  receitaDetails.value.recebimento = data.recebimento || undefined;
-  receitaDetails.value.contaId = data.contaId || '';
-  receitaDetails.value.incomeId = data.incomeId || '';
-  receitaDetails.value.observacao = data.observacao || '';
-  receitaDetails.value.tipoLancamento = data.tipoLancamento || '1'
-  receitaDetails.value.range && receitaDetails.value.range.inicio ? receitaDetails.value.range.inicio = data.range?.inicio || undefined : {}
-  receitaDetails.value.range && receitaDetails.value.range.fim ? receitaDetails.value.range.fim = data.range?.fim || undefined : {}
+  receitaDetails.value.id = data?.id || '';
+  receitaDetails.value.status = data?.status || '2';
+  receitaDetails.value.ano = data?.ano || 0;
+  receitaDetails.value.nome = data?.nome || '';
+  receitaDetails.value.mes = data?.mes || 0;
+  receitaDetails.value.descricao = data?.descricao || '';
+  receitaDetails.value.categoria = data?.categoria || '';
+  receitaDetails.value.replicar = data?.replicar || false;
+  receitaDetails.value.valor = data?.valor || '0.00';
+  receitaDetails.value.recebimento = data?.recebimento || undefined;
+  receitaDetails.value.contaId = data?.contaId || '';
+  receitaDetails.value.incomeId = data?.incomeId || '';
+  receitaDetails.value.observacao = data?.observacao || '';
+  receitaDetails.value.tipoLancamento = data?.tipoLancamento || '1'
+  receitaDetails.value.range && receitaDetails.value.range.inicio ? receitaDetails.value.range.inicio = data?.range?.inicio || undefined : {}
+  receitaDetails.value.range && receitaDetails.value.range.fim ? receitaDetails.value.range.fim = data?.range?.fim || undefined : {}
 };
 
 watchEffect(() => {
   if (props.receita) {
     preencher(props.receita);
+  } else {
+    preencher(undefined)
   }
 });
 

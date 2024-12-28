@@ -1,5 +1,5 @@
 <template>
-  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :on-before-close="handleLimpar()">
+  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :on-before-close="handleLimpar">
     <template #header="{ close, titleId, titleClass }">
       <h4>Adicionar conta</h4>
     </template>

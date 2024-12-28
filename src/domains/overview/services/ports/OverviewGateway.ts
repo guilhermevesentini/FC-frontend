@@ -10,9 +10,9 @@ export type OverviewSparkTotalInputDto = {
   fim: string
 }
 export type OverviewSparkTotalOutputDto = {
-  total: OverviewSparksOutputItem 
+  totalDespesas: OverviewSparksOutputItem 
+  totalReceitas: OverviewSparksOutputItem
   pendente: OverviewSparksOutputItem
-  pago: OverviewSparksOutputItem
   balanco: OverviewSparksOutputItem
 }
 
