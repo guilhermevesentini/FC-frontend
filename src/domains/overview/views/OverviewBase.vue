@@ -32,7 +32,7 @@
             <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()"
               :series="sparks.totalReceitas.values.slice(-5)" :gradient-type="3" />
 
-            <IndicatorSpark title="Despesas Pendentes" :valor="sparks.pendente.value.toString()"
+            <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()"
               :series="sparks.pendente.values.slice(-5)" :gradient-type="2" />
 
             <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)"

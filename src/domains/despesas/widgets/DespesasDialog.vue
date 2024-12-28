@@ -27,7 +27,7 @@
               <FCSelectContas v-model="despesasDetails.contaId" @update:model-value="updateConta" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" v-if="tipo == ETipoDespesaDrawer.criar">
             <el-form-item label="Lançamento" prop="tipoLancamento">
               <el-select v-model="despesasDetails.tipoLancamento" placeholder="Selecione...">
                 <el-option v-for="item in ETipoOptions" :key="item.value" :label="item.label"
@@ -35,7 +35,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="despesasDetails.tipoLancamento == '2'">
+          <el-col :span="6" v-if="despesasDetails.tipoLancamento == '2' && tipo == ETipoDespesaDrawer.criar">
             <el-form-item label="Meses" prop="range">
               <el-date-picker v-model="despesasDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
@@ -213,6 +213,7 @@ const preencher = (data: IDespesasModel | undefined) => {
   despesasDetails.value.ano = data?.ano || 0;
   despesasDetails.value.nome = data?.nome || '';
   despesasDetails.value.mes = data?.mes || 0;
+  despesasDetails.value.valor = data?.valor ? Number(data?.valor).toFixed(2) : '0';
   despesasDetails.value.descricao = data?.descricao || '';
   despesasDetails.value.categoria = data?.categoria || '';
   despesasDetails.value.replicar = data?.replicar || false;

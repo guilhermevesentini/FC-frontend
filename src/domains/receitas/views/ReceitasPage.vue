@@ -43,7 +43,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="Nome" prop="nome" width="auto" />
+              <el-table-column label="Nome" prop="nome" width="auto" :min-width="200" />
               <el-table-column label="Recebimento" prop="recebimento" width="150" sortable>
                 <template v-slot="scope">
                   {{ formatDate(scope.row.recebimento) }}
@@ -93,6 +93,7 @@ import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } f
 import AdicionarReceitas from '../widgets/ReceitasDialog.vue';
 import IconInsideTable from '@/domains/despesas/components/IconInsideTable.vue';
 import ReceitasDialog from '../widgets/ReceitasDialog.vue';
+import { ElNotification } from 'element-plus';
 
 const showDrawer = ref(false);
 
@@ -171,7 +172,40 @@ const periodo = reactive({
   ano: new Date().getFullYear()
 })
 
-const deletarReceita = () => { }
+const deletarReceita = async (row: ReceitaInputDto, multiplos?: boolean) => {
+  try {
+    loading.value = true
+
+    if (!row.id) return ElNotification({
+      title: 'Erro',
+      message: 'Erro ao selecionar a receita',
+      type: 'error',
+      duration: 5000
+    })
+
+    const response = await receitasGateway.excluir(row.id, multiplos ? undefined : row.mes);
+
+    if (!response) return ElNotification({
+      title: 'Erro',
+      message: 'Erro ao deletar a receita',
+      type: 'error',
+      duration: 5000
+    })
+
+    ElNotification({
+      title: 'success',
+      message: 'Receita deletada com sucesso',
+      type: 'success',
+      duration: 5000
+    })
+
+    await obterReceitas();
+  } catch (err) {
+    console.log(err);
+  } finally {
+    loading.value = false
+  }
+}
 
 const formatCollumnNumber = (row: ReceitaInputDto) => {
   const valor = row.valor;

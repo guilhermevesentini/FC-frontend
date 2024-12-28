@@ -38,4 +38,19 @@ export default class ReceitasGatewayAdapter implements ReceitasGateway {
 
     return response.body 
   }
+
+  async excluir(id: string, mes?: number): Promise<boolean> {
+        const incomeId = id;
+    
+        const response = await this.httpClient.post<boolean>({
+            url: `/delete-income`,
+            body: { despesaId: incomeId, mes: mes }
+        });
+    
+        if (response.status !== 200) {
+            return false;
+        }
+    
+        return true;
+    }
 }

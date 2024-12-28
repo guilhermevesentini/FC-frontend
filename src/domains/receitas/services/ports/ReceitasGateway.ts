@@ -36,6 +36,7 @@ export interface ReceitasGateway {
   criar(input: ReceitaInputDto): Promise<IDefaultHttpResponse<boolean | undefined> | undefined>
   obter(mes: number, ano: number): Promise<IDefaultHttpResponse<ReceitaModelDto[] | undefined> | undefined>
   editar(input: ReceitaInputDto): Promise<IDefaultHttpResponse<boolean | undefined> | undefined>
+  excluir(id: string, mes?: number): Promise<boolean>
 }
 
 export const ReceitasGatewayDi = Symbol("ReceitasGatewayDi")

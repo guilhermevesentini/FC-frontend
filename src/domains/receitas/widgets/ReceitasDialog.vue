@@ -27,7 +27,7 @@
               <FCSelectContas v-model="receitaDetails.contaId" @update:model-value="updateConta" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" v-if="tipo == ETipoReceitaDrawer.criar">
             <el-form-item label="Lançamento" prop="tipoLancamento">
               <el-select v-model="receitaDetails.tipoLancamento" placeholder="Selecione...">
                 <el-option v-for="item in ETipoOptions" :key="item.value" :label="item.label"
@@ -35,7 +35,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="receitaDetails.tipoLancamento == '2'">
+          <el-col :span="6" v-if="receitaDetails.tipoLancamento == '2' && tipo == ETipoReceitaDrawer.criar">
             <el-form-item label="Meses" prop="range">
               <el-date-picker v-model="receitaDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
@@ -215,7 +215,7 @@ const preencher = (data: ReceitaInputDto | undefined) => {
   receitaDetails.value.descricao = data?.descricao || '';
   receitaDetails.value.categoria = data?.categoria || '';
   receitaDetails.value.replicar = data?.replicar || false;
-  receitaDetails.value.valor = data?.valor || '0.00';
+  receitaDetails.value.valor = data?.valor ? Number(data?.valor).toFixed(2) : '0'
   receitaDetails.value.recebimento = data?.recebimento || undefined;
   receitaDetails.value.contaId = data?.contaId || '';
   receitaDetails.value.incomeId = data?.incomeId || '';

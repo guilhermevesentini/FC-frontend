@@ -43,7 +43,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="Nome" prop="nome" width="auto" />
+              <el-table-column label="Nome" prop="nome" width="auto" :min-width="200" />
               <el-table-column label="Vencimento" prop="vencimento" width="150" sortable>
                 <template v-slot="scope">
                   {{ formatDate(scope.row.vencimento) }}
