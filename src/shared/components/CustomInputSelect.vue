@@ -14,7 +14,7 @@ let categoriasList: ICategorias[] = reactive([]);
 
 const buscarCategorias = async (data: unknown) => {
   try {
-    const response = await fetch(`http://localhost:3001/${data}`);
+    const response = await fetch(`/${data}`);
     if (response.ok) {
       const data = await response.json();
       categoriasList.length = 0;

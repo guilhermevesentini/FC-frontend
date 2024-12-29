@@ -30,14 +30,11 @@ export default defineConfig({
       public: fileURLToPath(new URL("./public", import.meta.url)),
     }
   },
-  define: {
-    'console.log': 'console.log', // Isso disponibiliza o `log` globalmente
-  },
   css: {
     preprocessorOptions: {
       sass: {
         // Adicionar configurações globais para Sass, se necessário
-        additionalData: `@import "@/styles/variables.scss";`,
+        additionalData: `@use "@/styles/variables.scss" as *;`,
         api: 'modern-compiler',
         silenceDeprecations: ["legacy-js-api"],
       },
@@ -45,16 +42,6 @@ export default defineConfig({
         silenceDeprecations: ["legacy-js-api"],
       },
     },
-  },
-  server: {
-    proxy: {
-      // Redireciona todas as requisições para /api para a API externa
-      '/api': {
-        target: 'https://brasilapi.com.br',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api da URL ao enviar a requisição
-      },
-    },
-  },
+  }
 });
 

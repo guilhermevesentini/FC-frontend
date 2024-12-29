@@ -17,7 +17,7 @@ export default class LoginPageHttpRequest implements ILoginPageGateway {
 
     async cadastrarNovoUsuario(params: IRuleLoginForm): Promise<IDefaultHttpResponse<boolean | null> | undefined> {
         const response = await this.httpClient.post<IDefaultHttpResponse<boolean | null> | undefined>({
-            url: "http://localhost:3001/create-user",
+            url: "/create-user",
             body: params,
             headers: { "Content-Type": "application/json" }
         });
@@ -41,7 +41,7 @@ export default class LoginPageHttpRequest implements ILoginPageGateway {
 
     async obterUsuario(usuario: string): Promise<IDefaultHttpResponse<IResponseLoginValidation> | undefined> {
         const response = await this.httpClient.get<IDefaultHttpResponse<IResponseLoginValidation>>({
-            url: `http://localhost:3001/find-user/${usuario}`
+            url: `/find-user/${usuario}`
         });
         
         if (response.status != HttpStatusCode.success) return 

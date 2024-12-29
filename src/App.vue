@@ -8,5 +8,5 @@ import { RouterView } from 'vue-router';
 
 
 <style lang="scss">
-@import './shared/assets/styles/scss/Variables.scss';
+@use './shared/assets/styles/scss/Variables.scss' as *;
 </style>

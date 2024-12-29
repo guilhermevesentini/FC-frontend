@@ -3,12 +3,12 @@
     <template #body>
       <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Nome" prop="nome">
               <el-input v-model="receitaDetails.nome" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Categoria" prop="categoria">
               <el-select v-model="receitaDetails.categoria" placeholder="Selecione...">
                 <el-option v-for="item in ECategoriaReceitasOptions" :key="item.value" :label="item.label"
@@ -16,18 +16,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Valor" prop="valor">
-              <el-input v-model="receitaDetails.valor" :formatter="(value: string) => format(value, configInputMask)"
-                :parser="(value: string) => unformat(value, configInputMask)"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="Conta" prop="contaId">
-              <FCSelectContas v-model="receitaDetails.contaId" @update:model-value="updateConta" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6" v-if="tipo == ETipoReceitaDrawer.criar">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6" v-if="tipo == ETipoReceitaDrawer.criar">
             <el-form-item label="Lançamento" prop="tipoLancamento">
               <el-select v-model="receitaDetails.tipoLancamento" placeholder="Selecione...">
                 <el-option v-for="item in ETipoOptions" :key="item.value" :label="item.label"
@@ -35,24 +24,36 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="receitaDetails.tipoLancamento == '2' && tipo == ETipoReceitaDrawer.criar">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6"
+            v-if="receitaDetails.tipoLancamento == '2' && tipo == ETipoReceitaDrawer.criar">
             <el-form-item label="Meses" prop="range">
               <el-date-picker v-model="receitaDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
+            <el-form-item :label="receitaDetails.tipoLancamento == '2' ? 'Valor da Parcela' : 'Valor'" prop="valor">
+              <el-input v-model="receitaDetails.valor" :formatter="(value: string) => format(value, configInputMask)"
+                :parser="(value: string) => unformat(value, configInputMask)"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
+            <el-form-item label="Conta" prop="contaId">
+              <FCSelectContas v-model="receitaDetails.contaId" @update:model-value="updateConta" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Descrição" prop="descricao">
               <el-input v-model="receitaDetails.descricao" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Recebimento" prop="recebimento">
               <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Pago" prop="status">
               <el-select v-model="receitaDetails.status" :options="ESelectOptions" placeholder="Selecione...">
                 <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
@@ -80,7 +81,7 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { computed, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch, watchEffect } from 'vue';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
@@ -225,13 +226,17 @@ const preencher = (data: ReceitaInputDto | undefined) => {
   receitaDetails.value.range && receitaDetails.value.range.fim ? receitaDetails.value.range.fim = data?.range?.fim || undefined : {}
 };
 
-watchEffect(() => {
-  if (props.receita) {
-    preencher(props.receita);
-  } else {
-    preencher(undefined)
-  }
-});
+watch(
+  () => props.receita,
+  (newValue) => {
+    if (newValue) {
+      preencher(newValue);
+    } else if (props.tipo === ETipoReceitaDrawer.criar) {
+      preencher(undefined);
+    }
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   Limpar()

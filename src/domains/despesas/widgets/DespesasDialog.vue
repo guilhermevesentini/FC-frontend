@@ -3,12 +3,12 @@
     <template #body>
       <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%">
         <el-row :gutter="10">
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Nome" prop="nome">
               <el-input v-model="despesasDetails.nome" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Categoria" prop="categoria">
               <el-select v-model="despesasDetails.categoria" placeholder="Selecione...">
                 <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
@@ -16,18 +16,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Valor" prop="valor">
-              <el-input v-model="despesasDetails.valor" :formatter="(value: string) => format(value, configInputMask)"
-                :parser="(value: string) => unformat(value, configInputMask)"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="Conta" prop="contaId">
-              <FCSelectContas v-model="despesasDetails.contaId" @update:model-value="updateConta" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6" v-if="tipo == ETipoDespesaDrawer.criar">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6" v-if="tipo == ETipoDespesaDrawer.criar">
             <el-form-item label="Lançamento" prop="tipoLancamento">
               <el-select v-model="despesasDetails.tipoLancamento" placeholder="Selecione...">
                 <el-option v-for="item in ETipoOptions" :key="item.value" :label="item.label"
@@ -35,24 +24,36 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6" v-if="despesasDetails.tipoLancamento == '2' && tipo == ETipoDespesaDrawer.criar">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6"
+            v-if="despesasDetails.tipoLancamento == '2' && tipo == ETipoDespesaDrawer.criar">
             <el-form-item label="Meses" prop="range">
               <el-date-picker v-model="despesasDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
+            <el-form-item :label="despesasDetails.tipoLancamento == '2' ? 'Valor da Parcela' : 'Valor'" prop="valor">
+              <el-input v-model="despesasDetails.valor" :formatter="(value: string) => format(value, configInputMask)"
+                :parser="(value: string) => unformat(value, configInputMask)"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
+            <el-form-item label="Conta" prop="contaId">
+              <FCSelectContas v-model="despesasDetails.contaId" @update:model-value="updateConta" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Descrição" prop="descricao">
               <el-input v-model="despesasDetails.descricao" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Vencimento" prop="vencimento">
               <el-date-picker v-model="despesasDetails.vencimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Pago" prop="status">
               <el-select v-model="despesasDetails.status" :options="ESelectOptions" placeholder="Selecione...">
                 <el-option v-for="item in ESelectOptions" :key="item.value" :label="item.label"
@@ -80,7 +81,7 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { computed, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch, watchEffect } from 'vue';
 import { DespesasGatewayDi, type IDespesasGateway } from '../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
@@ -137,7 +138,7 @@ const updateConta = (id: string) => {
 }
 
 const criarDespesas = async () => {
-  const mes = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getMonth() : 0
+  const mes = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getMonth() + 1 : 0
   const ano = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getFullYear() : 0
 
   const response = await despesasGateway.criarDespesa({ ...despesasDetails.value, mes: mes, ano: ano });
@@ -226,13 +227,17 @@ const preencher = (data: IDespesasModel | undefined) => {
   despesasDetails.value.range && despesasDetails.value.range.fim ? despesasDetails.value.range.fim = data?.range?.fim || undefined : {}
 };
 
-watchEffect(() => {
-  if (props.despesa) {
-    preencher(props.despesa);
-  } else {
-    preencher(undefined)
-  }
-});
+watch(
+  () => props.despesa,
+  (newValue) => {
+    if (newValue) {
+      preencher(newValue);
+    } else if (props.tipo === ETipoDespesaDrawer.criar) {
+      preencher(undefined);
+    }
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   Limpar()
