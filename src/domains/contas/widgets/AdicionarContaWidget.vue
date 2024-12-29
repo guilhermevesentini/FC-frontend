@@ -123,9 +123,9 @@ onMounted(() => handleLimpar())
 <style lang="scss">
 .adicionar_conta_drawer {
   .el-drawer__header {
+    color: var(--text-primary);
     font-size: 18px;
     font-weight: 600;
-    color: #000;
     border-bottom: 1px solid rgb(223, 223, 223);
     padding: 1rem;
     margin-bottom: 1rem;

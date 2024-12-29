@@ -123,8 +123,8 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .container_page {
-  background-color: #fff;
-  padding: 10px;
+  background-color: var(--background-color-dark);
+  padding: 0;
   height: auto;
   overflow: hidden;
   border-radius: 5px;
@@ -132,7 +132,8 @@ onMounted(async () => {
 
   .body {
     min-height: auto;
-    background-color: #fff;
+    background-color: var(--background-color-dark);
+    color: var(--text-primary);
     padding: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -143,11 +144,12 @@ onMounted(async () => {
       grid-auto-rows: auto;
       gap: 16px;
       width: 100%;
+      padding: 1rem;
 
       &-card {
         width: 100%;
         cursor: pointer;
-        background-color: #fff;
+        background-color: var(--background-color-darker);
 
         &_header {
           display: flex;
@@ -176,7 +178,6 @@ onMounted(async () => {
 
       &-card:hover {
         cursor: pointer;
-        background-color: rgb(249, 249, 249);
         box-shadow: 2px 2px 6px 2px #a5d4f8;
       }
     }

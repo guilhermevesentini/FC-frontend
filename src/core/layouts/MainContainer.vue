@@ -18,7 +18,7 @@ import FCNavbar from '@/shared/components/navbar/FCNavbar.vue';
 .main {
   height: 100%;
   width: auto;
-  background-color: #e2e2e2;
+  background-color: var(--background-color);
   padding: 7px;
   position: relative;
   /* margin-left: 60px; */

@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col class="container_page" :xs="24" :md="20">
-      <el-row class="body" v-loading="loading">
+      <el-row class="body">
         <el-col class="hidden-sm-and-up" :span="24"
           style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center;    justify-content: center;">
           <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
@@ -21,8 +21,8 @@
           </el-row>
         </el-col>
         <el-col :span="24">
-          <TableFilterableFrame v-on:handle-editar="editarDespesa" v-on:handle-deletar="deletarDespesa"
-            :produtos="perPeriodlistaDeDespesas">
+          <TableFilterableFrame :Loading="loading" v-on:handle-editar="editarDespesa"
+            v-on:handle-deletar="deletarDespesa" :produtos="perPeriodlistaDeDespesas">
             <template #tableCollumn>
               <el-table-column label="" prop="status" width="50" sortable>
                 <template v-slot="scope">
@@ -55,7 +55,7 @@
       </el-row>
     </el-col>
     <el-col class="hidden-sm-and-down" :span="4">
-      <ResumoLateral v-loading="loading" label="Total despesas" :total="totalDeDespesas" :totalPago="totalPago"
+      <ResumoLateral :loading="loading" label="Total despesas" :total="totalDeDespesas" :totalPago="totalPago"
         :totalPendente="totalPendente">
         <template #header_total>
           <h4>Total Despesas</h4>
@@ -272,7 +272,8 @@ onMounted(() => {
 
   .body {
     min-height: auto;
-    background-color: #fff;
+    background-color: var(--background-color-dark);
+    color: var(--text-primary);
     padding: 10px;
     border-radius: 5px;
     overflow: hidden;

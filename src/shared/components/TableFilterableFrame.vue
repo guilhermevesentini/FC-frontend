@@ -1,7 +1,10 @@
 <template>
     <el-input v-model="filtroAtual" clearable placeholder="Digite aqui..." :suffix-icon="Search"></el-input>
-    <el-table :data="produtosFiltrados" style="width: 100%; margin-top: 10px;" empty-text="Sem Valores"
-        v-loading="isLoading" :default-sort="{ prop: 'vencimento', order: 'ascending' }">
+    <table class="table no-content" v-if="!produtosFiltrados">
+        <Empty image-size="100px" />
+    </table>
+    <el-table v-else class="table" :data="produtosFiltrados" style="width: 100%; margin-top: 10px;"
+        empty-text="Sem Valores" v-loading="isLoading" :default-sort="{ prop: 'vencimento', order: 'ascending' }">
         <slot name="tableCollumn"></slot>
         <el-table-column align="right" width="110" fixed="right">
             <template #default="scope">
@@ -31,6 +34,7 @@ import { filtrarItems } from '@/shared/utils/utils';
 import { Search } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue';
 import ConfirmationDialog from './ConfirmationDialog.vue';
+import Empty from './Empty.vue';
 
 const props = defineProps<{
     produtos: unknown[] | undefined;
@@ -71,3 +75,16 @@ const handleDeletar = (row: any, multiplos?: boolean) => {
     emits('handleDeletar', row, multiplos);
 }
 </script>
+
+<style lang="scss" scoped>
+.table {
+    background-color: var(--background-color-dark);
+    color: var(--text-primary);
+
+    &.no-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+</style>

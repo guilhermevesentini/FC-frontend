@@ -6,8 +6,8 @@
     <div class="flex-grow" />
     <span>{{ nomeUsuario }}</span>
     <div class="flex-grow" />
-    <!-- Simplificando a alternância de tema usando apenas v-model -->
-    <el-switch class="hidden-sm-and-down" v-model="thema" inline-prompt :active-icon="Sunny" :inactive-icon="Moon" />
+    <el-switch class="hidden-xs" v-model="thema" inline-prompt :active-icon="Sunny" :inactive-icon="Moon"
+      @click="toggleTheme" />
     <el-dropdown trigger="click" class="menu">
       <span class="el-dropdown-link">
         <el-icon class="el-icon--right">
@@ -31,7 +31,7 @@ import router from '@/core/router';
 import { Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
 import { onMounted, ref } from "vue";
 
-const thema = ref(true); // Controle do tema com v-model
+const thema = ref(true);
 
 const nomeUsuario = ref('')
 
@@ -44,23 +44,33 @@ const logout = (() => {
   router.push({ path: `/login` });
 })
 
-// Toggle entre os temas, dependendo do valor de `v-model` (thema)
+
 const toggleTheme = () => {
-  const newTheme = thema.value ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme); // Salva o tema no localStorage
+  const isDarkMode = document.documentElement.classList.contains('dark');
+
+  if (isDarkMode) {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }
+
+  const newTheme = isDarkMode ? 'light' : 'dark';
+  localStorage.setItem('theme', newTheme);
 };
 
-// Ao montar, recupera o tema do localStorage e aplica
+
+
 onMounted(() => {
   const storage = localStorage.getItem('user');
   const usuario = storage ? JSON.parse(storage) : {};
   nomeUsuario.value = usuario.username || 'user';
 
-  // Recupera o tema salvo e aplica ao document.documentElement
-  const savedTheme = localStorage.getItem('theme') || 'light'; // Default para 'light' se não encontrado
+
+  const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
-  thema.value = savedTheme === 'dark'; // Atualiza o valor de `thema` com base no tema salvo
+  thema.value = savedTheme === 'dark';
 });
 </script>
 
@@ -68,11 +78,11 @@ onMounted(() => {
 .navbar {
   width: 100%;
   height: 60px;
-  background-color: #466ff5;
+  background-color: var(--background-color-navbar);
   padding: 1rem 0;
   display: flex;
   align-items: center;
-  color: #fff;
+  color: var(--background-color-text-primary);
   position: fixed;
   z-index: 5;
 
@@ -81,7 +91,7 @@ onMounted(() => {
   }
 
   .logo {
-    color: #fff;
+    color: var(--background-color-text-primary);
   }
 
   .logo:hover {
@@ -95,7 +105,7 @@ onMounted(() => {
 
   .menu {
     padding: 1rem;
-    color: #fff;
+    color: var(--background-color-text-primary);
 
     .el-icon--right {
       font-size: 24px;
@@ -118,21 +128,5 @@ onMounted(() => {
     display: flex;
     align-items: center;
   }
-}
-
-/* Estilos globais para os temas */
-:root {
-  --background-color: #ffffff;
-  --text-color: #000000;
-}
-
-[data-theme='dark'] {
-  --background-color: #1e1e1e;
-  --text-color: #ffffff;
-}
-
-body {
-  background-color: var(--background-color);
-  color: var(--text-color);
 }
 </style>

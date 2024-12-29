@@ -50,7 +50,7 @@ const router = useRouter()
 const LoginPageGateway = container.get<ILoginPageGateway>(LoginPageGatewayDi);
 
 const loading = ref(false);
-const lembrar = ref(false);
+const lembrar = ref(true);
 
 const formulario = reactive<IRuleLoginForm>({
   username: '',

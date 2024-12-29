@@ -21,11 +21,13 @@ withDefaults(defineProps<Props>(), {
 
 <style lang="scss" scoped>
 .no-data {
-  height: 100%;
   width: 100%;
+  height: min-content;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0.5;
+  padding: 0;
+  margin: 0;
 }
 </style>

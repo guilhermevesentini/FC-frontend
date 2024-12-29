@@ -1,26 +1,56 @@
-// Variables.scss
 
 :root {
-  /* Tema Claro */
-  --background: #ffffff;
-  --text-primary: #303133;
-  --text-secondary: #606266;
   --primary: #409eff;
   --success: #67c23a;
   --warning: #e6a23c;
   --danger: #f56c6c;
+  --info: #909399;
+  
+  --text-primary: #343E59;
+  --text-secondary: #606266;
+  --background-color: #e2e2e2;
+  --background-color-navbar: #466ff5;
+  --background-color-text-primary: #fff;
+  
+  --background-color-dark: #fff;
+
+  --background-color-darker: #ffffff;
+  
+  --border-color: #dcdfe6;
+  --border-color-hover: #c0c4cc;
+  
+  --link-color: #409eff;
+  --link-hover-color: #66b1ff;
+  
+  --button-primary-bg: #409eff;
+  --button-primary-text: #fff;
+  
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --overlay-background: rgba(0, 0, 0, 0.5);
 }
 
-[data-theme="light"] {
-  /* Tema Escuro */
-  --background: #E0E0E0;
-  --text-primary: #1E1E1E;
+.dark {
+  --text-primary: #fff;
   --text-secondary: #A0A0A0;
+  --background-color: #343E59;
+
+  --background-color-navbar: #1E1E1E;
+  --background-color-text-primary: #fff;
+
+  --background-color-dark: #2B2D3E;
+
+  --background-color-darker: #20222e;
+
+  --border-color: #444c56;
+  --border-color-hover: #666d77;
+  
+  --link-color: #66b1ff;
+  --link-hover-color: #409eff;
+  
+  --button-primary-bg: #409eff;
+  --button-primary-text: #fff;
+  
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --overlay-background: rgba(0, 0, 0, 0.7);
 }
 
-[data-theme="dark"] {
-  /* Tema Escuro */
-  --background: #e0e0e0;
-  --text-primary: #1E1E1E;
-  --text-secondary: #A0A0A0;
-}

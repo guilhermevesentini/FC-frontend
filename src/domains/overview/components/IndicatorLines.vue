@@ -1,7 +1,8 @@
 <template>
   <div class="chart-container">
-    <Empty image-size="200px" v-if="series.length <= 0" />
-    <apexchart width="100%" heigth="150px" :options="options" :series="series" v-else />
+    <h4 class="titulo">Resumo de movimentos</h4>
+    <Empty image-size="150px" v-if="series.length <= 0" />
+    <apexchart width="100%" :options="options" :series="series" v-else />
   </div>
 </template>
 
@@ -48,6 +49,9 @@ const options = reactive({
       show: false
     }
   },
+  theme: {
+    mode: 'light'
+  },
   responsive: [
     {
       breakpoint: 768,
@@ -93,13 +97,21 @@ const options = reactive({
 
 <style lang="scss" scoped>
 .chart-container {
-  box-sizing: border-box;
-  /* Define uma largura fixa */
-  height: auto;
-  /* Define a altura fixa */
-  overflow: hidden;
-  /* Evita que o conteúdo passe do tamanho do contêiner */
-  color: #feb019;
-  ;
+  width: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+
+  .titulo {
+    padding: 0.5rem 0;
+    /* Reduz o espaçamento do título */
+    font-size: 1rem;
+    /* Ajusta o tamanho do texto */
+    text-align: left;
+  }
 }
 </style>

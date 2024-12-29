@@ -65,6 +65,7 @@ const options = reactive({
   },
   colors: ['#FFF'],
   tooltip: {
+    theme: 'dark',
     x: {
       show: false,
     },

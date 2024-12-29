@@ -1,7 +1,8 @@
 <template>
-  <div style="height: 100%;">
+  <div class="indicator_donut">
+    <h4 class="titulo">Categorias de despesas</h4>
     <div v-if="showNodata" style="height: 100%;">
-      <Empty image-size="200px" />
+      <Empty image-size="150px" />
     </div>
     <apexchart ref="chart" width="100%" type="donut" :options="options" :series="series" :key="seriesKey" v-else />
   </div>
@@ -40,8 +41,10 @@ const chart = ref<ApexCharts | null>(null);
 const options = reactive({
   chart: {
     type: 'donut',
-    width: '100%',
-    height: 400,
+    heigth: 200,
+  },
+  theme: {
+    mode: 'light'
   },
   dataLabels: {
     enabled: false,
@@ -59,20 +62,11 @@ const options = reactive({
     type: 'gradient',
   },
   colors: EcolorsPalette,
-  labels: [],
+  labels: labels,
   legend: {
     position: 'left',
     offsetY: 80,
   },
-});
-
-watch([labels, series], async () => {
-  if (chart.value) {
-    await nextTick();
-    chart.value.updateOptions({
-      labels: labels.value,
-    });
-  }
 });
 
 watch(() => props.values, (newSeries) => {
@@ -83,4 +77,23 @@ watch(() => props.values, (newSeries) => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.indicator_donut {
+  width: 100%;
+  min-height: 360px;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+
+  .titulo {
+    padding: 0.5rem 0;
+    /* Reduz o espaçamento do título */
+    font-size: 1rem;
+    /* Ajusta o tamanho do texto */
+    text-align: left;
+  }
+}
+</style>

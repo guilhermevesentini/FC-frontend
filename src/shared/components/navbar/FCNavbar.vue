@@ -43,11 +43,12 @@ watch(currentRoute, (routeName: string) => {
 
 <style lang="scss">
 .FC-Navbar {
-  background-color: #fff;
+  background-color: var(--background-color-dark);
+  color: var(--text-primary);
   padding: 10px;
   overflow: hidden;
   border-radius: 5px;
-  margin-bottom: 7px;
+  margin-bottom: 1rem;
 
   .el-tabs__header {
     margin: 0 !important;

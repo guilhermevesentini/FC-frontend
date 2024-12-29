@@ -40,11 +40,14 @@
           </el-row>
         </el-col>
         <el-col :span="24">
-          <el-row class="sparkboxes">
-            <el-col :xs="24" :sm="12" :span="12" style="padding: 0 4rem 0 0;">
+          <el-row class="sparkboxes indicadores">
+            <el-col :xs="24" :sm="10" :md="10" :lg="10">
               <IndicatorLines />
             </el-col>
-            <el-col :xs="24" :sm="10" :span="10" style="padding: 0 4rem 0 0;">
+            <el-col :xs="24" :sm="6" :md="6" :lg="6">
+              <IndicatorDonut :labels="donut.labels" :values="donut.values" />
+            </el-col>
+            <el-col :xs="24" :sm="6" :md="6" :lg="6">
               <IndicatorDonut :labels="donut.labels" :values="donut.values" />
             </el-col>
           </el-row>
@@ -194,14 +197,15 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .container_page {
-  background-color: #fff;
+  background-color: var(--background-color-dark);
+  //color: var(--text-primary);
   padding: 10px;
   height: auto;
   border-radius: 5px;
   min-height: calc(100vh - 60px);
 
   .filtros {
-    padding: 0px 10px 20px;
+    padding: 1rem 1rem 20px;
   }
 
   .content-area {
@@ -213,10 +217,18 @@ onMounted(async () => {
   }
 
   .sparkboxes {
+    width: 100%;
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
     padding: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-content: flex-start;
+    //margin: 0 auto;
+  }
+
+  .indicadores .el-col {
+    border-radius: 7px;
+    background-color: var(--background-color-darker);
   }
 
   .sparkboxes .sparkboxes .box .sparkboxes strong {

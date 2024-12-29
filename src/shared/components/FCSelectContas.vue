@@ -29,7 +29,7 @@ const obterBancos = async () => {
     EListaContasOpt.value = response?.result?.map((conta: ContaOutputDto, i: number) => {
       return {
         ...conta,
-        label: conta.nomeBanco,
+        label: conta.nome,
         value: conta.id,
         isContaPrincipal: conta.contaPrincipal
       }

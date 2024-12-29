@@ -31,6 +31,9 @@ var options = {
       show: false // Desativa os recursos no canto superior direito
     }
   },
+  theme: {
+    mode: 'light'
+  },
   dataLabels: {
     enabled: false
   },

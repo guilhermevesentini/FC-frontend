@@ -17,6 +17,9 @@ const options = reactive({
     height: 350,
     width: 380,
   },
+  theme: {
+    mode: 'light'
+  },
   plotOptions: {
     radialBar: {
       size: undefined,

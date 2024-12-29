@@ -21,8 +21,8 @@
           </el-row>
         </el-col>
         <el-col :span="24">
-          <TableFilterableFrame v-on:handle-editar="handleEditar" v-on:handle-deletar="deletarReceita"
-            :produtos="perPeriodlistaDeReceitas">
+          <TableFilterableFrame :Loading="loading" v-on:handle-editar="handleEditar"
+            v-on:handle-deletar="deletarReceita" :produtos="perPeriodlistaDeReceitas">
             <template #tableCollumn>
               <el-table-column label="" prop="status" width="50" sortable>
                 <template v-slot="scope">
@@ -55,7 +55,7 @@
       </el-row>
     </el-col>
     <el-col class="hidden-sm-and-down" :span="4">
-      <ResumoLateral v-loading="loading" label="Total Receitas" :total="totalDeDespesas" :totalPago="totalPago"
+      <ResumoLateral :loading="loading" label="Total Receitas" :total="totalDeDespesas" :totalPago="totalPago"
         :totalPendente="totalPendente">
         <template #header_total>
           <h4>Total Receitas</h4>
@@ -276,7 +276,8 @@ onMounted(() => {
 
   .body {
     min-height: auto;
-    background-color: #fff;
+    background-color: var(--background-color-dark);
+    color: var(--text-primary);
     padding: 10px;
     border-radius: 5px;
     overflow: hidden;
