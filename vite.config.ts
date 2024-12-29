@@ -26,7 +26,7 @@ export default defineConfig({
   test: vitestConfig.test,
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('../frontend/src/', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
       public: fileURLToPath(new URL("./public", import.meta.url)),
     }
   },
