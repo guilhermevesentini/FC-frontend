@@ -4,7 +4,8 @@
     <div v-if="showNodata" style="height: 100%;">
       <Empty image-size="150px" />
     </div>
-    <apexchart ref="chart" width="100%" type="donut" :options="options" :series="series" :key="seriesKey" v-else />
+    <apexchart style="padding: 1rem;" ref="chart" width="76%" type="donut" :options="options" :series="series"
+      :key="seriesKey" v-else />
   </div>
 
 </template>
@@ -41,7 +42,7 @@ const chart = ref<ApexCharts | null>(null);
 const options = reactive({
   chart: {
     type: 'donut',
-    heigth: 200,
+    heigth: 400,
   },
   theme: {
     mode: 'light'

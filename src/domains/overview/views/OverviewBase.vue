@@ -7,14 +7,13 @@
             <el-col :span="4">
               <h3>Filtros</h3>
             </el-col>
-            <el-col class="hidden-sm-and-down" span="auto"
-              style="margin: 0; padding: 0; display: flex; align-items: center;">
+            <el-col class="hidden-sm-and-down" span="auto" style="display: flex; align-items: center;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
             </el-col>
-            <el-col :span="4" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
+            <el-col :span="4" style="display: flex; justify-content: flex-end;">
               <el-popover trigger="click" v-model:visible="popoverVisible" placement="left-start" width="200">
                 <div>
-                  <span style="width: 100%; margin-bottom: 10px;">Contas:</span>
+                  <span>Contas:</span>
                   <FCSelectContas v-model="contaSelecionada" @update:model-value="updateConta" />
                 </div>
                 <template #reference>
@@ -28,26 +27,20 @@
           <el-row class="sparkboxes">
             <IndicatorSpark title="Despesas" :valor="sparks.totalDespesas.value.toString()"
               :series="sparks.totalDespesas.values.slice(-5)" :gradient-type="1" />
-
             <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()"
               :series="sparks.totalReceitas.values.slice(-5)" :gradient-type="3" />
-
             <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()"
               :series="sparks.pendente.values.slice(-5)" :gradient-type="2" />
-
             <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)"
               :series="sparks.balanco.values.slice(-5)" :gradient-type="4" />
           </el-row>
         </el-col>
         <el-col :span="24">
           <el-row class="sparkboxes indicadores">
-            <el-col :xs="24" :sm="10" :md="10" :lg="10">
-              <IndicatorLines />
+            <el-col :xs="24" :sm="11" :md="11" :lg="11">
+              <IndicatorLines :resumo="resumo" />
             </el-col>
-            <el-col :xs="24" :sm="6" :md="6" :lg="6">
-              <IndicatorDonut :labels="donut.labels" :values="donut.values" />
-            </el-col>
-            <el-col :xs="24" :sm="6" :md="6" :lg="6">
+            <el-col :xs="24" :sm="11" :md="11" :lg="11">
               <IndicatorDonut :labels="donut.labels" :values="donut.values" />
             </el-col>
           </el-row>
@@ -61,104 +54,75 @@
 import { container } from '@/inversify.config';
 import { onMounted, reactive, ref } from 'vue';
 import DatePeriodoPicker from '@/shared/components/DatePeriodoPicker.vue';
-import {
-  Filter
-} from '@element-plus/icons-vue';
+import { Filter } from '@element-plus/icons-vue';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 import IndicatorSpark from '../components/IndicatorSpark.vue';
 import IndicatorLines from '../components/IndicatorLines.vue';
 import IndicatorDonut from '../components/IndicatorDonut.vue';
-import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewSparkTotalOutputDto } from '../services/ports/OverviewGateway';
+import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from '../services/ports/OverviewGateway';
 
-const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi)
+const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi);
 
 const sparks = ref<OverviewSparkTotalOutputDto>({
-  totalDespesas: {
-    value: 0,
-    values: []
-  },
-  totalReceitas: {
-    value: 0,
-    values: []
-  },
-  balanco: {
-    value: 0,
-    values: []
-  },
-  pendente: {
-    value: 0,
-    values: []
-  },
+  totalDespesas: { value: 0, values: [] },
+  totalReceitas: { value: 0, values: [] },
+  balanco: { value: 0, values: [] },
+  pendente: { value: 0, values: [] },
+});
 
-})
+const donut = ref<OverviewDonutOutputDto>({ labels: [], values: [] });
 
-const donut = ref<OverviewDonutOutputDto>({
-  labels: [],
-  values: []
-})
+const resumo = ref<OverviewResumoMovimentoOutputDto>({
+  balanco: [], despesas: [], receitas: []
+});
 
-const popoverVisible = ref(false);  // Controle da visibilidade do popover
-const selectedValue = ref('');  // Valor selecionado no popover
+const popoverVisible = ref(false);
+const contaSelecionada = ref<string | undefined>(undefined);
 
-const periodo = reactive({
-  mes: new Date().getMonth() + 1,
-  ano: new Date().getFullYear()
-})
+const periodo = reactive({ mes: new Date().getMonth() + 1, ano: new Date().getFullYear() });
 
 const filterDate = ref({
-  inicio: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
-  fim: new Date(new Date().getFullYear(), new Date().getMonth(), 0)
-})
-
-const contaSelecionada = ref<string | undefined>(undefined)
+  inicio: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  fim: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+});
 
 const updateConta = (id: string) => {
-  contaSelecionada.value = id
-}
+  contaSelecionada.value = id;
+};
 
 const obterSparks = async (inicio: string, fim: string) => {
-  const response = await overviewGateway.sparkTotal({ inicio: inicio, fim: fim })
-
-  if (!response?.result) return
-
-  sparks.value = {
-    totalDespesas: {
-      value: response?.result?.totalDespesas?.value || 0,
-      values: response?.result?.totalDespesas?.values || []
-    },
-    totalReceitas: {
-      value: response?.result?.totalReceitas?.value || 0,
-      values: response?.result?.totalReceitas?.values || []
-    },
-    pendente: {
-      value: response?.result?.pendente?.value || 0,
-      values: response?.result?.pendente?.values || []
-    },
-    balanco: {
-      value: response?.result?.balanco?.value || 0,
-      values: response?.result?.balanco?.values || []
-    }
-  };
-}
+  const response = await overviewGateway.sparkTotal({ inicio, fim });
+  if (response?.result) {
+    sparks.value = {
+      totalDespesas: { value: response.result.totalDespesas?.value || 0, values: response.result.totalDespesas?.values || [] },
+      totalReceitas: { value: response.result.totalReceitas?.value || 0, values: response.result.totalReceitas?.values || [] },
+      pendente: { value: response.result.pendente?.value || 0, values: response.result.pendente?.values || [] },
+      balanco: { value: response.result.balanco?.value || 0, values: response.result.balanco?.values || [] },
+    };
+  }
+};
 
 const obterDonut = async (inicio: string, fim: string) => {
-  const response = await overviewGateway.obterDonut({ inicio: inicio, fim: fim })
+  const response = await overviewGateway.obterDonut({ inicio, fim });
+  if (response) {
+    donut.value = { labels: response.result?.labels || [], values: response.result?.values || [] };
+  }
+};
 
-  if (!response) return
-
-  donut.value.labels = response.result?.labels || [];
-  donut.value.values = response.result?.values || [];
-}
+const obterResumo = async () => {
+  const response = await overviewGateway.resumoMovimentos();
+  if (response) {
+    resumo.value = { despesas: response.result?.despesas || [], receitas: response.result?.receitas || [], balanco: response.result?.balanco || [] };
+  }
+};
 
 const handleDatesReq = () => {
-  const inicioReq = new Date(filterDate.value.inicio as unknown as string).toISOString();
-  const fimReq = new Date(filterDate.value.fim as unknown as string).toISOString()
-
   return {
-    inicioReq,
-    fimReq
-  }
-}
+    inicioReq: new Date(filterDate.value.inicio as unknown as string).toISOString(),
+    fimReq: new Date(filterDate.value.fim as unknown as string).toISOString(),
+  };
+};
+
 const calcularDatasPeriodo = (mes: number, ano: number) => {
   const inicio = new Date(ano, mes - 1, 1).toISOString();
   const fim = new Date(ano, mes, 0).toISOString();
@@ -166,17 +130,10 @@ const calcularDatasPeriodo = (mes: number, ano: number) => {
 };
 
 const handlePeriodo = async (mes: number, ano: number) => {
-  console.log("Período selecionado:", mes, ano);
-
   periodo.mes = mes;
   periodo.ano = ano;
-
   const { inicio, fim } = calcularDatasPeriodo(mes, ano);
-
-  filterDate.value = {
-    inicio: new Date(inicio),
-    fim: new Date(fim),
-  };
+  filterDate.value = { inicio: new Date(inicio), fim: new Date(fim) };
 
   try {
     await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim)]);
@@ -188,7 +145,7 @@ const handlePeriodo = async (mes: number, ano: number) => {
 onMounted(async () => {
   const { inicio, fim } = calcularDatasPeriodo(periodo.mes, periodo.ano);
   try {
-    await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim)]);
+    await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim), obterResumo()]);
   } catch (error) {
     console.error("Erro ao carregar os dados iniciais:", error);
   }
@@ -198,7 +155,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .container_page {
   background-color: var(--background-color-dark);
-  //color: var(--text-primary);
   padding: 10px;
   height: auto;
   border-radius: 5px;
@@ -217,25 +173,15 @@ onMounted(async () => {
   }
 
   .sparkboxes {
-    width: 100%;
     display: flex;
     padding: 1rem;
+    margin: 1rem 0;
     justify-content: space-between;
-    align-items: flex-start;
-    align-content: flex-start;
-    //margin: 0 auto;
   }
 
   .indicadores .el-col {
     border-radius: 7px;
     background-color: var(--background-color-darker);
-  }
-
-  .sparkboxes .sparkboxes .box .sparkboxes strong {
-    position: relative;
-    z-index: 3;
-    top: -8px;
-    color: #fff;
   }
 }
 </style>

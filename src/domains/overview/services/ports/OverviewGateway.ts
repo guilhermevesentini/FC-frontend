@@ -25,9 +25,16 @@ export type OverviewDonutOutputDto = {
   values: number[]
 }
 
+export type OverviewResumoMovimentoOutputDto = {
+  despesas: number[]
+  receitas: number[]
+  balanco: number[]
+}
+
 export interface IOverviewGateway {
   sparkTotal(input: OverviewSparkTotalInputDto): Promise<IDefaultHttpResponse<OverviewSparkTotalOutputDto | undefined> | undefined>
   obterDonut(input: OverviewDonutInputDto): Promise<IDefaultHttpResponse<OverviewDonutOutputDto | undefined> | undefined>
+  resumoMovimentos(): Promise<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto | undefined> | undefined>
 }
 
 export const OverviewGatewayDi = Symbol("OverviewGatewayDi")

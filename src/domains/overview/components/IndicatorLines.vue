@@ -1,42 +1,48 @@
 <template>
   <div class="chart-container">
-    <h4 class="titulo">Resumo de movimentos</h4>
-    <Empty image-size="150px" v-if="series.length <= 0" />
-    <apexchart width="100%" :options="options" :series="series" v-else />
+    <h4 class="titulo">Resumo mensal de movimentos</h4>
+    <Empty image-size="150px" v-if="series.length === 0" />
+    <apexchart style="padding: 1rem;" width="100%" :options="options" :series="series" v-else />
   </div>
 </template>
 
 <script setup lang="ts">
 import Empty from '@/shared/components/Empty.vue';
-import { reactive, ref } from 'vue';
+import { ref, reactive, watch } from 'vue';
 
-// Série de dados
-// const series = ref([
-//   {
-//     name: "Receitas",
-//     data: [1, 15, 26, 20, 33, 27]
-//   },
-//   {
-//     name: "Despesas",
-//     data: [3, 33, 21, 42, 19, 32]
-//   },
-//   {
-//     name: "Balanço",
-//     data: [0, 39, 52, 11, 29, 43]
-//   }
-// ]);
+type IProps = {
+  resumo: {
+    despesas: number[];
+    receitas: number[];
+    balanco: number[];
+  };
+};
 
-const series = ref([]);
+const props = defineProps<IProps>();
 
-var colorPalette = ['#00D8B6', '#FF4560', '#FEB019']
+const series = ref([
+  {
+    name: 'Receitas',
+    data: props.resumo.receitas,
+  },
+  {
+    name: 'Despesas',
+    data: props.resumo.despesas,
+  },
+  {
+    name: 'Balanço',
+    data: props.resumo.balanco,
+  },
+]);
 
-// Configuração do gráfico
+const colorPalette = ['#00D8B6', '#FF4560', '#FEB019'];
+
 const options = reactive({
   chart: {
     height: '100%',
     type: 'line',
     zoom: {
-      enabled: false
+      enabled: false,
     },
     dropShadow: {
       enabled: true,
@@ -46,11 +52,11 @@ const options = reactive({
       opacity: 1,
     },
     toolbar: {
-      show: false
-    }
+      show: false,
+    },
   },
   theme: {
-    mode: 'light'
+    mode: 'light',
   },
   responsive: [
     {
@@ -66,39 +72,60 @@ const options = reactive({
   colors: colorPalette,
   stroke: {
     curve: 'smooth',
-    width: 2
+    width: 2,
   },
   markers: {
     size: 6,
     strokeWidth: 0,
     hover: {
-      size: 9
-    }
+      size: 9,
+    },
   },
   grid: {
     show: true,
     padding: {
-      bottom: 0
-    }
+      bottom: 0,
+    },
   },
-  labels: ['01/15/2002', '01/16/2002', '01/17/2002', '01/18/2002', '01/19/2002', '01/20/2002'],
+  labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
   xaxis: {
     tooltip: {
-      enabled: false
-    }
+      enabled: false,
+    },
   },
   legend: {
-    position: 'top',
-    horizontalAlign: 'right',
-    offsetY: -20
-  }
+    position: 'bottom',
+    horizontalAlign: 'center',
+    offsetY: 10,
+  },
 });
+
+watch(
+  () => props.resumo,
+  (newResumo) => {
+    series.value = [
+      {
+        name: 'Receitas',
+        data: newResumo.receitas,
+      },
+      {
+        name: 'Despesas',
+        data: newResumo.despesas,
+      },
+      {
+        name: 'Balanço',
+        data: newResumo.balanco,
+      },
+    ];
+  },
+  { deep: true }
+);
 </script>
 
 <style lang="scss" scoped>
 .chart-container {
   width: 100%;
-  min-height: 200px;
+  min-height: 400px;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -108,9 +135,7 @@ const options = reactive({
 
   .titulo {
     padding: 0.5rem 0;
-    /* Reduz o espaçamento do título */
     font-size: 1rem;
-    /* Ajusta o tamanho do texto */
     text-align: left;
   }
 }
