@@ -132,26 +132,23 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
     const responseUsuario = await LoginPageGateway.obterUsuario(formulario.username);
 
 
-    if (responseUsuario && responseUsuario.result != undefined) {
+    if (responseUsuario) {
       const usuario: ILoginUser = {
-        _id: responseUsuario.result._id,
         id: responseUsuario.result?.id,
-        username: responseUsuario.result?.username,
+        username: responseUsuario.result?.username || 'Usuário',
       }
 
       localStorage.setItem('user', JSON.stringify(usuario));
+      localStorage.setItem('customerId', JSON.stringify(usuario.id));
     }
 
     if (lembrar.value) {
-      const info = {
-        username: formulario?.username
-      }
-      localStorage.setItem('user', JSON.stringify(info));
+      localStorage.setItem('lembrarEmail', JSON.stringify(formulario?.username));
     }
 
-    setTimeout(() => {
-      router.push({ path: `/overview` });
-    }, 2000)
+    router.push({ path: `/overview` });
+
+    loading.value = false;
   } catch (err) {
     console.log(err)
     ElNotification({
@@ -173,12 +170,12 @@ const handleKeyPress = (event: KeyboardEvent) => {
 onMounted(() => {
   window.addEventListener('keydown', handleKeyPress);
 
-  const hasEmail = localStorage.getItem('user');
+  const hasEmail = localStorage.getItem('lembrarEmail');
 
   if (hasEmail) {
     const info = JSON.parse(hasEmail);
 
-    formulario.username = info.username || '';
+    formulario.username = info || '';
 
     lembrar.value = true;
   }

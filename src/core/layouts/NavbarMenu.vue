@@ -41,6 +41,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 const logout = (() => {
   localStorage.removeItem('user');
+  localStorage.removeItem('fctoken');
   router.push({ path: `/login` });
 })
 

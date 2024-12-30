@@ -5,7 +5,6 @@ export interface IGerarId {
 }
 
 export default function useGerarId({ quantidade }: IGerarId) {
-  // Gerar id aleatório
   const idBytes = new Uint8Array(quantidade);
   crypto.getRandomValues(idBytes);
   const idProduto: string = Array.from(idBytes, (b) =>
