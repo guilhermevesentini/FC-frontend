@@ -7,9 +7,11 @@ import { isAuthenticated } from '@/shared/composables/auth';
 import { contasPaths } from '@/domains/contas/routes/contasPaths';
 import { receitasPaths } from '@/domains/receitas/routes/receitasPaths';
 import { overviewPaths } from '@/domains/overview/router/overviewPaths';
+import NotFoundPage from '@/shared/components/NotFoundPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { path: '/login', component: Login },
+  { path: '/:pathMatch(.*)*', component: NotFoundPage },
   { path: '/novoUsuario', component: ResgistrarUsuario },
   { 
     path: '/', 
