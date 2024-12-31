@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '@/domains/login/views/logar/LoginPage.vue';
 import { despesasPaths } from '../../domains/despesas/router/despesasPath';
 import ResgistrarUsuario from '@/domains/login/views/registrar/ResgistrarUsuario.vue';
@@ -9,9 +9,8 @@ import { receitasPaths } from '@/domains/receitas/routes/receitasPaths';
 import { overviewPaths } from '@/domains/overview/router/overviewPaths';
 import NotFoundPage from '@/shared/components/NotFoundPage.vue';
 
-const routes: Array<RouteRecordRaw> = [
+const routes: Array<RouteRecordRaw> = [    
   { path: '/login', component: Login },
-  { path: '/:pathMatch(.*)*', component: NotFoundPage },
   { path: '/novoUsuario', component: ResgistrarUsuario },
   { 
     path: '/', 
@@ -24,11 +23,12 @@ const routes: Array<RouteRecordRaw> = [
       ...despesasPaths,
       ...contasPaths,
     ]
-  }
+  },
+  { path: '/:pathMatch(.*)*', component: NotFoundPage },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 
