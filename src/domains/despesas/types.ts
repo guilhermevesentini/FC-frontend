@@ -63,7 +63,7 @@ export const DespesaInitialState: IDespesasModel = {
   categoria: '',
   replicar: false,
   valor: '0.00',
-  vencimento: new Date(),
+  vencimento: undefined,
   observacao: '',
   despesaId: '',
   tipoLancamento: '1'

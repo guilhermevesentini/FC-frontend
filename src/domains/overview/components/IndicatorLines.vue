@@ -1,8 +1,8 @@
 <template>
   <div class="chart-container">
     <h4 class="titulo">Resumo mensal de movimentos</h4>
-    <Empty image-size="150px" v-if="series.length === 0" />
-    <apexchart style="padding: 1rem;" width="100%" :options="options" :series="series" v-else />
+    <Empty image-size="200px" v-if="series.length === 0" />
+    <apexchart class="lines-chart" width="100%" :options="options" :series="series" v-else />
   </div>
 </template>
 
@@ -54,9 +54,6 @@ const options = reactive({
     toolbar: {
       show: false,
     },
-  },
-  theme: {
-    mode: 'light',
   },
   responsive: [
     {
@@ -125,7 +122,6 @@ watch(
 <style lang="scss" scoped>
 .chart-container {
   width: 100%;
-  min-height: 400px;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -133,10 +129,9 @@ watch(
   flex-direction: column;
   align-items: left;
 
-  .titulo {
-    padding: 0.5rem 0;
-    font-size: 1rem;
-    text-align: left;
+  .lines-chart {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

@@ -16,7 +16,7 @@ export const ReceitasInitialState: ReceitaInputDto = {
   categoria: '',
   replicar: false,
   valor: '0.00',
-  recebimento: new Date(),
+  recebimento: undefined,
   contaId: '',
   incomeId: '',
   tipoLancamento: '1',

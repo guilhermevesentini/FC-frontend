@@ -41,7 +41,7 @@
               <IndicatorLines :resumo="resumo" />
             </el-col>
             <el-col :xs="24" :sm="11" :md="11" :lg="11">
-              <IndicatorDonut :labels="donut.labels" :values="donut.values" />
+              <IndicatorBar :labels="donut.labels" :values="donut.values" />
             </el-col>
           </el-row>
         </el-col>
@@ -58,8 +58,8 @@ import { Filter } from '@element-plus/icons-vue';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 import IndicatorSpark from '../components/IndicatorSpark.vue';
 import IndicatorLines from '../components/IndicatorLines.vue';
-import IndicatorDonut from '../components/IndicatorDonut.vue';
 import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from '../services/ports/OverviewGateway';
+import IndicatorBar from '../components/IndicatorBar.vue';
 
 const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi);
 
@@ -173,10 +173,17 @@ onMounted(async () => {
   }
 
   .sparkboxes {
+    width: 100%;
     display: flex;
     padding: 1rem;
-    margin: 1rem 0;
     justify-content: space-between;
+    gap: 5px;
+
+    .titulo {
+      padding: 0.5rem 0;
+      font-size: 1rem;
+      text-align: left;
+    }
   }
 
   .indicadores .el-col {

@@ -116,7 +116,7 @@ const despesasDetails = ref<IDespesasModel>({
   range: undefined,
   status: '2',
   valor: '0.00',
-  vencimento: new Date(),
+  vencimento: undefined,
   contaId: '',
 });
 
