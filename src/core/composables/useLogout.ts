@@ -1,9 +1,8 @@
-import { useRouter } from "vue-router";
+import router from "../router";
+
 
 export function useLogout() {
-  const logout = () => {
-    const router = useRouter()
-    
+  const logout = () => {    
     localStorage.removeItem('user');
     localStorage.removeItem('fctoken');
     localStorage.removeItem('customerId');
