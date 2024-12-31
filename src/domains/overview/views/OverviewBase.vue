@@ -25,23 +25,23 @@
         </el-col>
         <el-col :span="24">
           <el-row class="sparkboxes">
-            <IndicatorSpark title="Despesas" :valor="sparks.totalDespesas.value.toString()"
+            <IndicatorSpark title="Despesas" :valor="sparks.totalDespesas.value.toString()" v-loading="loading"
               :series="sparks.totalDespesas.values.slice(-5)" :gradient-type="1" />
-            <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()"
+            <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()" v-loading="loading"
               :series="sparks.totalReceitas.values.slice(-5)" :gradient-type="3" />
-            <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()"
+            <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()" v-loading="loading"
               :series="sparks.pendente.values.slice(-5)" :gradient-type="2" />
-            <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)"
+            <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)" v-loading="loading"
               :series="sparks.balanco.values.slice(-5)" :gradient-type="4" />
           </el-row>
         </el-col>
         <el-col :span="24">
           <el-row class="sparkboxes indicadores">
             <el-col :xs="24" :sm="11" :md="11" :lg="11">
-              <IndicatorLines :resumo="resumo" />
+              <IndicatorLines :resumo="resumo" v-loading="loading" />
             </el-col>
             <el-col :xs="24" :sm="11" :md="11" :lg="11">
-              <IndicatorBar :labels="donut.labels" :values="donut.values" />
+              <IndicatorBar :labels="donut.labels" :values="donut.values" v-loading="loading" />
             </el-col>
           </el-row>
         </el-col>
@@ -60,6 +60,8 @@ import IndicatorSpark from '../components/IndicatorSpark.vue';
 import IndicatorLines from '../components/IndicatorLines.vue';
 import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from '../services/ports/OverviewGateway';
 import IndicatorBar from '../components/IndicatorBar.vue';
+
+const loading = ref(false)
 
 const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi);
 
@@ -116,12 +118,12 @@ const obterResumo = async () => {
   }
 };
 
-const handleDatesReq = () => {
-  return {
-    inicioReq: new Date(filterDate.value.inicio as unknown as string).toISOString(),
-    fimReq: new Date(filterDate.value.fim as unknown as string).toISOString(),
-  };
-};
+// const handleDatesReq = () => {
+//   return {
+//     inicioReq: new Date(filterDate.value.inicio as unknown as string).toISOString(),
+//     fimReq: new Date(filterDate.value.fim as unknown as string).toISOString(),
+//   };
+// };
 
 const calcularDatasPeriodo = (mes: number, ano: number) => {
   const inicio = new Date(ano, mes - 1, 1).toISOString();
@@ -136,18 +138,24 @@ const handlePeriodo = async (mes: number, ano: number) => {
   filterDate.value = { inicio: new Date(inicio), fim: new Date(fim) };
 
   try {
+    loading.value = true
     await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim)]);
   } catch (error) {
     console.error("Erro ao atualizar dados para o período selecionado:", error);
+  } finally {
+    loading.value = false
   }
 };
 
 onMounted(async () => {
   const { inicio, fim } = calcularDatasPeriodo(periodo.mes, periodo.ano);
   try {
+    loading.value = true
     await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim), obterResumo()]);
   } catch (error) {
     console.error("Erro ao carregar os dados iniciais:", error);
+  } finally {
+    loading.value = false
   }
 });
 </script>
