@@ -30,21 +30,17 @@ import logo from "@/shared/assets/images/logo.png";
 import router from '@/core/router';
 import { Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
 import { onMounted, ref } from "vue";
+import { useLogout } from "../composables/useLogout";
 
 const thema = ref(true);
 
 const nomeUsuario = ref('')
 
+const { logout } = useLogout();
+
 const handleSelect = (key: string, keyPath: string[]) => {
   router.push({ path: `/` });
 }
-
-const logout = (() => {
-  localStorage.removeItem('user');
-  localStorage.removeItem('fctoken');
-  router.push({ path: `/login` });
-})
-
 
 const toggleTheme = () => {
   const isDarkMode = document.documentElement.classList.contains('dark');

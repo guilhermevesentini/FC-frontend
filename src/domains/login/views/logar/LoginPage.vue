@@ -134,12 +134,12 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
 
     if (responseUsuario) {
       const usuario: ILoginUser = {
-        id: responseUsuario.result?.id,
+        id: responseUsuario.result?.id || undefined,
         username: responseUsuario.result?.username || 'Usuário',
       }
 
       localStorage.setItem('user', JSON.stringify(usuario));
-      localStorage.setItem('customerId', JSON.stringify(usuario.id));
+      if (usuario.id) localStorage.setItem('customerId', usuario.id.toString());
     }
 
     if (lembrar.value) {

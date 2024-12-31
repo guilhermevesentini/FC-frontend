@@ -8,6 +8,9 @@ import { contasPaths } from '@/domains/contas/routes/contasPaths';
 import { receitasPaths } from '@/domains/receitas/routes/receitasPaths';
 import { overviewPaths } from '@/domains/overview/router/overviewPaths';
 import NotFoundPage from '@/shared/components/NotFoundPage.vue';
+import { useLogout } from '../composables/useLogout';
+
+const { logout } = useLogout();
 
 const routes: Array<RouteRecordRaw> = [    
   { path: '/login', component: Login },
@@ -34,6 +37,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
+    logout()
+
     next('/login');
   } else {
     next();
