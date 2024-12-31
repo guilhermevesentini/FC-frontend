@@ -1,9 +1,10 @@
 <template>
-  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :on-before-close="handleLimpar">
+  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :on-before-close="handleLimpar()">
     <template #header="{ close, titleId, titleClass }">
       <h4>Adicionar conta</h4>
     </template>
-    <el-form ref="formRef" :model="contaDetails" :rules="rules" label-position="top" style="width: 100%">
+    <el-form ref="formRef" :model="contaDetails" :rules="rules" label-position="top" style="width: 100%"
+      v-loading="loading">
       <el-row :gutter="10">
         <el-col :span="12">
           <el-form-item label="Banco" prop="banco">
@@ -40,7 +41,7 @@
     </el-form>
     <template #footer>
       <el-button @click="handleVoltar">Cancel</el-button>
-      <el-button type="primary" @click="handleCriar(formRef)">Salvar</el-button>
+      <el-button type="primary" @click="handleCriar(formRef)" :loading="loading">Salvar</el-button>
     </template>
   </el-drawer>
 </template>
@@ -54,9 +55,11 @@ import FCSelectBancos from '@/shared/components/FCSelectBancos.vue';
 import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '../services/ports/ContasGateway';
 import { configInputMask } from '@/core/@types/types';
 
+const loading = ref(false)
+
 const contasGateway = container.get<ContasGateway>(ContasGatewayDi);
 
-const contaDetails = reactive<ContaOutputDto>({
+const contaDetails = ref<ContaOutputDto>({
   agencia: '',
   contaPrincipal: false,
   conta: '',
@@ -81,20 +84,18 @@ const emits = defineEmits<{
 }>();
 
 const handleLimpar = () => {
-  contaDetails.agencia = ''
-  contaDetails.conta = ''
-  contaDetails.nome = ''
-  contaDetails.banco = undefined
-  contaDetails.contaPrincipal = false
-  contaDetails.saldo = ''
-  contaDetails.id = ''
+  contaDetails.value.agencia = ''
+  contaDetails.value.conta = ''
+  contaDetails.value.nome = ''
+  contaDetails.value.banco = undefined
+  contaDetails.value.contaPrincipal = false
+  contaDetails.value.saldo = ''
+  contaDetails.value.id = ''
 }
 
 const updateBanco = (params: { banco: number, name: string }) => {
-  console.log(params);
-
-  contaDetails.banco = Number(params.banco)
-  contaDetails.nomeBanco = params.name
+  contaDetails.value.banco = Number(params.banco)
+  contaDetails.value.nomeBanco = params.name
 }
 
 const handleCriar = async (formEl: FormInstance | undefined) => {
@@ -102,10 +103,18 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (valid) {
-      const response = await contasGateway.criar(contaDetails);
+      try {
+        loading.value = true
 
-      if (response) {
-        emits('handleFechar');
+        const response = await contasGateway.criar(contaDetails.value);
+
+        if (response) {
+          emits('handleFechar');
+        }
+      } catch (err) {
+        console.log(err)
+      } finally {
+        loading.value = false
       }
     }
   });
@@ -117,7 +126,6 @@ const handleVoltar = (() => {
 });
 
 onMounted(() => handleLimpar())
-
 </script>
 
 <style lang="scss">

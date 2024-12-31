@@ -1,7 +1,8 @@
 <template>
   <FCDrawer :title="tituloDrawer" :on-before-close="Limpar" destroy-on-close>
     <template #body>
-      <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%">
+      <el-form ref="formRef" :model="receitaDetails" :rules="rules" label-position="top" style="width: 100%"
+        v-loading="loading">
         <el-row :gutter="10">
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Nome" prop="nome">
@@ -74,7 +75,7 @@
       <el-button @click="Voltar">Cancel</el-button>
     </template>
     <template #FRight>
-      <el-button type="primary" @click="handleReceita(formRef)">Salvar</el-button>
+      <el-button type="primary" @click="handleReceita(formRef)" :loading="loading">Salvar</el-button>
     </template>
   </FCDrawer>
 </template>
@@ -96,6 +97,8 @@ interface IProps {
   receita: ReceitaInputDto | undefined
   tipo: ETipoReceitaDrawer
 }
+
+const loading = ref(false)
 
 const props = defineProps<IProps>()
 
@@ -139,41 +142,58 @@ const updateConta = (id: string) => {
 }
 
 const criarReceita = async () => {
-  const mes = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getMonth() : 0
-  const ano = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getFullYear() : 0
+  try {
+    loading.value = true
 
-  const response = await receitasGateway.criar({ ...receitaDetails.value, mes: mes, ano: ano });
+    const mes = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getMonth() : 0
+    const ano = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getFullYear() : 0
 
-  if (!response) return
+    const response = await receitasGateway.criar({ ...receitaDetails.value, mes: mes, ano: ano });
 
-  ElNotification({
-    title: 'success',
-    message: 'Receita criada com sucesso.',
-    type: 'success',
-    duration: 2000
-  })
+    if (!response) return
 
-  Limpar()
+    ElNotification({
+      title: 'success',
+      message: 'Receita criada com sucesso.',
+      type: 'success',
+      duration: 2000
+    })
+
+    Limpar()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 }
 
 const editarReceita = async () => {
-  const response = await receitasGateway.editar(receitaDetails.value)
+  try {
+    loading.value = true
 
-  if (response?.statusCode != 200) return ElNotification({
-    title: 'error',
-    message: 'Erro ao editar receita',
-    type: 'success',
-    duration: 2000
-  })
+    const response = await receitasGateway.editar(receitaDetails.value)
 
-  ElNotification({
-    title: 'success',
-    message: 'Receita editada com sucesso.',
-    type: 'success',
-    duration: 2000
-  })
+    if (response?.statusCode != 200) return ElNotification({
+      title: 'error',
+      message: 'Erro ao editar receita',
+      type: 'success',
+      duration: 2000
+    })
 
-  Limpar()
+    ElNotification({
+      title: 'success',
+      message: 'Receita editada com sucesso.',
+      type: 'success',
+      duration: 2000
+    })
+
+    Limpar()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
+
 }
 
 const handleReceita = async (formEl: FormInstance | undefined) => {

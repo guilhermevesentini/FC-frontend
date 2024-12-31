@@ -22,7 +22,7 @@
           </div>
           <div class="despesas-cartao" v-else>
             <el-card class="despesas-cartao-card" style="max-width: 480px" v-for="card in contas" :key="card.id"
-              :style="{ border: card.contaPrincipal ? '1px solid #a6d4fc' : '' }">
+              v-loading="loading" :style="{ border: card.contaPrincipal ? '1px solid #a6d4fc' : '' }">
               <template #header>
                 <div class="despesas-cartao-card_header">
                   <div class="title">
@@ -69,6 +69,8 @@ import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '../ser
 import AdicionarContaWidget from '../widgets/AdicionarContaWidget.vue';
 import Empty from '@/shared/components/Empty.vue';
 
+const loading = ref(false)
+
 const showAdicionar = ref(false)
 
 const contas = ref<ContaOutputDto[]>()
@@ -85,34 +87,48 @@ const handleFechar = async () => {
 }
 
 const obterContas = async () => {
-  const response = await contasGateway.obter();
-  if (response?.statusCode == 200) {
-    contas.value = (response.result || []).sort((a, b) => {
-      return Number(b.contaPrincipal) - Number(a.contaPrincipal);
-    });
+  try {
+    loading.value = true
+
+    const response = await contasGateway.obter();
+    if (response?.statusCode == 200) {
+      contas.value = (response.result || []).sort((a, b) => {
+        return Number(b.contaPrincipal) - Number(a.contaPrincipal);
+      });
+    }
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
   }
 }
 
 const handleDelete = async (conta: ContaOutputDto) => {
-  console.log({ id: conta.id });
+  try {
+    loading.value = true
 
-  const response = await contasGateway.delete({ id: conta.id });
-  if (response) {
-    ElNotification({
-      title: 'success',
-      message: 'Conta Excluída com sucesso.',
-      type: 'success',
-      duration: 2000
-    })
+    const response = await contasGateway.delete({ id: conta.id });
+    if (response) {
+      ElNotification({
+        title: 'success',
+        message: 'Conta Excluída com sucesso.',
+        type: 'success',
+        duration: 2000
+      })
 
-    await obterContas();
-  } else {
-    ElNotification({
-      title: 'error',
-      message: 'Houve um erro ao excluir a conta, tente novamente mais tarde.',
-      type: 'error',
-      duration: 2000
-    })
+      await obterContas();
+    } else {
+      ElNotification({
+        title: 'error',
+        message: 'Houve um erro ao excluir a conta, tente novamente mais tarde.',
+        type: 'error',
+        duration: 2000
+      })
+    }
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
   }
 }
 

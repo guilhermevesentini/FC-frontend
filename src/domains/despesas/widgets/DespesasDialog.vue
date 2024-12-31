@@ -1,7 +1,8 @@
 <template>
   <FCDrawer :title="tituloDrawer" :on-before-close="Limpar" destroy-on-close>
     <template #body>
-      <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%">
+      <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%"
+        v-loading="loading">
         <el-row :gutter="10">
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="Nome" prop="nome">
@@ -74,7 +75,7 @@
       <el-button @click="Voltar">Cancel</el-button>
     </template>
     <template #FRight>
-      <el-button type="primary" @click="handleCriar(formRef)">Salvar</el-button>
+      <el-button type="primary" @click="handleCriar(formRef)" :loading="loading">Salvar</el-button>
     </template>
   </FCDrawer>
 </template>
@@ -95,6 +96,8 @@ interface IProps {
   despesa: IDespesasModel | undefined
   tipo: ETipoDespesaDrawer
 }
+
+const loading = ref(false)
 
 const props = defineProps<IProps>()
 
@@ -138,41 +141,57 @@ const updateConta = (id: string) => {
 }
 
 const criarDespesas = async () => {
-  const mes = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getMonth() + 1 : 0
-  const ano = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getFullYear() : 0
+  try {
+    loading.value = true
 
-  const response = await despesasGateway.criarDespesa({ ...despesasDetails.value, mes: mes, ano: ano });
+    const mes = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getMonth() + 1 : 0
+    const ano = despesasDetails.value.vencimento ? new Date(despesasDetails.value.vencimento).getFullYear() : 0
 
-  if (!response) return
+    const response = await despesasGateway.criarDespesa({ ...despesasDetails.value, mes: mes, ano: ano });
 
-  ElNotification({
-    title: 'success',
-    message: 'Despesa criada com sucesso.',
-    type: 'success',
-    duration: 2000
-  })
+    if (!response) return
 
-  Limpar()
+    ElNotification({
+      title: 'success',
+      message: 'Despesa criada com sucesso.',
+      type: 'success',
+      duration: 2000
+    })
+
+    Limpar()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 }
 
 const editarDespesa = (async () => {
-  const response = await despesasGateway.editarDespesas(despesasDetails.value);
+  try {
+    loading.value = true
 
-  if (!response) return ElNotification({
-    title: 'Error',
-    message: 'Erro ao salvar suas alterações, tente novamente.',
-    type: 'error',
-    duration: 2000
-  })
+    const response = await despesasGateway.editarDespesas(despesasDetails.value);
 
-  ElNotification({
-    title: 'success',
-    message: 'Despesa foi salva com sucesso.',
-    type: 'success',
-    duration: 2000
-  })
+    if (!response) return ElNotification({
+      title: 'Error',
+      message: 'Erro ao salvar suas alterações, tente novamente.',
+      type: 'error',
+      duration: 2000
+    })
 
-  Limpar()
+    ElNotification({
+      title: 'success',
+      message: 'Despesa foi salva com sucesso.',
+      type: 'success',
+      duration: 2000
+    })
+
+    Limpar()
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 })
 
 const handleCriar = async (formEl: FormInstance | undefined) => {
