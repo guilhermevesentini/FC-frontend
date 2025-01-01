@@ -52,7 +52,7 @@ const isLoading = computed(() => props.Loading)
 
 const filtroAtual = ref<string>('');
 const currentPage = ref(1);
-const itemsPerPage = ref(6);
+const itemsPerPage = ref(25);
 
 const produtosFiltrados = computed(() => {
     return filtrarItems(props?.produtos || [], filtroAtual, currentPage, itemsPerPage)

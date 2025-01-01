@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <h4 class="titulo">Resumo mensal de movimentos</h4>
+    <h4 class="titulo">Resumo mensal de movimentos de {{ new Date().getFullYear() }}</h4>
     <Empty image-size="200px" v-if="series.length === 0" />
     <apexchart class="lines-chart" width="100%" :options="options" :series="series" v-else />
   </div>
