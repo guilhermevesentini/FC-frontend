@@ -26,13 +26,13 @@
         <el-col :span="24">
           <el-row class="sparkboxes">
             <IndicatorSpark title="Despesas" :valor="sparks.totalDespesas.value.toString()" v-loading="loading"
-              :series="sparks.totalDespesas.values.slice(-5)" :gradient-type="1" />
+              :series="sparks.totalDespesas.values" :gradient-type="1" />
             <IndicatorSpark title="Receitas" :valor="sparks.totalReceitas.value.toString()" v-loading="loading"
-              :series="sparks.totalReceitas.values.slice(-5)" :gradient-type="3" />
+              :series="sparks.totalReceitas.values" :gradient-type="3" />
             <IndicatorSpark title="Pendentes" :valor="sparks.pendente.value.toString()" v-loading="loading"
-              :series="sparks.pendente.values.slice(-5)" :gradient-type="2" />
-            <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString().slice(-5)" v-loading="loading"
-              :series="sparks.balanco.values.slice(-5)" :gradient-type="4" />
+              :series="sparks.pendente.values" :gradient-type="2" />
+            <IndicatorSpark title="Balanço" :valor="sparks.balanco.value.toString()" v-loading="loading"
+              :series="sparks.balanco.values" :gradient-type="4" />
           </el-row>
         </el-col>
         <el-col :span="24">
