@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, createWebHistory, type RouteRecordR
 import Login from '@/domains/login/views/logar/LoginPage.vue';
 import { despesasPaths } from '../../domains/despesas/router/despesasPath';
 import ResgistrarUsuario from '@/domains/login/views/registrar/ResgistrarUsuario.vue';
+import RecuperarSenha from '@/domains/login/views/recuperarSenha/RecuperarSenha.vue';
 import BaseLayout from '../layouts/BaseLayout.vue';
 import { isAuthenticated } from '@/shared/composables/auth';
 import { contasPaths } from '@/domains/contas/routes/contasPaths';
@@ -14,7 +15,16 @@ const { logout } = useLogout();
 
 const routes: Array<RouteRecordRaw> = [    
   { path: '/login', component: Login },
-  { path: '/novoUsuario', component: ResgistrarUsuario },
+  {
+    path: '/novoUsuario',
+    name: "Novo usuario",
+    component: ResgistrarUsuario
+  },
+  {
+    path: '/recuperarSenha',
+    name: "Recuperar senha",
+    component: RecuperarSenha
+  },
   { 
     path: '/', 
     redirect: '/login',

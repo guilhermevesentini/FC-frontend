@@ -9,8 +9,8 @@
           </div>
           <el-form ref="ruleFormRef" :model="formulario" :rules="rules" label-width="auto" style="max-width: 600px"
             label-position="top" class="login_form-form" status-icon>
-            <el-form-item label="Usuario" prop="username">
-              <el-input v-model="formulario.username" />
+            <el-form-item label="Email" prop="email">
+              <el-input v-model="formulario.email" />
             </el-form-item>
             <el-form-item label="Senha" prop="password">
               <el-input v-model="formulario.password" show-password />
@@ -41,8 +41,8 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import logo from "@/shared/assets/images/logo-sem-fundo.png";
 import { container } from '@/inversify.config';
 import type { ILoginUser, IRuleLoginForm } from '@/domains/login/types';
-import { LoginPageGatewayDi, type ILoginPageGateway } from '../../services/login/LoginPageHttpRequest';
-import LoginFrame from '../LoginFrame.vue';
+import LoginFrame from '../../LoginBase.vue';
+import { LoginPageGatewayDi, type ILoginPageGateway } from '../../services/ports/LoginPageGateway';
 
 const ruleFormRef = ref<FormInstance>()
 const router = useRouter()
@@ -53,13 +53,13 @@ const loading = ref(false);
 const lembrar = ref(true);
 
 const formulario = reactive<IRuleLoginForm>({
-  username: '',
+  email: '',
   password: ''
 })
 
 const rules = reactive<FormRules<IRuleLoginForm>>({
-  username: [
-    { required: true, message: 'Por favor, digite o seu usuário', trigger: 'blur' },
+  email: [
+    { required: true, type: "email", message: 'Por favor, digite o seu email', trigger: 'blur' },
   ],
   password: [
     {
@@ -67,7 +67,7 @@ const rules = reactive<FormRules<IRuleLoginForm>>({
       message: 'Por favor, digite a sua senha',
       trigger: 'change',
     },
-    { min: 3, max: 10, message: 'Deve conter de 3 a 10 caracaters', trigger: 'blur' },
+    { min: 3, message: 'Deve conter de 3 a 10 caracaters', trigger: 'blur' },
   ]
 });
 
@@ -76,23 +76,7 @@ const handleCriar = () => {
 }
 
 const handleEsqueciSenha = async () => {
-  //const result = await LoginPageGateway.obterSenha(formulario.username);
-
-  // if (!result) {
-  //   ElNotification({
-  //     title: 'error',
-  //     message: 'Usuário não encontrado',
-  //     type: 'error',
-  //     duration: 5000
-  //   })
-  // } else {
-  //   ElNotification({
-  //     title: 'Info',
-  //     message: result,
-  //     type: 'success',
-  //     duration: 5000
-  //   })
-  // }
+  router.push({ path: `/recuperarSenha` });
 }
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -110,10 +94,10 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
 
     const result = await LoginPageGateway.validarUsuario(formulario);
 
-    if (result && result.statusCode != 200) {
+    if (result?.statusCode != 200) {
       ElNotification({
         title: 'Error',
-        message: result.error || 'Usuário não encontrado.',
+        message: result?.message || 'Usuário não encontrado.',
         type: 'error',
         duration: 4000
       })
@@ -129,12 +113,12 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
       localStorage.setItem('fctoken', token);
     }
 
-    const responseUsuario = await LoginPageGateway.obterUsuario(formulario.username);
-
+    const responseUsuario = await LoginPageGateway.obterUsuario(formulario.email);
 
     if (responseUsuario) {
       const usuario: ILoginUser = {
         id: responseUsuario.result?.id || undefined,
+        email: responseUsuario.result?.email || 'email@email.com',
         username: responseUsuario.result?.username || 'Usuário',
       }
 
@@ -143,7 +127,7 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
     }
 
     if (lembrar.value) {
-      localStorage.setItem('lembrarEmail', JSON.stringify(formulario?.username));
+      localStorage.setItem('lembrarEmail', JSON.stringify(formulario?.email));
     }
 
     router.push({ path: `/overview` });
@@ -175,7 +159,7 @@ onMounted(() => {
   if (hasEmail) {
     const info = JSON.parse(hasEmail);
 
-    formulario.username = info || '';
+    formulario.email = info || '';
 
     lembrar.value = true;
   }

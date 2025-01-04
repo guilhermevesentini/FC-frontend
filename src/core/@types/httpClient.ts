@@ -19,7 +19,7 @@ export type IDefaultResponseError = {
 export type IDefaultHttpResponse<T> = {
     result: T | null | undefined
     statusCode: HttpStatusCode
-    error?: string;
+    message?: string;
 }
 
 export type IHttpResponse<T> = {

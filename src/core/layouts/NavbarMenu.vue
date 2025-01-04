@@ -16,13 +16,15 @@
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>Configurar Conta</el-dropdown-item>
-          <el-dropdown-item>Personalizar</el-dropdown-item>
+          <el-dropdown-item @click="showAlterarSenha = true">Alterar Senha</el-dropdown-item>
+          <!-- <el-dropdown-item>Configurar Conta</el-dropdown-item>
+          <el-dropdown-item>Personalizar</el-dropdown-item> -->
           <el-dropdown-item :icon="SwitchButton" @click="logout">Sair</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
   </el-menu>
+  <AlterarSenha v-model="showAlterarSenha" v-on:handle-fechar="showAlterarSenha = false" />
 </template>
 
 <script setup lang="ts">
@@ -31,10 +33,12 @@ import router from '@/core/router';
 import { Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
 import { onMounted, ref } from "vue";
 import { useLogout } from "../composables/useLogout";
+import AlterarSenha from "@/shared/components/menu-de-configuracao/alterar-senha/AlterarSenha.vue";
 
 const thema = ref(true);
 
 const nomeUsuario = ref('')
+const showAlterarSenha = ref(false)
 
 const { logout } = useLogout();
 
@@ -56,8 +60,6 @@ const toggleTheme = () => {
   const newTheme = isDarkMode ? 'light' : 'dark';
   localStorage.setItem('theme', newTheme);
 };
-
-
 
 onMounted(() => {
   const storage = localStorage.getItem('user');

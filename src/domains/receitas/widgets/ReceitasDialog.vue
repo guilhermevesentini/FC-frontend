@@ -175,7 +175,7 @@ const editarReceita = async () => {
 
     if (response?.statusCode != 200) return ElNotification({
       title: 'error',
-      message: 'Erro ao editar receita',
+      message: response?.message || 'Erro ao editar receita',
       type: 'success',
       duration: 2000
     })

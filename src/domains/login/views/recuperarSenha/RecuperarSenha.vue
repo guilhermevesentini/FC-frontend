@@ -7,21 +7,18 @@
             <img :src="logo">
             <h1>Finance Control</h1>
           </div>
+          <div style="margin: 10px 0;">
+            <el-alert title="Enviamos uma nova senha no seu email cadastrado." type="warning" :closable="false" />
+          </div>
           <el-form ref="ruleFormRef" :model="formulario" :rules="rules" label-width="auto" style="max-width: 600px"
             label-position="top" class="login_registration-form" status-icon>
-            <el-form-item label="Usuario" prop="username">
-              <el-input v-model="formulario.username" />
-            </el-form-item>
             <el-form-item label="Email" prop="email">
               <el-input v-model="formulario.email" />
-            </el-form-item>
-            <el-form-item label="Senha" prop="password">
-              <el-input v-model="formulario.password" show-password />
             </el-form-item>
             <br>
             <el-form-item>
               <el-button :loading="loading" class="login_registration__form-button" type="primary"
-                @keyup.enter="onSubmit(ruleFormRef)" @click="onSubmit(ruleFormRef)">Criar</el-button>
+                @keyup.enter="onSubmit(ruleFormRef)" @click="onSubmit(ruleFormRef)">Enviar</el-button>
             </el-form-item>
             <el-form-item>
               <el-button class="login_registration__form-button return" link @click="handleVoltar">Voltar</el-button>
@@ -36,7 +33,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import logo from "@/shared/assets/images/logo-sem-fundo.png";
-import type { IRuleLoginForm } from '../../types';
+import type { IRecuperarSenha } from '../../types';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import LoginFrame from '../../LoginBase.vue';
 import { container } from '@/inversify.config';
@@ -49,26 +46,13 @@ const router = useRouter()
 
 const LoginPageGateway = container.get<ILoginPageGateway>(LoginPageGatewayDi);
 
-const formulario = reactive<IRuleLoginForm>({
-  username: '',
+const formulario = reactive<IRecuperarSenha>({
   email: '',
-  password: ''
 })
 
-const rules = reactive<FormRules<IRuleLoginForm>>({
-  username: [
-    { required: true, message: 'Por favor, digite o seu usuário', trigger: 'blur' },
-  ],
+const rules = reactive<FormRules<IRecuperarSenha>>({
   email: [
     { required: true, type: "email", message: 'Por favor, digite o seu email', trigger: 'blur' },
-  ],
-  password: [
-    {
-      required: true,
-      message: 'Por favor, digite a sua senha',
-      trigger: 'change',
-    },
-    { min: 3, max: 10, message: 'Deve conter de 3 a 10 caracaters', trigger: 'blur' },
   ]
 });
 
@@ -76,17 +60,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
-      validarUsuario(formulario);
+      recuperar(formulario);
     }
   });
 };
 
-const validarUsuario = async (formulario: IRuleLoginForm) => {
+const recuperar = async (formulario: IRecuperarSenha) => {
   try {
     loading.value = true;
 
-    const result = await LoginPageGateway.cadastrarNovoUsuario(formulario);
-
+    const result = await LoginPageGateway.recuperarSenha({ email: formulario.email });
 
     if (result && result.statusCode != 200) {
       ElNotification({
@@ -104,7 +87,7 @@ const validarUsuario = async (formulario: IRuleLoginForm) => {
 
     ElNotification({
       title: 'Success',
-      message: 'Usuário criado com sucesso.',
+      message: 'Recuperação de senha bem sucedida',
       type: 'success',
       duration: 5000
     })

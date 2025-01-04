@@ -1,15 +1,8 @@
 import { httpClientDI, HttpStatusCode, type HttpClient, type IDefaultHttpResponse, type IHttpResponse } from "@/core/@types/httpClient";
 import { inject, injectable } from "inversify";
 import 'reflect-metadata';
-import type { IResponseLoginValidation, IRuleLoginForm } from "../../../../domains/login/types";
-
-export const LoginPageGatewayDi = Symbol("LoginPageGatewayDi")
-
-export interface ILoginPageGateway {
-    validarUsuario(params: IRuleLoginForm): Promise<IDefaultHttpResponse<string | undefined> | undefined>;
-    cadastrarNovoUsuario(params: IRuleLoginForm): Promise<IDefaultHttpResponse<boolean | null> | undefined>;
-    obterUsuario(usuario: string): Promise<IDefaultHttpResponse<IResponseLoginValidation> | undefined>
-}
+import type { IAlterarInputSenha, IRecuperarSenha, IResponseLoginValidation, IRuleLoginForm } from "../../../../domains/login/types";
+import type { ILoginPageGateway } from "../ports/LoginPageGateway";
 
 @injectable()
 export default class LoginPageHttpRequest implements ILoginPageGateway {
@@ -45,6 +38,27 @@ export default class LoginPageHttpRequest implements ILoginPageGateway {
         });
         
         if (response.status != HttpStatusCode.success) return 
+
+        return response.body
+    }
+
+    async recuperarSenha(form: IRecuperarSenha): Promise<IDefaultHttpResponse<boolean> | undefined> {
+        const response = await this.httpClient.get<IDefaultHttpResponse<boolean> | undefined>({
+            url: `/recover-password/${form.email}`
+        });
+        
+        if (response.status != HttpStatusCode.success) return
+
+        return response.body
+    }
+
+    async alterarSenha(form: IAlterarInputSenha): Promise<IDefaultHttpResponse<boolean> | undefined> {
+        const response = await this.httpClient.post<IDefaultHttpResponse<boolean> | undefined>({
+            url: `/change-password`,
+            body: {form}
+        });
+        
+        if (response.status != HttpStatusCode.success) return
 
         return response.body
     }
