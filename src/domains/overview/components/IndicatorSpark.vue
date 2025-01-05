@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { formatCurrency } from "@/shared/utils/utils";
+import { formatCurrency } from "@/core/utils/utils";
 import Empty from '@/shared/components/Empty.vue';
 
 type IProps = {

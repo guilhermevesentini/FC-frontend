@@ -58,6 +58,10 @@ watch(selectedValue, (newVal) => {
     emit('update:modelValue', { banco: undefined, name: '' })
   }
 })
+
+watch(() => props.modelValue, (newVal) => {
+  if (!newVal) selectedValue.value = undefined
+});
 </script>
 
 <style lang="scss" scoped></style>

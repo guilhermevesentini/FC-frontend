@@ -2,15 +2,18 @@
   <div class="container_page">
     <div class="content-area">
       <el-row class="main">
+        <el-col>
+
+        </el-col>
         <el-col :span="24" class="filtros">
           <el-row class="container" justify="space-between">
-            <el-col :span="4">
+            <el-col :span="4" style="visibility: hidden;">
               <h3>Filtros</h3>
             </el-col>
-            <el-col class="hidden-sm-and-down" span="auto" style="display: flex; align-items: center;">
+            <el-col span="auto" style="display: flex; align-items: center;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
             </el-col>
-            <el-col :span="4" style="display: flex; justify-content: flex-end;">
+            <el-col :span="4" style="display: flex; justify-content: flex-end; visibility: hidden;">
               <el-popover trigger="click" v-model:visible="popoverVisible" placement="left-start" width="200">
                 <div>
                   <span>Contas:</span>
@@ -56,10 +59,11 @@ import { onMounted, reactive, ref } from 'vue';
 import DatePeriodoPicker from '@/shared/components/DatePeriodoPicker.vue';
 import { Filter } from '@element-plus/icons-vue';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
-import IndicatorSpark from '../components/IndicatorSpark.vue';
-import IndicatorLines from '../components/IndicatorLines.vue';
-import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from '../services/ports/OverviewGateway';
-import IndicatorBar from '../components/IndicatorBar.vue';
+import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from './services/ports/OverviewGateway';
+import IndicatorSpark from './components/IndicatorSpark.vue';
+import IndicatorLines from './components/IndicatorLines.vue';
+import IndicatorBar from './components/IndicatorBar.vue';
+
 
 const loading = ref(false)
 
@@ -117,13 +121,6 @@ const obterResumo = async () => {
     resumo.value = { despesas: response.result?.despesas || [], receitas: response.result?.receitas || [], balanco: response.result?.balanco || [] };
   }
 };
-
-// const handleDatesReq = () => {
-//   return {
-//     inicioReq: new Date(filterDate.value.inicio as unknown as string).toISOString(),
-//     fimReq: new Date(filterDate.value.fim as unknown as string).toISOString(),
-//   };
-// };
 
 const calcularDatasPeriodo = (mes: number, ano: number) => {
   const inicio = new Date(ano, mes - 1, 1).toISOString();
@@ -185,7 +182,7 @@ onMounted(async () => {
     display: flex;
     padding: 1rem;
     justify-content: space-between;
-    gap: 5px;
+    gap: 15px;
 
     .titulo {
       padding: 0.5rem 0;
@@ -196,7 +193,8 @@ onMounted(async () => {
 
   .indicadores .el-col {
     border-radius: 7px;
-    background-color: var(--background-color-darker);
+    margin-bottom: 1rem;
+    background-color: var(--background-color--apex-card);
   }
 }
 </style>

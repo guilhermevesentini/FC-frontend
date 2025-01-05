@@ -1,4 +1,4 @@
-import ElementPlus from 'element-plus'
+import ElementPlus, { ElLoading } from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 
@@ -24,18 +24,20 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-app.use(ElementPlus, { locale: ptbr });
+
+
+app.config.globalProperties.$loading = ElLoading.service;
 
 app.config.globalProperties.$globalLoading = (options = {}) => {
-  return app.config.globalProperties.$loading({    
+  return app.config.globalProperties.$loading({
     ...options,
   });
 };
 
-dayjs.locale('pt-br');  // Configurando o idioma globalmente
+dayjs.locale('pt-br');
 
 app.use(money)
 
 app.use(VueApexCharts);
-
+app.use(ElementPlus, { locale: ptbr });
 app.mount('#app')

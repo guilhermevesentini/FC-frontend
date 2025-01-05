@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import useBreakpointsElement from '@/shared/composables/useBreakpoints';
+import useBreakpointsElement from '@/core/composables/useBreakpoints';
 import { computed } from 'vue';
 
 

@@ -74,7 +74,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, computed, reactive } from "vue";
-import { formatCurrency, formatDate } from "@/shared/utils/utils";
+import { formatCurrency, formatDate } from "@/core/utils/utils";
 import { container } from "@/inversify.config";
 import {
   Plus

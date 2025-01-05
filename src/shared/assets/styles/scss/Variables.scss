@@ -16,6 +16,8 @@
 
   --background-color-darker: #ffffff;
   
+  --background-color--apex-card: #fafafa;
+
   --border-color: #dcdfe6;
   --border-color-hover: #c0c4cc;
   
@@ -25,21 +27,23 @@
   --button-primary-bg: #409eff;
   --button-primary-text: #fff;
   
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --overlay-background: rgba(0, 0, 0, 0.5);
+  --shadow-color: #54565c;
+  --overlay-background: #54565c;
 }
 
 .dark {
   --text-primary: #fff;
   --text-secondary: #A0A0A0;
-  --background-color: #343E59;
+  --background-color: #4b4f5a;
 
-  --background-color-navbar: #1E1E1E;
+  --background-color-navbar: #2b2b2b;
   --background-color-text-primary: #fff;
 
-  --background-color-dark: #2B2D3E;
+  --background-color-dark: #34353d;
 
-  --background-color-darker: #20222e;
+  --background-color-darker: #2a2b31;
+
+  --background-color--apex-card: #54565c;
 
   --border-color: #444c56;
   --border-color-hover: #666d77;
@@ -50,7 +54,7 @@
   --button-primary-bg: #409eff;
   --button-primary-text: #fff;
   
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --overlay-background: rgba(0, 0, 0, 0.7);
+  --shadow-color: #54565c;
+  --overlay-background: #54565c;
 }
 

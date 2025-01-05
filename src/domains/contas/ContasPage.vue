@@ -2,10 +2,6 @@
   <el-row>
     <el-col class="container_page" :span="24">
       <el-row class="body">
-        <el-col class="hidden-sm-and-up" :span="24"
-          style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center;    justify-content: center;">
-          <DatePeriodoPicker />
-        </el-col>
         <el-col :span="24" style="margin: 0.5rem 0 1rem;">
           <el-row class="row-bg" justify="space-between">
             <el-col :span="4">
@@ -21,8 +17,8 @@
             <Empty image-size="200px" />
           </div>
           <div class="despesas-cartao" v-else>
-            <el-card class="despesas-cartao-card" style="max-width: 480px" v-for="card in contas" :key="card.id"
-              v-loading="loading" :style="{ border: card.contaPrincipal ? '1px solid #a6d4fc' : '' }">
+            <el-card class="despesas-cartao-card" v-for="card in contas" :key="card.id" v-loading="loading"
+              :style="{ border: card.contaPrincipal ? '1px solid #a6d4fc' : '' }">
               <template #header>
                 <div class="despesas-cartao-card_header">
                   <div class="title">
@@ -56,18 +52,16 @@
 <script setup lang="ts">
 import BreadCrumb from '@/shared/components/BreadCrumb.vue';
 import FCButtonIcon from '@/shared/components/buttons/Criar/FCButtonIcon.vue';
-import DatePeriodoPicker from '@/shared/components/DatePeriodoPicker.vue';
 import {
-  Edit,
   Plus,
   Delete,
 } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue';
 import { container } from '@/inversify.config';
 import { ElNotification } from 'element-plus';
-import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from '../services/ports/ContasGateway';
-import AdicionarContaWidget from '../widgets/AdicionarContaWidget.vue';
 import Empty from '@/shared/components/Empty.vue';
+import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from './services/ports/ContasGateway';
+import AdicionarContaWidget from './widgets/AdicionarContaWidget.vue';
 
 const loading = ref(false)
 
@@ -111,7 +105,7 @@ const handleDelete = async (conta: ContaOutputDto) => {
     if (response) {
       ElNotification({
         title: 'success',
-        message: 'Conta Excluída com sucesso.',
+        message: 'Conta Excluída com sucesso',
         type: 'success',
         duration: 2000
       })
@@ -195,6 +189,11 @@ onMounted(async () => {
       &-card:hover {
         cursor: pointer;
         box-shadow: 2px 2px 6px 2px #a5d4f8;
+      }
+
+      @media screen and (max-width: 920px) {
+        grid-template-columns: repeat(1, 1fr);
+        grid-auto-rows: auto;
       }
     }
   }

@@ -5,7 +5,7 @@ export type ContaInputDto = {
   banco: number | undefined
   nomeBanco: string
   nome: string
-  conta: string
+  conta: string | undefined
   agencia: string
   saldo: string
   contaPrincipal: boolean
@@ -16,7 +16,7 @@ export type ContaOutputDto = {
   banco: number | undefined
   nomeBanco: string
   nome: string
-  conta: string
+  conta: string | undefined
   agencia: string
   saldo: string
   contaPrincipal: boolean

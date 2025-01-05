@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/shared/utils/utils";
+import { formatCurrency } from "@/core/utils/utils";
 
 export default function useFinanceHandler() {
 

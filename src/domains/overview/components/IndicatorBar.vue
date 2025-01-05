@@ -13,7 +13,7 @@
 import { computed, reactive, ref, watch } from 'vue';
 import Empty from '@/shared/components/Empty.vue';
 import { EcolorsPaletteMapper } from '@/core/@types/enums'; // Certifique-se de importar a paleta de cores
-import { formatCurrency } from '@/shared/utils/utils';
+import { formatCurrency } from '@/core/utils/utils';
 import { ECategoriaOptions } from '@/domains/despesas/types';
 
 type IProps = {

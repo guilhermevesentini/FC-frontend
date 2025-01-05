@@ -6,7 +6,7 @@
     <div class="flex-grow" />
     <span>{{ nomeUsuario }}</span>
     <div class="flex-grow" />
-    <el-switch class="hidden-xs" v-model="thema" inline-prompt :active-icon="Sunny" :inactive-icon="Moon"
+    <el-switch class="hidden-xs" v-model="thema" inline-prompt :active-icon="Moon" :inactive-icon="Sunny"
       @click="toggleTheme" />
     <el-dropdown trigger="click" class="menu">
       <span class="el-dropdown-link">
@@ -15,10 +15,9 @@
         </el-icon>
       </span>
       <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="showAlterarSenha = true">Alterar Senha</el-dropdown-item>
-          <!-- <el-dropdown-item>Configurar Conta</el-dropdown-item>
-          <el-dropdown-item>Personalizar</el-dropdown-item> -->
+        <el-dropdown-menu style="width: 200px;">
+          <el-dropdown-item @click="showAlterarSenha = true" :icon="Lock">Alterar Senha</el-dropdown-item>
+          <el-divider style="margin: 5px 0 5px"></el-divider>
           <el-dropdown-item :icon="SwitchButton" @click="logout">Sair</el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -30,12 +29,14 @@
 <script setup lang="ts">
 import logo from "@/shared/assets/images/logo.png";
 import router from '@/core/router';
-import { Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
+import { Lock, Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
 import { onMounted, ref } from "vue";
 import { useLogout } from "../composables/useLogout";
 import AlterarSenha from "@/shared/components/menu-de-configuracao/alterar-senha/AlterarSenha.vue";
 
-const thema = ref(true);
+const savedTheme = localStorage.getItem('theme') || 'light';
+const isDarkMode = savedTheme === 'dark';
+const thema = ref(isDarkMode);
 
 const nomeUsuario = ref('')
 const showAlterarSenha = ref(false)
@@ -66,11 +67,20 @@ onMounted(() => {
   const usuario = storage ? JSON.parse(storage) : {};
   nomeUsuario.value = usuario.username || 'user';
 
-
   const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  const isDarkApplied = document.documentElement.classList.contains('dark');
+  const isLightApplied = document.documentElement.classList.contains('light');
+  const currentTheme = isDarkApplied ? 'dark' : isLightApplied ? 'light' : '';
+
+  if (savedTheme !== currentTheme) {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(savedTheme);
+  }
+
   thema.value = savedTheme === 'dark';
 });
+
 </script>
 
 <style lang="scss" scoped>

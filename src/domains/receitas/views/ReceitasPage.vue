@@ -86,7 +86,7 @@ import TableFilterableFrame from '@/shared/components/TableFilterableFrame.vue';
 import { ReceitasGatewayDi, type ReceitaInputDto, type ReceitaOutputDto, type ReceitasGateway } from '../services/ports/ReceitasGateway';
 
 import useFinanceHandler from '../../despesas/composables/useFinanceHandler';
-import { formatCurrency, formatDate } from '@/shared/utils/utils';
+import { formatCurrency, formatDate } from '@/core/utils/utils';
 import ResumoLateral from '@/shared/components/ResumoLateral.vue';
 import { ReceitasFactoryDi, type IReceitasFactory } from '../ReceitasFactory';
 import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } from '../types';

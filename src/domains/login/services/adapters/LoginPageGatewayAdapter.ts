@@ -1,11 +1,11 @@
 import { httpClientDI, HttpStatusCode, type HttpClient, type IDefaultHttpResponse, type IHttpResponse } from "@/core/@types/httpClient";
 import { inject, injectable } from "inversify";
 import 'reflect-metadata';
-import type { IAlterarInputSenha, IRecuperarSenha, IResponseLoginValidation, IRuleLoginForm } from "../../../../domains/login/types";
+import type { IAlterarInputSenha, IRecuperarSenha, IResponseLoginValidation, IRuleLoginForm } from "../../types";
 import type { ILoginPageGateway } from "../ports/LoginPageGateway";
 
 @injectable()
-export default class LoginPageHttpRequest implements ILoginPageGateway {
+export default class LoginPageGatewayAdapter implements ILoginPageGateway {
     @inject(httpClientDI) private readonly httpClient!: HttpClient
 
     async cadastrarNovoUsuario(params: IRuleLoginForm): Promise<IDefaultHttpResponse<boolean | null> | undefined> {

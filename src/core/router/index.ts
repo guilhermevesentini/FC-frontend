@@ -1,30 +1,19 @@
-import { createRouter, createWebHashHistory, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import Login from '@/domains/login/views/logar/LoginPage.vue';
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import { despesasPaths } from '../../domains/despesas/router/despesasPath';
-import ResgistrarUsuario from '@/domains/login/views/registrar/ResgistrarUsuario.vue';
-import RecuperarSenha from '@/domains/login/views/recuperarSenha/RecuperarSenha.vue';
 import BaseLayout from '../layouts/BaseLayout.vue';
-import { isAuthenticated } from '@/shared/composables/auth';
+import { isAuthenticated } from '@/core/composables/auth';
 import { contasPaths } from '@/domains/contas/routes/contasPaths';
 import { receitasPaths } from '@/domains/receitas/routes/receitasPaths';
 import { overviewPaths } from '@/domains/overview/router/overviewPaths';
 import NotFoundPage from '@/shared/components/NotFoundPage.vue';
 import { useLogout } from '../composables/useLogout';
+import { loginPaths } from '@/domains/login/router/loginPaths';
+import useGlobalLoading from '../composables/useGlobalLoading';
 
 const { logout } = useLogout();
 
 const routes: Array<RouteRecordRaw> = [    
-  { path: '/login', component: Login },
-  {
-    path: '/novoUsuario',
-    name: "Novo usuario",
-    component: ResgistrarUsuario
-  },
-  {
-    path: '/recuperarSenha',
-    name: "Recuperar senha",
-    component: RecuperarSenha
-  },
+  ...loginPaths,
   { 
     path: '/', 
     redirect: '/login',
@@ -40,18 +29,30 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/:pathMatch(.*)*', component: NotFoundPage },
 ];
 
+const { start, finish } = useGlobalLoading();
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated()) {
-    logout()
+router.beforeEach(async (to, from, next) => {
+  start();
 
-    next('/login');
-  } else {
-    next();
+  try {
+    if (to.meta.requiresAuth && !isAuthenticated()) {
+      await logout();
+      next('/login');
+    } else {
+      next();
+    }
+  } catch (error) {
+    console.error('Error during navigation:', error);
+    next(false);
+  } finally {
+    setTimeout(() => {
+      finish();
+    }, 1000)    
   }
 });
 

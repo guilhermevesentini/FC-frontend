@@ -1,6 +1,6 @@
 export const contasPaths = [{
   path: "/contas",
   name: "Contas",
-  component: () => import('@/domains/contas/views/ContasPage.vue'),
+  component: () => import('@/domains/contas/ContasPage.vue'),
   meta: { requiresAuth: true }
 }]

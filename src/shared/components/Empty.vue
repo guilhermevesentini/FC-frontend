@@ -1,7 +1,7 @@
 <template>
   <div class="no-data">
     <el-empty :description="text" :image-size="imageSize" v-if="!onlyIcon" />
-    <el-empty description=" " :image-size="imageSize" v-else />
+    <el-empty description=" " :image-size="imageSize" fill="blue" v-else />
   </div>
 </template>
 

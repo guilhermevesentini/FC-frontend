@@ -30,7 +30,7 @@ import {
     Delete,
     Brush
 } from '@element-plus/icons-vue'
-import { filtrarItems } from '@/shared/utils/utils';
+import { filtrarItems } from '@/core/utils/utils';
 import { Search } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue';
 import ConfirmationDialog from './ConfirmationDialog.vue';

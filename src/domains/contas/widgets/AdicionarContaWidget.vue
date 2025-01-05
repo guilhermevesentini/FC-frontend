@@ -1,6 +1,6 @@
 <template>
-  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :on-before-close="handleLimpar()">
-    <template #header="{ close, titleId, titleClass }">
+  <el-drawer class="adicionar_conta_drawer" size="600px" height="100%" :before-close="onCloseDrawer">
+    <template #header>
       <h4>Adicionar conta</h4>
     </template>
     <el-form ref="formRef" :model="contaDetails" :rules="rules" label-position="top" style="width: 100%"
@@ -62,7 +62,7 @@ const contasGateway = container.get<ContasGateway>(ContasGatewayDi);
 const contaDetails = ref<ContaOutputDto>({
   agencia: '',
   contaPrincipal: false,
-  conta: '',
+  conta: undefined,
   id: '',
   nome: '',
   banco: undefined,
@@ -83,10 +83,15 @@ const emits = defineEmits<{
   (event: "handleFechar"): void;
 }>();
 
+const onCloseDrawer = (done: () => void) => {
+  handleLimpar()
+  done();
+}
 const handleLimpar = () => {
   contaDetails.value.agencia = ''
   contaDetails.value.conta = ''
   contaDetails.value.nome = ''
+  contaDetails.value.nomeBanco = ''
   contaDetails.value.banco = undefined
   contaDetails.value.contaPrincipal = false
   contaDetails.value.saldo = ''

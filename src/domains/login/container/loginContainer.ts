@@ -1,9 +1,9 @@
 
 import { ContainerModule } from "inversify"
 import { LoginPageGatewayDi, type ILoginPageGateway } from "../services/ports/LoginPageGateway"
-import LoginPageHttpRequest from "../services/login/LoginPageHttpRequest"
+import LoginPageGatewayAdapter from "../services/adapters/LoginPageGatewayAdapter"
 
 
 export const loginContainer = new ContainerModule((bind) => {
-    bind<ILoginPageGateway>(LoginPageGatewayDi).to(LoginPageHttpRequest)
+    bind<ILoginPageGateway>(LoginPageGatewayDi).to(LoginPageGatewayAdapter)
 })
