@@ -81,6 +81,11 @@ export const EcolorsPaletteMapper = {
   Pêssego: '#FFDAB9', // Pêssego
 };
 
+export enum ETipoCategory {
+  income = 1,
+  expense = 2
+}
+
 
 
 

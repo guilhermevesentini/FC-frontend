@@ -6,6 +6,7 @@ import { httpClientDI, type HttpClient, type IDefaultHttpResponse } from "@/core
 @injectable()
 export default class DespesasGatewayAdapters implements IDespesasGateway {
     @inject(httpClientDI) private readonly httpClient!: HttpClient
+    
     async editarDespesas(despesa: IDespesasModel): Promise<boolean> {
         const response = await this.httpClient.post<boolean>({
             url: `/edit-expense`,

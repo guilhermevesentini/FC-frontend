@@ -9,12 +9,15 @@
               <el-input v-model="despesasDetails.nome" placeholder="Digite aqui" />
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="6" :md="6" :lg="6">
-            <el-form-item label="Categoria" prop="categoria">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6" style="display: flex; align-items: center;">
+            <el-form-item label="Categoria" prop="categoria" style="width: 100%;">
               <el-select v-model="despesasDetails.categoria" placeholder="Selecione...">
                 <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item label=" ">
+              <el-button :icon="Plus" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6" v-if="tipo == ETipoDespesaDrawer.criar">
@@ -69,8 +72,8 @@
           </el-col>
         </el-row>
       </el-form>
+      <CategoriasList v-model="showCategoriaList" v-if="showCategoriaList" />
     </template>
-
     <template #FLeft>
       <el-button @click="Voltar">Cancel</el-button>
     </template>
@@ -82,15 +85,19 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { computed, onMounted, onUnmounted, reactive, ref, watch, watchEffect } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { DespesasGatewayDi, type IDespesasGateway } from '../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { DespesaInitialState, ECategoriaOptions, EFrequenciaOptions, ESelectOptions, ETipoDespesaDrawer, ETipoOptions, type IDespesasModel } from '../types';
+import { ECategoriaOptions, ESelectOptions, ETipoDespesaDrawer, ETipoOptions, type IDespesasModel } from '../types';
 import { configInputMask } from '@/core/@types/types';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
+import {
+  Plus
+} from '@element-plus/icons-vue';
+import CategoriasList from '@/shared/components/categorias/CategoriasList.vue';
 
 interface IProps {
   despesa: IDespesasModel | undefined
@@ -98,6 +105,8 @@ interface IProps {
 }
 
 const loading = ref(false)
+
+const showCategoriaList = ref(false)
 
 const props = defineProps<IProps>()
 
