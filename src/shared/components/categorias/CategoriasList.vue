@@ -1,29 +1,33 @@
 <template>
-  <FCDrawer title="Categorias (Em construção)" :on-before-close="Limpar" destroy-on-close>
+  <FCDrawer title="Categorias (Em construção)" :on-before-close="Limpar" destroy-on-close :hasFooter="false">
     <template #body>
-      <ElButton @click="handleCriar()">Criar categoria</ElButton>
-      <br>
-      <el-table :data="tableData" stripe style="width: 100%">
+      <ElButton type="primary" style="width: 100%; height: 40px;" @click="handleCriar()">
+        Adicionar categoria
+      </ElButton>
+      <Empty v-if="!tableData"></Empty>
+      <el-table :data="tableData" stripe style="width: 100%" v-loading="loading" v-else>
         <el-table-column prop="nome" label="Nome" width="auto" />
+        <el-table-column fixed="right" label="" width="60">
+          <template #default="scope">
+            <el-button link type="danger" size="small" @click.prevent="deletar(scope.row.id)">
+              Exluir
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
-      <el-dialog v-model="dialogVisible" title="Nova categoria" width="500">
-        <el-input v-model="novaCategoria" type="text" placeholder="Digite aqui"></el-input>
+
+      <el-dialog v-model="dialogVisible" title="Nova categoria" width="500" :before-close="handleCloseDialog">
+        <el-input v-model="novaCategoria" type="text" placeholder="Digite aqui" clearable></el-input>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="dialogVisible = false">cancelar</el-button>
+            <el-button @click="handleCloseDialog">cancelar</el-button>
             <el-button type="primary" @click="handleSalvar">
               Salvar
             </el-button>
           </div>
         </template>
       </el-dialog>
-    </template>
-    <template #FLeft>
-      <span></span>
-    </template>
-    <template #FRight>
-      <el-button type="primary" @click="handleCriar()" :loading="loading">Salvar</el-button>
     </template>
   </FCDrawer>
 </template>
@@ -36,6 +40,13 @@ import { categoriasContainer } from './container/categoriasContainer';
 import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from './services/ports/CategoriasGateway';
 import { ETipoCategory } from '@/core/@types/enums';
 import { ElButton } from 'element-plus';
+import Empty from '../Empty.vue';
+
+type Props = {
+  tipo: ETipoCategory
+}
+
+const props = defineProps<Props>()
 
 container.load(categoriasContainer)
 
@@ -52,25 +63,47 @@ const tableData = ref<CategoriaDto[]>([])
 const Limpar = () => { }
 
 const handleCriar = () => {
+  novaCategoria.value = ''
   dialogVisible.value = true
 }
 
+const handleCloseDialog = () => {
+  dialogVisible.value = false;
+  novaCategoria.value = ''; // Limpa o valor do input
+};
+
 const obterCategorias = async () => {
-  const response = await categoriasGateway.obter({ tipo: ETipoCategory.income })
+  try {
+    loading.value = true
 
-  if (response?.statusCode != 200) return
+    const response = await categoriasGateway.obter({ tipo: props.tipo })
 
-  tableData.value = response.result || []
+    if (response?.statusCode != 200) return
+
+    tableData.value = response.result || []
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleSalvar = async () => {
   const model = {
     id: undefined,
     nome: novaCategoria.value,
-    tipo: ETipoCategory.expense
+    tipo: props.tipo
   }
 
   const response = await categoriasGateway.criar(model)
+
+  if (response?.statusCode != 200) return
+
+  obterCategorias()
+
+  dialogVisible.value = false
+}
+
+const deletar = async (id: string) => {
+  const response = await categoriasGateway.deletar({ id: id, tipo: props.tipo })
 
   if (response?.statusCode != 200) return
 

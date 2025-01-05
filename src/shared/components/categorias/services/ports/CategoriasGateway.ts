@@ -13,6 +13,7 @@ export type ObterCategoriasInputDto = {
 
 export type DeletarCategoriasInputDto = {
   id: string
+  tipo: ETipoCategory
 }
 
 export interface CategoriasGateway {

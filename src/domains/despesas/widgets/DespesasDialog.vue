@@ -72,7 +72,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <CategoriasList v-model="showCategoriaList" v-if="showCategoriaList" />
+      <CategoriasList v-model="showCategoriaList" v-if="showCategoriaList" :tipo="ETipoCategory.expense" />
     </template>
     <template #FLeft>
       <el-button @click="Voltar">Cancel</el-button>
@@ -98,6 +98,7 @@ import {
   Plus
 } from '@element-plus/icons-vue';
 import CategoriasList from '@/shared/components/categorias/CategoriasList.vue';
+import { ETipoCategory } from '@/core/@types/enums';
 
 interface IProps {
   despesa: IDespesasModel | undefined

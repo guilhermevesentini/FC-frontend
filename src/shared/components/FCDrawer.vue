@@ -1,10 +1,10 @@
 <template>
   <el-drawer v-bind="$attrs" :size="widgetSize" class="FC-Drawer" destroy-on-close>
-    <template #header="{ close, titleId, titleClass }">
+    <template #header>
       <h4>{{ title }}</h4>
     </template>
     <slot name="body"></slot>
-    <template #footer>
+    <template #footer v-if="hasFooter">
       <slot name="FLeft"></slot>
       <slot name="FRight"></slot>
     </template>
@@ -18,12 +18,14 @@ import { computed } from 'vue';
 
 interface IProps {
   title: string
-  size?: string
+  width?: string
+  hasFooter?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   title: '',
-  size: '700px'
+  size: '700px',
+  hasFooter: true
 })
 
 const { breakpoints } = useBreakpointsElement();
@@ -32,7 +34,7 @@ const isMobile = computed(() => {
   return breakpoints.smallerOrEqual("sm").value;
 });
 
-const widgetSize = computed(() => isMobile ? '100%' : props.size)
+const widgetSize = computed(() => isMobile ? '100%' : props.width)
 </script>
 
 <style lang="scss">
