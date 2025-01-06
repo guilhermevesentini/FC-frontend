@@ -7,7 +7,7 @@ export default function useGlobalLoading() {
     loadingInstance = ElLoading.service({
       lock: true,
       text: 'Loading...',
-      background: 'rgba(245, 245, 245, 0.14)',
+      background: 'rgba(194, 194, 194, 0.65)',
     });
   };
 

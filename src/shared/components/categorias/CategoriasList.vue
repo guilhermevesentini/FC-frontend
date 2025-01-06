@@ -17,7 +17,7 @@
       </el-table>
 
 
-      <el-dialog v-model="dialogVisible" title="Nova categoria" width="500" :before-close="handleCloseDialog">
+      <el-dialog v-model="dialogVisible" title="Nova categoria" width="350" :before-close="handleCloseDialog">
         <el-input v-model="novaCategoria" type="text" placeholder="Digite aqui" clearable></el-input>
         <template #footer>
           <div class="dialog-footer">
@@ -33,22 +33,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import FCDrawer from '../FCDrawer.vue';
 import { container } from '@/inversify.config';
-import { categoriasContainer } from './container/categoriasContainer';
 import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from './services/ports/CategoriasGateway';
 import { ETipoCategory } from '@/core/@types/enums';
 import { ElButton } from 'element-plus';
 import Empty from '../Empty.vue';
+import useBreakpointsElement from '@/core/composables/useBreakpoints';
 
 type Props = {
   tipo: ETipoCategory
 }
 
 const props = defineProps<Props>()
-
-container.load(categoriasContainer)
 
 const dialogVisible = ref(false)
 
@@ -59,6 +57,14 @@ const loading = ref(false)
 const categoriasGateway = container.get<CategoriasGateway>(CategoriasGatewayDi);
 
 const tableData = ref<CategoriaDto[]>([])
+
+const { breakpoints } = useBreakpointsElement();
+
+const isMobile = computed(() => {
+  return breakpoints.smallerOrEqual("sm").value;
+});
+
+const widgetSize = computed(() => isMobile ? '100%' : '300px')
 
 const Limpar = () => { }
 
@@ -113,8 +119,6 @@ const deletar = async (id: string) => {
 onMounted(() => {
   obterCategorias()
 })
-
-onUnmounted(() => container.unload(categoriasContainer))
 </script>
 
 <style lang="scss" scoped></style>

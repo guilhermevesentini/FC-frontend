@@ -1,5 +1,5 @@
 <template>
-  <FCDrawer :title="tituloDrawer" :on-before-close="Limpar" destroy-on-close>
+  <FCDrawer :title="tituloDrawer" destroy-on-close :before-close="onCloseDrawer">
     <template #body>
       <el-form ref="formRef" :model="despesasDetails" :rules="rules" label-position="top" style="width: 100%"
         v-loading="loading">
@@ -11,10 +11,8 @@
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6" style="display: flex; align-items: center;">
             <el-form-item label="Categoria" prop="categoria" style="width: 100%;">
-              <el-select v-model="despesasDetails.categoria" placeholder="Selecione...">
-                <el-option v-for="item in ECategoriaOptions" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
+              <FCSelectCategorias v-model="despesasDetails.categoria" :tipo="ETipoCategory.expense"
+                @update:model-value="updateCategoria" />
             </el-form-item>
             <el-form-item label=" ">
               <el-button :icon="Plus" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
@@ -91,7 +89,7 @@ import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
 import { unformat, format } from 'v-money3';
-import { ECategoriaOptions, ESelectOptions, ETipoDespesaDrawer, ETipoOptions, type IDespesasModel } from '../types';
+import { ESelectOptions, ETipoDespesaDrawer, ETipoOptions, type IDespesasModel } from '../types';
 import { configInputMask } from '@/core/@types/types';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 import {
@@ -99,6 +97,7 @@ import {
 } from '@element-plus/icons-vue';
 import CategoriasList from '@/shared/components/categorias/CategoriasList.vue';
 import { ETipoCategory } from '@/core/@types/enums';
+import FCSelectCategorias from '@/shared/components/FCSelectCategorias.vue';
 
 interface IProps {
   despesa: IDespesasModel | undefined
@@ -132,6 +131,10 @@ const despesasDetails = ref<IDespesasModel>({
   vencimento: undefined,
   contaId: '',
 });
+
+const updateCategoria = (val: string) => {
+  despesasDetails.value.categoria = val
+}
 
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
 
@@ -218,6 +221,11 @@ const handleCriar = async (formEl: FormInstance | undefined) => {
   });
 }
 
+const onCloseDrawer = (done: () => void) => {
+  Limpar()
+  done();
+}
+
 const Limpar = (() => {
   despesasDetails.value.id = ''
   despesasDetails.value.nome = ''
@@ -225,6 +233,7 @@ const Limpar = (() => {
   despesasDetails.value.range = undefined
   despesasDetails.value.descricao = ''
   despesasDetails.value.contaId = ''
+  despesasDetails.value.categoria = ''
   despesasDetails.value.observacao = ''
   despesasDetails.value.status = '2'
   despesasDetails.value.valor = '0.00'

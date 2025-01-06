@@ -6,6 +6,7 @@ import { receitasContainer } from "./domains/receitas/container/receitasContaine
 import { despesasContainer } from "./domains/despesas/container/despesasContainer";
 import { overviewContainer } from "./domains/overview/container/overviewContainer";
 import { contasContainer } from "./domains/contas/container/contasContainer";
+import { categoriasContainer } from "./shared/components/categorias/container/categoriasContainer";
 
 const container = new Container()
 
@@ -15,6 +16,7 @@ container.load(receitasContainer)
 container.load(contasContainer)
 container.load(despesasContainer)
 container.load(overviewContainer)
+container.load(categoriasContainer)
 
 export {
   container

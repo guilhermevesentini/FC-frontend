@@ -87,6 +87,7 @@ const onCloseDrawer = (done: () => void) => {
   handleLimpar()
   done();
 }
+
 const handleLimpar = () => {
   contaDetails.value.agencia = ''
   contaDetails.value.conta = ''

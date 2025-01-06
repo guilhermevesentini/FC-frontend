@@ -10,7 +10,7 @@
             <el-col :span="4" style="visibility: hidden;">
               <h3>Filtros</h3>
             </el-col>
-            <el-col span="auto" style="display: flex; align-items: center;">
+            <el-col span="auto" style="display: flex; align-items: center; justify-content: center;width: 100%;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
             </el-col>
             <el-col :span="4" style="display: flex; justify-content: flex-end; visibility: hidden;">
