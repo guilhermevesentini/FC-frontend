@@ -1,6 +1,6 @@
 import type { IDefaultHttpResponse } from "@/core/@types/httpClient"
 
-type Range = [string | undefined, string | undefined] | undefined;
+export type CustomRange = [string | undefined, string | undefined] | [];
 
 export type ReceitaInputDto = {
   id: string
@@ -8,7 +8,7 @@ export type ReceitaInputDto = {
   recebimento: Date | undefined
   replicar: boolean
   tipoLancamento: string
-  range?: Range
+  range: CustomRange
   meses?: ReceitaMesOutputDto[]
 } & ReceitaMesOutputDto;
 

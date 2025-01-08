@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import type { IDespesas, IDespesasModel } from "./types";
+import type { CustomRange } from "../receitas/services/ports/ReceitasGateway";
 
 export const DespesaFactoryDi = Symbol("DespesaFactoryDi");
 
@@ -24,7 +25,7 @@ export default class DespesaFactory implements IDespesaFactory {
           categoria: mes.categoria ?? '',
           vencimento: mes.vencimento,
           tipoLancamento: despesa.tipoLancamento ?? '1',
-          range: [despesa.range?.[0] || '', despesa.range?.[1] || ''],
+          range: [despesa.range?.[0] || '', despesa.range?.[1] || '']  as CustomRange,//TODO: erro de tipagem range
           ano: mes.ano ?? 0,
           contaId: mes.contaId ?? '',
           replicar: despesa.replicar ?? false,

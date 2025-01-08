@@ -125,7 +125,7 @@ const despesasDetails = ref<IDespesasModel>({
   descricao: '',
   observacao: '',
   tipoLancamento: '1',
-  range: [],
+  range: ['', ''],
   status: '2',
   valor: '0.00',
   vencimento: undefined,

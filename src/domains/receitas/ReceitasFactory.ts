@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import type { ReceitaInputDto, ReceitaModelDto } from "./services/ports/ReceitasGateway";
+import type { CustomRange, ReceitaInputDto, ReceitaModelDto } from "./services/ports/ReceitasGateway";
 
 export const ReceitasFactoryDi = Symbol("ReceitasFactoryDi");
 
@@ -23,7 +23,7 @@ export default class ReceitaFactory implements IReceitasFactory {
           descricao: mes.descricao ?? '',
           tipoLancamento: receita.tipoLancamento ?? '1',
           categoria: mes.categoria ?? '',
-          range: [receita.range?.[0] || '', receita.range?.[1] || ''],
+          range: [receita.range?.[0] || '', receita.range?.[1] || ''] as CustomRange, //TODO: erro de tipagem range
           recebimento: mes.recebimento,
           ano: mes.ano ?? 0,
           contaId: receita.contaId,

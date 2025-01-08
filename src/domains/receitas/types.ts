@@ -20,7 +20,7 @@ export const ReceitasInitialState: ReceitaInputDto = {
   contaId: '',
   incomeId: '',
   tipoLancamento: '1',
-  range: undefined,
+  range: ['', ''],
   observacao: ''
 }
 
