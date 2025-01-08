@@ -24,10 +24,7 @@ export default class DespesaFactory implements IDespesaFactory {
           categoria: mes.categoria ?? '',
           vencimento: mes.vencimento,
           tipoLancamento: despesa.tipoLancamento ?? '1',
-          range: {
-            inicio: despesa.range?.inicio ?? undefined,
-            fim: despesa.range?.fim ?? undefined
-          },
+          range: [despesa.range?.[0] || '', despesa.range?.[1] || ''],
           ano: mes.ano ?? 0,
           contaId: mes.contaId ?? '',
           replicar: despesa.replicar ?? false,
@@ -36,7 +33,8 @@ export default class DespesaFactory implements IDespesaFactory {
           id: despesa.id ?? '',
         })) || []
     );
-
+    
+    //TODO: erro de tipagem range
     return despesasDoMes.length ? despesasDoMes : [];
   }
 }

@@ -27,8 +27,8 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6"
-            v-if="receitaDetails.tipoLancamento == '2' && tipo == ETipoReceitaDrawer.criar">
-            <el-form-item label="Meses" prop="range">
+            v-if="receitaDetails.tipoLancamento == '2' || receitaDetails.tipoLancamento == '3' && tipo == ETipoReceitaDrawer.criar">
+            <el-form-item label="Período" prop="range">
               <el-date-picker v-model="receitaDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
             </el-form-item>
@@ -50,9 +50,8 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
-            <el-form-item label="Recebimento" prop="recebimento">
-              <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%"
-                placeholder="Selecione a data" />
+            <el-form-item :label="receitaDetails.tipoLancamento == '3' ? 'Dia do recebimento' : 'Recebimento'" prop="recebimento">              
+              <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%" placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
@@ -84,7 +83,7 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch, watchEffect } from 'vue';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
 import router from '@/core/router';
@@ -125,7 +124,7 @@ const receitaDetails = ref<ReceitaInputDto>({
   nome: '',
   categoria: '',
   tipoLancamento: '1',
-  range: undefined,
+  range: ['', ''],
   descricao: '',
   observacao: '',
   status: '2',
@@ -159,7 +158,7 @@ const criarReceita = async () => {
   try {
     loading.value = true
 
-    const mes = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getMonth() : 0
+    const mes = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getMonth() + 1 : 0
     const ano = receitaDetails.value.recebimento ? new Date(receitaDetails.value.recebimento).getFullYear() : 0
 
     const response = await receitasGateway.criar({ ...receitaDetails.value, mes: mes, ano: ano });
@@ -256,8 +255,10 @@ const preencher = (data: ReceitaInputDto | undefined) => {
   receitaDetails.value.incomeId = data?.incomeId || '';
   receitaDetails.value.observacao = data?.observacao || '';
   receitaDetails.value.tipoLancamento = data?.tipoLancamento || '1'
-  receitaDetails.value.range && receitaDetails.value.range.inicio ? receitaDetails.value.range.inicio = data?.range?.inicio || undefined : {}
-  receitaDetails.value.range && receitaDetails.value.range.fim ? receitaDetails.value.range.fim = data?.range?.fim || undefined : {}
+  receitaDetails.value.range = [
+    data?.range?.[0] || undefined,
+    data?.range?.[1] || undefined,
+  ];
 };
 
 watch(
@@ -272,6 +273,19 @@ watch(
   { immediate: true }
 );
 
+watchEffect(() => {
+  const isTipoLancamentoRecorrente = receitaDetails.value.tipoLancamento === '3';
+
+  if (isTipoLancamentoRecorrente) {
+    const primeiroMesDoAno = new Date(new Date().getFullYear(), 0, 1);
+    const ultimoMesDoAno = new Date(new Date().getFullYear(), 11, 31);
+
+    receitaDetails.value.range = [primeiroMesDoAno.toString(), ultimoMesDoAno.toString()]; // Definir como array
+  } else {
+    receitaDetails.value.range = ['', '']
+  }
+});
+
 onMounted(() => {
   Limpar()
 })
@@ -281,4 +295,8 @@ onUnmounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+// .date-picker-custom .el-date-picker__header {
+//   display: none !important;
+// }
+</style>

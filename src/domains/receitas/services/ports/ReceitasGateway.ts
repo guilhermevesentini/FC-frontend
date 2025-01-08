@@ -1,15 +1,14 @@
 import type { IDefaultHttpResponse } from "@/core/@types/httpClient"
 
+type Range = [string | undefined, string | undefined] | undefined;
+
 export type ReceitaInputDto = {
   id: string
   nome: string
   recebimento: Date | undefined
   replicar: boolean
   tipoLancamento: string
-  range?: {
-    inicio: string | undefined
-    fim: string | undefined
-  }
+  range?: Range
   meses?: ReceitaMesOutputDto[]
 } & ReceitaMesOutputDto;
 

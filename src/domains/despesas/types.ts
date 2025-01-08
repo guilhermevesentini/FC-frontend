@@ -5,16 +5,15 @@ export enum ETipoDespesaDrawer {
   editar = '2'
 }
 
+type Range = [string | undefined, string | undefined] | [];
+
 export interface IDespesasModel {
   id: string | null
   nome: string
   vencimento: Date | string | undefined
   replicar: boolean
   tipoLancamento: string
-  range?: {
-    inicio: string | undefined
-    fim: string | undefined
-  }
+  range?: Range
   contaId: string
   mes: number
   ano: number
@@ -44,10 +43,7 @@ export interface IDespesas {
   nome: string
   vencimento: Date | string | undefined
   tipoLancamento: string
-  range?: {
-    inicio: string | undefined
-    fim: string | undefined
-  }
+  range?: Range
   replicar: boolean
   meses: IDespesaMeses[] | [];
 }

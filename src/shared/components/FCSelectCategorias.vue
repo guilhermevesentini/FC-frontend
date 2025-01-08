@@ -1,14 +1,21 @@
 <template>
-  <el-select v-model="selectedValue" placeholder="Selecione..." filterable clearable>
-    <el-option v-for="item in ECategoriasOpt" :key="item.value" :label="item.label" :value="item.value"></el-option>
+  <el-select class="FC-categorias-select" v-model="selectedValue" placeholder="Selecione..." filterable clearable
+    :loading="loading">
+    <el-option v-for="item in OPT" :key="item.value" :label="item.label" :value="item.value">
+      <div style="display: flex; align-items: center;">
+        <el-tag class="color-label" :color="item.cor"
+          style="margin-right: 8px; border-radius: 5px; width: 10px; height: 15px; border: none;" />
+        {{ item.label }}
+      </div>
+    </el-option>
   </el-select>
 </template>
 
 <script setup lang="ts">
-import { container } from '@/inversify.config';
-import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from './categorias/services/ports/CategoriasGateway';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { ETipoCategory } from '@/core/@types/enums';
+import { useCategoriasStore } from '@/core/store/categoriasStore/index.';
+import { storeToRefs } from 'pinia';
 
 type Props = {
   tipo: ETipoCategory
@@ -23,43 +30,26 @@ const emit = defineEmits(['update:modelValue'])
 
 const selectedValue = ref('')
 
-const categorias = ref<CategoriaDto[]>([])
+const categoriasStore = useCategoriasStore()
+const { categoriasOpt } = storeToRefs(categoriasStore)
 
-const categoriasGateway = container.get<CategoriasGateway>(CategoriasGatewayDi);
+const OPT = computed(() => categoriasOpt.value)
 
-const ECategoriasOpt = ref()
+const value = ref<string[]>([])
 
-const obterCategorias = async () => {
-  try {
-    loading.value = true
-
-    const response = await categoriasGateway.obter({ tipo: props.tipo })
-
-    if (response?.statusCode != 200) return
-
-    categorias.value = response.result || []
-
-    ECategoriasOpt.value = response.result?.map((categoria: CategoriaDto) => {
-      return {
-        label: categoria.nome,
-        value: categoria.id
-      }
-    })
-  } finally {
-    loading.value = false
-  }
-}
-
+categoriasOpt.value.forEach((color) => {
+  value.value.push(color.value)
+})
 
 onMounted(async () => {
-  await obterCategorias()
+  await categoriasStore.fetchCategoriasLista(props.tipo)
 })
 
 watch(selectedValue, (newVal) => {
   if (newVal) {
-    emit('update:modelValue', { categoria: newVal })
+    emit('update:modelValue', newVal)
   } else {
-    emit('update:modelValue', { categoria: undefined })
+    emit('update:modelValue', undefined)
   }
 })
 
@@ -68,4 +58,12 @@ watch(() => props.modelValue, (newVal) => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.FC-categorias-select {
+  .color-label {
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 8px;
+  }
+}
+</style>

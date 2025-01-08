@@ -27,6 +27,17 @@ export default class CategoriasGatewayAdapter implements CategoriasGateway {
 
     return response.body
   }
+
+  async editar(input: CategoriaDto): Promise<IDefaultHttpResponse<boolean> | undefined> {
+    const response = await this.httpClient.post<IDefaultHttpResponse<boolean> | undefined>({
+      url: `/edit-category`,
+      body: input
+    });
+
+    if (response.status != 200) return
+
+    return response.body
+  }
   async deletar(input: DeletarCategoriasInputDto): Promise<IDefaultHttpResponse<boolean> | undefined> {
     const response = await this.httpClient.post<IDefaultHttpResponse<boolean> | undefined>({
       url: `/delete-category`,

@@ -38,8 +38,8 @@
               </el-table-column>
               <el-table-column label="Categoria" prop="categoria" width="150" header-align="center" sortable>
                 <template #default="{ row }">
-                  <span class="custom-label" :style="{ backgroundColor: getCategoryColor(row.categoria) }">
-                    {{ getCategoryLabel(row.categoria) }}
+                  <span class="custom-label" :style="{ backgroundColor: handleCategoria(row.categoria).cor }">
+                    {{ handleCategoria(row.categoria).nome }}
                   </span>
                 </template>
               </el-table-column>
@@ -91,6 +91,10 @@ import useFinanceHandler from "../composables/useFinanceHandler";
 import { DespesasGatewayDi, type IDespesasGateway } from "../services/ports/DespesasGateway";
 import IconInsideTable from "../components/IconInsideTable.vue";
 import DespesasDialog from "../widgets/DespesasDialog.vue";
+import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/shared/components/categorias/services/ports/CategoriasGateway";
+import { ETipoCategory } from "@/core/@types/enums";
+import { useCategoriasStore } from "@/core/store/categoriasStore/index.";
+import { storeToRefs } from "pinia";
 
 const loading = ref(false);
 const showDrawer = ref(false);
@@ -107,18 +111,23 @@ const financeHandler = useFinanceHandler();
 const despesasGateway = container.get<IDespesasGateway>(DespesasGatewayDi);
 const despesasFactory = container.get<IDespesaFactory>(DespesaFactoryDi);
 
+const categoriasGateway = container.get<CategoriasGateway>(CategoriasGatewayDi);
+
+const categoriasStore = useCategoriasStore()
+const { categoriasList } = storeToRefs(categoriasStore)
+
 const periodo = reactive({
   mes: new Date().getMonth() + 1,
   ano: new Date().getFullYear()
 })
 
-const getCategoryColor = (value: string) => {
-  return ECategoriaOptions[Number(value)].color || "#ccc";
-}
+const handleCategoria = (categoria: string) => {
+  const findCategoria = categoriasList.value.find((cat) => cat.id == categoria)
 
-const getCategoryLabel = (value: string) => {
-  const option = ECategoriaOptions.find((item) => item.value === value);
-  return option ? option.label : "Desconhecido";
+  return {
+    nome: findCategoria?.nome || 'Não encontrada',
+    cor: findCategoria?.color || "#ccc"
+  }
 }
 
 const formatCollumnNumber = (row: IDespesasModel) => {
@@ -245,6 +254,7 @@ const obterDespesas = async () => {
       listaDeDespesas.value = []
     }
 
+    await categoriasStore.fetchCategoriasLista(ETipoCategory.expense)
   } catch (err) {
     console.log(err);
   } finally {
@@ -260,8 +270,17 @@ const handlePeriodo = async (mes: number, ano: number) => {
   await obterDespesas()
 }
 
+const obterCategorias = async () => {
+  const response = await categoriasGateway.obter({ tipo: ETipoCategory.expense })
+
+  if (response?.statusCode != 200) return
+
+  categoriasList.value = response.result || []
+}
+
 onMounted(() => {
   obterDespesas();
+  obterCategorias()
 })
 </script>
 

@@ -23,10 +23,7 @@ export default class ReceitaFactory implements IReceitasFactory {
           descricao: mes.descricao ?? '',
           tipoLancamento: receita.tipoLancamento ?? '1',
           categoria: mes.categoria ?? '',
-          range: {
-            inicio: receita.range?.inicio ?? undefined,
-            fim: receita.range?.fim ?? undefined
-          },
+          range: [receita.range?.[0] || '', receita.range?.[1] || ''],
           recebimento: mes.recebimento,
           ano: mes.ano ?? 0,
           contaId: receita.contaId,
@@ -37,7 +34,9 @@ export default class ReceitaFactory implements IReceitasFactory {
         })) || []
     );
 
-    return model.length ? model : [];
+    //TODO: erro de tipagem range
+
+    return model.length ? model : []; //vericiar erro
   }
 }
 

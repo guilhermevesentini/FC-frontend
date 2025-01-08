@@ -38,8 +38,8 @@
               </el-table-column>
               <el-table-column label="Categoria" prop="categoria" width="150" header-align="center" sortable>
                 <template #default="{ row }">
-                  <span class="custom-label" :style="{ backgroundColor: getCategoryColor(row.categoria) }">
-                    {{ getCategoryLabel(row.categoria) }}
+                  <span class="custom-label" :style="{ backgroundColor: handleCategoria(row.categoria).cor }">
+                    {{ handleCategoria(row.categoria).nome }}
                   </span>
                 </template>
               </el-table-column>
@@ -90,10 +90,12 @@ import { formatCurrency, formatDate } from '@/core/utils/utils';
 import ResumoLateral from '@/shared/components/ResumoLateral.vue';
 import { ReceitasFactoryDi, type IReceitasFactory } from '../ReceitasFactory';
 import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } from '../types';
-import AdicionarReceitas from '../widgets/ReceitasDialog.vue';
 import IconInsideTable from '@/domains/despesas/components/IconInsideTable.vue';
 import ReceitasDialog from '../widgets/ReceitasDialog.vue';
 import { ElNotification } from 'element-plus';
+import { useCategoriasStore } from '@/core/store/categoriasStore/index.';
+import { storeToRefs } from 'pinia';
+import { ETipoCategory } from '@/core/@types/enums';
 
 const showDrawer = ref(false);
 
@@ -109,6 +111,18 @@ const receitasFactory = container.get<IReceitasFactory>(ReceitasFactoryDi);
 const perPeriodlistaDeReceitas = ref<ReceitaInputDto[] | undefined>([]);
 
 const listaDeReceitas = ref<ReceitaInputDto[]>();
+
+const categoriasStore = useCategoriasStore()
+const { categoriasList } = storeToRefs(categoriasStore)
+
+const handleCategoria = (categoria: string) => {
+  const findCategoria = categoriasList.value.find((cat) => cat.id == categoria)
+
+  return {
+    nome: findCategoria?.nome || 'Não encontrada',
+    cor: findCategoria?.color || "#ccc"
+  }
+}
 
 const totalDeDespesas = computed(() => {
   return financeHandler.obterTotal(perPeriodlistaDeReceitas?.value || [])
@@ -183,7 +197,9 @@ const deletarReceita = async (row: ReceitaInputDto, multiplos?: boolean) => {
       duration: 5000
     })
 
-    const response = await receitasGateway.excluir(row.id, multiplos ? undefined : row.mes);
+    const isMultiplos = multiplos ? 99 : row.mes;
+
+    const response = await receitasGateway.excluir(row.id, isMultiplos);
 
     if (!response) return ElNotification({
       title: 'Erro',
@@ -213,15 +229,6 @@ const formatCollumnNumber = (row: ReceitaInputDto) => {
   return formatCurrency(valor)
 }
 
-const getCategoryColor = (value: string) => {
-  return ECategoriaReceitasOptions[Number(value)].color || "#ccc";
-}
-
-const getCategoryLabel = (value: string) => {
-  const option = ECategoriaReceitasOptions.find((item) => item.value === value);
-  return option ? option.label : "Desconhecido";
-}
-
 const obterReceitas = async () => {
   try {
     loading.value = true
@@ -243,6 +250,8 @@ const obterReceitas = async () => {
     } else {
       listaDeReceitas.value = []
     }
+
+    await categoriasStore.fetchCategoriasLista(ETipoCategory.income)
 
   } catch (err) {
     console.log(err);

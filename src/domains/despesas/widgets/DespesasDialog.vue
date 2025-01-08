@@ -15,7 +15,7 @@
                 @update:model-value="updateCategoria" />
             </el-form-item>
             <el-form-item label=" ">
-              <el-button :icon="Plus" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
+              <el-button :icon="Setting" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6" v-if="tipo == ETipoDespesaDrawer.criar">
@@ -27,8 +27,8 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6"
-            v-if="despesasDetails.tipoLancamento == '2' && tipo == ETipoDespesaDrawer.criar">
-            <el-form-item label="Meses" prop="range">
+            v-if="despesasDetails.tipoLancamento == '2' || despesasDetails.tipoLancamento == '3' && tipo == ETipoDespesaDrawer.criar">
+            <el-form-item label="Período" prop="range">
               <el-date-picker v-model="despesasDetails.range" type="monthrange" start-placeholder="Início"
                 end-placeholder="fim" format="MM/YYYY" />
             </el-form-item>
@@ -50,7 +50,7 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
-            <el-form-item label="Vencimento" prop="vencimento">
+            <el-form-item :label="despesasDetails.tipoLancamento == '3' ? 'Dia do vencimento' : 'Vencimento'" prop="vencimento">
               <el-date-picker v-model="despesasDetails.vencimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import FCDrawer from '@/shared/components/FCDrawer.vue';
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch, watchEffect } from 'vue';
 import { DespesasGatewayDi, type IDespesasGateway } from '../services/ports/DespesasGateway';
 import { container } from '@/inversify.config';
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
@@ -93,7 +93,7 @@ import { ESelectOptions, ETipoDespesaDrawer, ETipoOptions, type IDespesasModel }
 import { configInputMask } from '@/core/@types/types';
 import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 import {
-  Plus
+  Setting
 } from '@element-plus/icons-vue';
 import CategoriasList from '@/shared/components/categorias/CategoriasList.vue';
 import { ETipoCategory } from '@/core/@types/enums';
@@ -125,7 +125,7 @@ const despesasDetails = ref<IDespesasModel>({
   descricao: '',
   observacao: '',
   tipoLancamento: '1',
-  range: undefined,
+  range: [],
   status: '2',
   valor: '0.00',
   vencimento: undefined,
@@ -261,9 +261,24 @@ const preencher = (data: IDespesasModel | undefined) => {
   despesasDetails.value.contaId = data?.contaId || '';
   despesasDetails.value.despesaId = data?.despesaId || '';
   despesasDetails.value.observacao = data?.observacao || '';
-  despesasDetails.value.range && despesasDetails.value.range.inicio ? despesasDetails.value.range.inicio = data?.range?.inicio || undefined : {}
-  despesasDetails.value.range && despesasDetails.value.range.fim ? despesasDetails.value.range.fim = data?.range?.fim || undefined : {}
+  despesasDetails.value.range = [
+    data?.range?.[0] || undefined,
+    data?.range?.[1] || undefined,
+  ];
 };
+
+watchEffect(() => {
+  const isTipoLancamentoRecorrente = despesasDetails.value.tipoLancamento === '3';
+
+  if (isTipoLancamentoRecorrente) {
+    const primeiroMesDoAno = new Date(new Date().getFullYear(), 0, 1);
+    const ultimoMesDoAno = new Date(new Date().getFullYear(), 11, 31);
+
+    despesasDetails.value.range = [primeiroMesDoAno.toString(), ultimoMesDoAno.toString()]; // Definir como array
+  } else {
+    despesasDetails.value.range = ['', '']
+  }
+});
 
 watch(
   () => props.despesa,
