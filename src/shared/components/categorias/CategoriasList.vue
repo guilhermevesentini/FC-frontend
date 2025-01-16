@@ -56,7 +56,7 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import FCDrawer from '../FCDrawer.vue';
 import { container } from '@/inversify.config';
-import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from './services/ports/CategoriasGateway';
+import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from '../../../core/services/ports/CategoriasGateway';
 import { EcolorsPalette, ETipoCategory } from '@/core/@types/enums';
 import { ElButton, type FormInstance, type FormRules } from 'element-plus';
 import Empty from '../Empty.vue';
@@ -65,7 +65,7 @@ import {
   EditPen,
   Delete,
 } from '@element-plus/icons-vue'
-import { useCategoriasStore } from '@/core/store/categoriasStore/index.';
+import { useCategoriasStore } from '@/core/store/categoriasStore/useCategoriasStore';
 
 type Props = {
   tipo: ETipoCategory
@@ -121,7 +121,7 @@ const isMobile = computed(() => {
 
 const widgetSize = computed(() => isMobile.value ? '100%' : '400px')
 
-const Limpar = () => { 
+const Limpar = () => {
   form.id = '';
   form.nome = '';
   form.color = '#ccc';
@@ -132,14 +132,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       if (form.id) handleSalvar('editar')
-      else handleSalvar('criar')      
+      else handleSalvar('criar')
     }
   })
 }
 
 const handleCloseDialog = async () => {
   dialogVisible.value = false;
-  Limpar()  
+  Limpar()
 };
 
 const obterCategorias = async () => {

@@ -2,27 +2,10 @@
   <div class="container_page">
     <div class="content-area">
       <el-row class="main">
-        <el-col>
-
-        </el-col>
         <el-col :span="24" class="filtros">
           <el-row class="container" justify="space-between">
-            <el-col :span="4" style="visibility: hidden;">
-              <h3>Filtros</h3>
-            </el-col>
             <el-col span="auto" style="display: flex; align-items: center; justify-content: center;width: 100%;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
-            </el-col>
-            <el-col :span="4" style="display: flex; justify-content: flex-end; visibility: hidden;">
-              <el-popover trigger="click" v-model:visible="popoverVisible" placement="left-start" width="200">
-                <div>
-                  <span>Contas:</span>
-                  <FCSelectContas v-model="contaSelecionada" @update:model-value="updateConta" />
-                </div>
-                <template #reference>
-                  <Filter style="width: 20px; cursor: pointer;" />
-                </template>
-              </el-popover>
             </el-col>
           </el-row>
         </el-col>
@@ -44,7 +27,8 @@
               <IndicatorLines :resumo="resumo" v-loading="loading" />
             </el-col>
             <el-col :xs="24" :sm="11" :md="11" :lg="11">
-              <IndicatorBar :labels="donut.labels" :values="donut.values" v-loading="loading" />
+              <IndicatorBar :labels="donut.labels" :values="donut.values" v-loading="loading"
+                :lista-categoria="categoriasStore.categoriasList" />
             </el-col>
           </el-row>
         </el-col>
@@ -57,17 +41,18 @@
 import { container } from '@/inversify.config';
 import { onMounted, reactive, ref } from 'vue';
 import DatePeriodoPicker from '@/shared/components/DatePeriodoPicker.vue';
-import { Filter } from '@element-plus/icons-vue';
-import FCSelectContas from '@/shared/components/FCSelectContas.vue';
 import { OverviewGatewayDi, type IOverviewGateway, type OverviewDonutOutputDto, type OverviewResumoMovimentoOutputDto, type OverviewSparkTotalOutputDto } from './services/ports/OverviewGateway';
 import IndicatorSpark from './components/IndicatorSpark.vue';
 import IndicatorLines from './components/IndicatorLines.vue';
 import IndicatorBar from './components/IndicatorBar.vue';
+import { useCategoriasStore } from '@/core/store/categoriasStore/useCategoriasStore';
 
 
 const loading = ref(false)
 
 const overviewGateway = container.get<IOverviewGateway>(OverviewGatewayDi);
+
+const categoriasStore = useCategoriasStore()
 
 const sparks = ref<OverviewSparkTotalOutputDto>({
   totalDespesas: { value: 0, values: [] },
@@ -82,19 +67,12 @@ const resumo = ref<OverviewResumoMovimentoOutputDto>({
   balanco: [], despesas: [], receitas: []
 });
 
-const popoverVisible = ref(false);
-const contaSelecionada = ref<string | undefined>(undefined);
-
 const periodo = reactive({ mes: new Date().getMonth() + 1, ano: new Date().getFullYear() });
 
 const filterDate = ref({
   inicio: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   fim: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
 });
-
-const updateConta = (id: string) => {
-  contaSelecionada.value = id;
-};
 
 const obterSparks = async (inicio: string, fim: string) => {
   const response = await overviewGateway.sparkTotal({ inicio, fim });
@@ -109,14 +87,21 @@ const obterSparks = async (inicio: string, fim: string) => {
 };
 
 const obterDonut = async (inicio: string, fim: string) => {
-  const response = await overviewGateway.obterDonut({ inicio, fim });
-  if (response) {
-    donut.value = { labels: response.result?.labels || [], values: response.result?.values || [] };
+  const [fetchCategoriasResponse, donutResponse] = await Promise.all([
+    categoriasStore.fetchCategoriasLista(),
+    overviewGateway.obterDonut({ inicio, fim })
+  ]);
+
+  if (donutResponse) {
+    donut.value = {
+      labels: donutResponse.result?.labels || [],
+      values: donutResponse.result?.values || []
+    };
   }
 };
 
-const obterResumo = async () => {
-  const response = await overviewGateway.resumoMovimentos();
+const obterResumo = async (ano: number) => {
+  const response = await overviewGateway.resumoMovimentos({ ano: ano });
   if (response) {
     resumo.value = { despesas: response.result?.despesas || [], receitas: response.result?.receitas || [], balanco: response.result?.balanco || [] };
   }
@@ -136,7 +121,7 @@ const handlePeriodo = async (mes: number, ano: number) => {
 
   try {
     loading.value = true
-    await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim)]);
+    await Promise.all([categoriasStore.fetchCategoriasLista(), obterSparks(inicio, fim), obterDonut(inicio, fim), obterResumo(ano)]);
   } catch (error) {
     console.error("Erro ao atualizar dados para o período selecionado:", error);
   } finally {
@@ -148,7 +133,7 @@ onMounted(async () => {
   const { inicio, fim } = calcularDatasPeriodo(periodo.mes, periodo.ano);
   try {
     loading.value = true
-    await Promise.all([obterSparks(inicio, fim), obterDonut(inicio, fim), obterResumo()]);
+    await Promise.all([categoriasStore.fetchCategoriasLista(), obterSparks(inicio, fim), obterDonut(inicio, fim), obterResumo(periodo.ano)]);
   } catch (error) {
     console.error("Erro ao carregar os dados iniciais:", error);
   } finally {

@@ -6,7 +6,7 @@ import { receitasContainer } from "./domains/receitas/container/receitasContaine
 import { despesasContainer } from "./domains/despesas/container/despesasContainer";
 import { overviewContainer } from "./domains/overview/container/overviewContainer";
 import { contasContainer } from "./domains/contas/container/contasContainer";
-import { categoriasContainer } from "./shared/components/categorias/container/categoriasContainer";
+import { categoriasContainer } from "./core/container/categoriasContainer";
 
 const container = new Container()
 

@@ -1,4 +1,4 @@
-import type { CategoriaDto } from "@/shared/components/categorias/services/ports/CategoriasGateway"
+import type { CategoriaDto } from "@/core/services/ports/CategoriasGateway"
 
 export type ESelectOpt = {
   label: string

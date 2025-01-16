@@ -12,49 +12,63 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import Empty from '@/shared/components/Empty.vue';
-import { EcolorsPaletteMapper } from '@/core/@types/enums'; // Certifique-se de importar a paleta de cores
+import { EcolorsPaletteMapper } from '@/core/@types/enums';
 import { formatCurrency } from '@/core/utils/utils';
-import { ECategoriaOptions } from '@/domains/despesas/types';
+import type { CategoriaDto } from '@/core/services/ports/CategoriasGateway';
+import { useDarkModeStore } from '@/core/store/darkMode/useDarkModeStore';
+import { storeToRefs } from 'pinia';
 
 type IProps = {
   labels: string[];
   values: number[];
+  listaCategoria: CategoriaDto[];
 };
 
 const props = defineProps<IProps>();
 
-const categoryColors = computed(() => {
-  return props.labels.map((label) => {
-    const categoria = ECategoriaOptions.find((opt) => opt.value === String(label));
-    return categoria ? categoria.color : EcolorsPaletteMapper.AzulIntenso;
-  });
-});
-
-const labels = computed(() =>
-  props.labels.map((item) => {
-    const categoria = ECategoriaOptions.find(opt => opt.value === String(item));
-    return categoria ? categoria.label : 'Indefinida';
-  })
-);
-
-const series = reactive([
-  {
-    name: 'Despesas',
-    data: props.values,
-  },
-]);
+const darkModeStore = useDarkModeStore();
+const { thema } = storeToRefs(darkModeStore);
 
 const seriesKey = ref(Date.now());
 const showNodata = ref(false);
 
-watch(
-  () => props.values,
-  (newValues) => {
-    series[0].data = newValues;
-    seriesKey.value = Date.now();
-    showNodata.value = newValues.length === 0;
-  }
-);
+const chart = ref<ApexCharts | null>(null);
+
+
+const series = computed(() => {
+  return [
+    {
+      name: 'Despesas',
+      data: props.values.map((value, index) => ({
+        x: labels.value[index],
+        y: value,
+        fillColor: categoryColors.value[index],
+      })),
+    },
+  ];
+});
+
+const categoryColors = computed(() => {
+  const listaCategoria = props.listaCategoria;
+
+  const labels = props.labels;
+
+  return labels.map((item) => {
+    const categoria = listaCategoria.find((opt) => opt.id === item);
+    return categoria ? categoria.color : EcolorsPaletteMapper.AzulIntenso;
+  });
+});
+
+const labels = computed(() => {
+  const listaCategoria = props.listaCategoria;
+
+  const labels = props.labels;
+
+  return labels.map((item) => {
+    const categoria = listaCategoria.find((opt) => opt.id === item);
+    return categoria ? categoria.nome : 'Indefinida';
+  });
+});
 
 const options = reactive({
   chart: {
@@ -64,17 +78,25 @@ const options = reactive({
       show: false,
     },
   },
+  theme: {
+    mode: thema.value,
+    palette: 'palette1',
+    monochrome: {
+      enabled: false,
+      color: '#255aee',
+      shadeTo: 'light',
+      shadeIntensity: 0.65,
+    },
+  },
   plotOptions: {
     bar: {
-      horizontal: false,
+      horizontal: true,
       endingShape: 'rounded',
+      columnWidth: '90%',
     },
   },
   dataLabels: {
-    enabled: true,
-    formatter: function (val: number) {
-      return formatCurrency(val);
-    },
+    enabled: false,
   },
   xaxis: {
     categories: labels,
@@ -82,11 +104,43 @@ const options = reactive({
   fill: {
     opacity: 1,
   },
-  colors: categoryColors,
   legend: {
     position: 'top',
   },
+  tooltip: {
+    y: {
+      formatter: function (val: number) {
+        return formatCurrency(val);
+      },
+    },
+  },
 });
+
+watch(
+  () => thema.value,
+  (newTheme) => {
+    options.theme.mode = newTheme;
+    if (chart.value) {
+      chart.value.updateOptions({
+        theme: { mode: newTheme },
+      });
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.values,
+  (newValues) => {
+    series.value[0].data = newValues.map((value, index) => ({
+      x: labels.value[index],
+      y: value,
+      fillColor: categoryColors.value[index],
+    }));
+    seriesKey.value = Date.now();
+    showNodata.value = newValues.length === 0;
+  }
+);
 </script>
 
 <style lang="scss" scoped>

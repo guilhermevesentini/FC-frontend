@@ -15,7 +15,7 @@
                 @update:model-value="updateCategoria" />
             </el-form-item>
             <el-form-item label=" ">
-              <el-button :icon="Plus" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
+              <el-button :icon="Setting" style="margin: 6px 0 0 5px;" @click="showCategoriaList = true" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6" v-if="tipo == ETipoReceitaDrawer.criar">
@@ -50,8 +50,10 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
-            <el-form-item :label="receitaDetails.tipoLancamento == '3' ? 'Dia do recebimento' : 'Recebimento'" prop="recebimento">              
-              <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%" placeholder="Selecione a data" />
+            <el-form-item :label="receitaDetails.tipoLancamento == '3' ? 'Dia do recebimento' : 'Recebimento'"
+              prop="recebimento">
+              <el-date-picker v-model="receitaDetails.recebimento" format="DD/MM/YYYY" type="date" style="width: 100%"
+                placeholder="Selecione a data" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
@@ -96,7 +98,7 @@ import { configInputMask } from '@/core/@types/types';
 import FCSelectCategorias from '@/shared/components/FCSelectCategorias.vue';
 import { ETipoCategory } from '@/core/@types/enums';
 import {
-  Plus
+  Setting
 } from '@element-plus/icons-vue';
 import CategoriasList from '@/shared/components/categorias/CategoriasList.vue';
 
@@ -298,5 +300,4 @@ onUnmounted(() => {
 <style lang="scss">
 // .date-picker-custom .el-date-picker__header {
 //   display: none !important;
-// }
-</style>
+// }</style>

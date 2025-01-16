@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import 'reflect-metadata'
-import type { CategoriaDto, CategoriasGateway, DeletarCategoriasInputDto, ObterCategoriasInputDto } from "../ports/CategoriasGateway";
 import { httpClientDI, type HttpClient, type IDefaultHttpResponse } from "@/core/@types/httpClient";
+import type { CategoriaDto, CategoriasGateway, DeletarCategoriasInputDto, ObterCategoriasInputDto } from "../ports/CategoriasGateway";
 
 @injectable()
 export default class CategoriasGatewayAdapter implements CategoriasGateway {

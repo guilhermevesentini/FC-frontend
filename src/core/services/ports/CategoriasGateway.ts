@@ -9,7 +9,7 @@ export type CategoriaDto = {
 }
 
 export type ObterCategoriasInputDto = {
-  tipo: ETipoCategory
+  tipo?: ETipoCategory
 }
 
 export type DeletarCategoriasInputDto = {

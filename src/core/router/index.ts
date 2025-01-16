@@ -29,16 +29,14 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/:pathMatch(.*)*', component: NotFoundPage },
 ];
 
-const { start, finish } = useGlobalLoading();
+
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
-  start();
-
+router.beforeEach(async (to, from, next) => { 
   try {
     if (to.meta.requiresAuth && !isAuthenticated()) {
       await logout();
@@ -49,10 +47,6 @@ router.beforeEach(async (to, from, next) => {
   } catch (error) {
     console.error('Error during navigation:', error);
     next(false);
-  } finally {
-    setTimeout(() => {
-      finish();
-    }, 1000)    
   }
 });
 

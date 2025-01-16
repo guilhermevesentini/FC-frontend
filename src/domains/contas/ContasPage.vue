@@ -4,10 +4,10 @@
       <el-row class="body">
         <el-col :span="24" style="margin: 0.5rem 0 1rem;">
           <el-row class="row-bg" justify="space-between">
-            <el-col :span="4">
-              <BreadCrumb name="Contas" />
+            <el-col :span="10">
+              <BreadCrumb name="Contas" icon="🏦" />
             </el-col>
-            <el-col :span="4" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
+            <el-col :span="10" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
               <FCButtonIcon type="primary" circle :icon="Plus" @click="handleAdicionar" />
             </el-col>
           </el-row>
@@ -154,7 +154,7 @@ onMounted(async () => {
       grid-auto-rows: auto;
       gap: 16px;
       width: 100%;
-      padding: 1rem;
+      padding: 1rem 0;
 
       &-card {
         width: 100%;

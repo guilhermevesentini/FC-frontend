@@ -1,6 +1,6 @@
 import { httpClientDI, type HttpClient, type IDefaultHttpResponse } from "@/core/@types/httpClient";
 import { inject, injectable } from "inversify";
-import type { IOverviewGateway, OverviewDonutInputDto, OverviewDonutOutputDto, OverviewResumoMovimentoOutputDto, OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../ports/OverviewGateway";
+import type { IOverviewGateway, OverviewDonutInputDto, OverviewDonutOutputDto, OverviewResumoMovimentoInputDto, OverviewResumoMovimentoOutputDto, OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../ports/OverviewGateway";
 
 @injectable()
 export default class OverviewGatewayAdapter implements IOverviewGateway {
@@ -25,9 +25,10 @@ export default class OverviewGatewayAdapter implements IOverviewGateway {
     return response.body      
   }
 
-  async resumoMovimentos(): Promise<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto | undefined> | undefined> {
+  async resumoMovimentos(input: OverviewResumoMovimentoInputDto): Promise<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto | undefined> | undefined> {
     const response = await this.httpClient.get<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto>>({
-      url: '/overview/resumo-movimentos'
+      url: '/overview/resumo-movimentos',
+      queryParams: {ano: input.ano}
     });
   
     if (response.status != 200 || !response.body) return

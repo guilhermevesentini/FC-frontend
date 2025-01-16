@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { container } from "@/inversify.config";
-import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/shared/components/categorias/services/ports/CategoriasGateway";
+import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/core/services/ports/CategoriasGateway";
 import type { ETipoCategory } from "@/core/@types/enums";
 import type { ICategoriasStore } from "./types";
 
@@ -32,7 +32,7 @@ export const useCategoriasStore = defineStore(idStore, {
         }
       })
     },
-    async fetchCategoriasLista(tipo: ETipoCategory) {
+    async fetchCategoriasLista(tipo?: ETipoCategory) {
       const response = await container.get<CategoriasGateway>(CategoriasGatewayDi).obter({ tipo: tipo });
       
       if (response?.statusCode != 200) return

@@ -28,57 +28,47 @@
 
 <script setup lang="ts">
 import logo from "@/shared/assets/images/logo.png";
-import router from '@/core/router';
-import { Lock, Avatar, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
-import { onMounted, ref } from "vue";
+import router from "@/core/router";
+import { Lock, Avatar, SwitchButton, Sunny, Moon } from "@element-plus/icons-vue";
+import { onMounted, ref, watch } from "vue";
 import { useLogout } from "../composables/useLogout";
 import AlterarSenha from "@/shared/components/menu-de-configuracao/alterar-senha/AlterarSenha.vue";
+import { useDarkModeStore } from "../store/darkMode/useDarkModeStore";
 
 const savedTheme = localStorage.getItem('theme') || 'light';
 const isDarkMode = savedTheme === 'dark';
 const thema = ref(isDarkMode);
 
-const nomeUsuario = ref('')
-const showAlterarSenha = ref(false)
+const darkModeStore = useDarkModeStore();
+
+const nomeUsuario = ref("");
+const showAlterarSenha = ref(false);
 
 const { logout } = useLogout();
 
 const handleSelect = (key: string, keyPath: string[]) => {
   router.push({ path: `/` });
-}
+};
 
 const toggleTheme = () => {
-  const isDarkMode = document.documentElement.classList.contains('dark');
+  const isDarkMode = darkModeStore.thema === "dark";
+  const newTheme = isDarkMode ? "light" : "dark";
 
-  if (isDarkMode) {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-  } else {
-    document.documentElement.classList.remove('light');
-    document.documentElement.classList.add('dark');
-  }
+  document.documentElement.classList.remove(isDarkMode ? "dark" : "light");
+  document.documentElement.classList.add(newTheme);
 
-  const newTheme = isDarkMode ? 'light' : 'dark';
-  localStorage.setItem('theme', newTheme);
+  darkModeStore.setTheme(newTheme); // Atualiza o tema na store
+  localStorage.setItem("theme", newTheme);
 };
 
 onMounted(() => {
-  const storage = localStorage.getItem('user');
+  const storage = localStorage.getItem("user");
   const usuario = storage ? JSON.parse(storage) : {};
-  nomeUsuario.value = usuario.username || 'user';
+  nomeUsuario.value = usuario.username || "user";
 
-  const savedTheme = localStorage.getItem('theme') || 'light';
-
-  const isDarkApplied = document.documentElement.classList.contains('dark');
-  const isLightApplied = document.documentElement.classList.contains('light');
-  const currentTheme = isDarkApplied ? 'dark' : isLightApplied ? 'light' : '';
-
-  if (savedTheme !== currentTheme) {
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(savedTheme);
-  }
-
-  thema.value = savedTheme === 'dark';
+  const savedTheme = localStorage.getItem("theme") || "light";
+  darkModeStore.setTheme(savedTheme); // Inicializa o tema na store
+  document.documentElement.classList.add(savedTheme);
 });
 
 </script>

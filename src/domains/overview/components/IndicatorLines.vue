@@ -2,12 +2,14 @@
   <div class="chart-container">
     <h4 class="titulo">Resumo mensal de movimentos de {{ new Date().getFullYear() }}</h4>
     <Empty image-size="200px" v-if="series.length === 0" />
-    <apexchart class="lines-chart" width="100%" :options="options" :series="series" v-else />
+    <apexchart ref="chart" class="lines-chart" width="100%" :options="options" :series="series" v-else />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useDarkModeStore } from '@/core/store/darkMode/useDarkModeStore';
 import Empty from '@/shared/components/Empty.vue';
+import { storeToRefs } from 'pinia';
 import { ref, reactive, watch } from 'vue';
 
 type IProps = {
@@ -19,6 +21,11 @@ type IProps = {
 };
 
 const props = defineProps<IProps>();
+
+const chart = ref<ApexCharts | null>(null);
+
+const darkModeStore = useDarkModeStore();
+const { thema } = storeToRefs(darkModeStore);
 
 const series = ref([
   {
@@ -53,6 +60,16 @@ const options = reactive({
     },
     toolbar: {
       show: false,
+    },
+  },
+  theme: {
+    mode: thema.value,
+    palette: 'palette1',
+    monochrome: {
+      enabled: false,
+      color: '#255aee',
+      shadeTo: 'light',
+      shadeIntensity: 0.65,
     },
   },
   responsive: [
@@ -93,29 +110,46 @@ const options = reactive({
   legend: {
     position: 'bottom',
     horizontalAlign: 'center',
-    offsetY: 10,
+    offsetY: 0
   },
 });
 
 watch(
   () => props.resumo,
   (newResumo) => {
+    const hasValues = newResumo.receitas.length >= 1 && newResumo.despesas.length >= 1 && newResumo.balanco.length >= 1;
+
+    if (!hasValues) return series.value = []
+
     series.value = [
       {
         name: 'Receitas',
-        data: newResumo.receitas,
+        data: newResumo.receitas.length >= 1 ? newResumo.receitas : [],
       },
       {
         name: 'Despesas',
-        data: newResumo.despesas,
+        data: newResumo.despesas.length >= 1 ? newResumo.despesas : [],
       },
       {
         name: 'Balanço',
-        data: newResumo.balanco,
+        data: newResumo.balanco.length >= 1 ? newResumo.balanco : [],
       },
     ];
   },
   { deep: true }
+);
+
+watch(
+  () => thema.value,
+  (newTheme) => {
+    options.theme.mode = newTheme;
+    if (chart.value) {
+      chart.value.updateOptions({
+        theme: { mode: newTheme },
+      });
+    }
+  },
+  { immediate: true }
 );
 </script>
 
@@ -130,6 +164,7 @@ watch(
   align-items: left;
 
   .lines-chart {
+    padding: 1rem;
     display: flex;
     justify-content: center;
   }

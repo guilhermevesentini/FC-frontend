@@ -13,6 +13,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { type PageItems } from './useFCNavbar';
 import type { TabsPaneContext } from 'element-plus';
+import useGlobalLoading from '@/core/composables/useGlobalLoading';
 
 type IProps = {
   navbarItems: PageItems[]
@@ -26,6 +27,8 @@ const route = useRoute();
 const routername = computed<string>(() => router.currentRoute.value.name as string);
 const currentRoute = ref<string>(routername.value || '/Overview');
 
+const { start, finish } = useGlobalLoading();
+
 const handleTabClick = (tab: TabsPaneContext) => {
   currentRoute.value = String(tab.props.name);
 };
@@ -36,8 +39,11 @@ watch(() => route.name, () => {
 
 watch(currentRoute, (routeName: string) => {
   try {
+    start();
     router.push(routeName);
-  } catch (err) { console.log(err) }
+  } catch (err) { console.log(err) } finally {
+    finish();
+  }
 }, { deep: true, immediate: true });
 </script>
 

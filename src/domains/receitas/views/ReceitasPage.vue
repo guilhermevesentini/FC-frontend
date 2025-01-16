@@ -2,23 +2,23 @@
   <el-row>
     <el-col class="container_page" :xs="24" :md="20">
       <el-row class="body">
-        <el-col class="hidden-sm-and-up" :span="24"
-          style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center; justify-content: center;">
-          <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
-        </el-col>
         <el-col :span="24" style="margin: 0.5rem 0 1rem;">
           <el-row class="row-bg" justify="space-between">
-            <el-col :span="4">
-              <BreadCrumb name="Receitas" />
+            <el-col :span="8">
+              <BreadCrumb name="Receitas" icon="💰" />
             </el-col>
             <el-col class="hidden-sm-and-down" span="auto"
               style="margin: 0; padding: 0; display: flex; align-items: center;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
             </el-col>
-            <el-col :span="4" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
+            <el-col :span="8" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
               <FCButtonIcon type="primary" circle :icon="Plus" @click="handleAdicionar" />
             </el-col>
           </el-row>
+          <el-col class="hidden-sm-and-up" :span="24"
+            style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
+          </el-col>
         </el-col>
         <el-col :span="24">
           <TableFilterableFrame :Loading="loading" v-on:handle-editar="handleEditar"
@@ -93,7 +93,7 @@ import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } f
 import IconInsideTable from '@/domains/despesas/components/IconInsideTable.vue';
 import ReceitasDialog from '../widgets/ReceitasDialog.vue';
 import { ElNotification } from 'element-plus';
-import { useCategoriasStore } from '@/core/store/categoriasStore/index.';
+import { useCategoriasStore } from '@/core/store/categoriasStore/useCategoriasStore';
 import { storeToRefs } from 'pinia';
 import { ETipoCategory } from '@/core/@types/enums';
 

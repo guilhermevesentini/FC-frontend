@@ -31,10 +31,14 @@ export type OverviewResumoMovimentoOutputDto = {
   balanco: number[]
 }
 
+export type OverviewResumoMovimentoInputDto = {
+  ano: number
+}
+
 export interface IOverviewGateway {
   sparkTotal(input: OverviewSparkTotalInputDto): Promise<IDefaultHttpResponse<OverviewSparkTotalOutputDto | undefined> | undefined>
   obterDonut(input: OverviewDonutInputDto): Promise<IDefaultHttpResponse<OverviewDonutOutputDto | undefined> | undefined>
-  resumoMovimentos(): Promise<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto | undefined> | undefined>
+  resumoMovimentos(input: OverviewResumoMovimentoInputDto): Promise<IDefaultHttpResponse<OverviewResumoMovimentoOutputDto | undefined> | undefined>
 }
 
 export const OverviewGatewayDi = Symbol("OverviewGatewayDi")

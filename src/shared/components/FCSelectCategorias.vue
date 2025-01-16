@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import type { ETipoCategory } from '@/core/@types/enums';
-import { useCategoriasStore } from '@/core/store/categoriasStore/index.';
+import { useCategoriasStore } from '@/core/store/categoriasStore/useCategoriasStore';
 import { storeToRefs } from 'pinia';
 
 type Props = {

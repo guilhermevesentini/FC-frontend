@@ -2,23 +2,23 @@
   <el-row>
     <el-col class="container_page" :xs="24" :md="20">
       <el-row class="body">
-        <el-col class="hidden-sm-and-up" :span="24"
-          style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center;    justify-content: center;">
-          <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
-        </el-col>
         <el-col :span="24" style="margin: 0.5rem 0 1rem;">
           <el-row class="row-bg" justify="space-between">
-            <el-col :span="4">
-              <BreadCrumb name="Despesas" />
+            <el-col :span="8">
+              <BreadCrumb name="Despesas" icon="💸" />
             </el-col>
             <el-col class="hidden-sm-and-down" span="auto"
               style="margin: 0; padding: 0; display: flex; align-items: center;">
               <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
             </el-col>
-            <el-col :span="4" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
+            <el-col :span="8" style="display: flex;flex-wrap: wrap; justify-content: flex-end;">
               <FCButtonIcon type="primary" circle v-on:handle-click="adicionarDespesa" :icon="Plus" />
             </el-col>
           </el-row>
+        </el-col>
+        <el-col class="hidden-sm-and-up" :span="24"
+          style="margin: 0.5rem 0 1rem; padding: 0; display: flex; align-items: center;    justify-content: center;">
+          <DatePeriodoPicker v-on:update:month-change="handlePeriodo" />
         </el-col>
         <el-col :span="24">
           <TableFilterableFrame :Loading="loading" v-on:handle-editar="editarDespesa"
@@ -91,9 +91,9 @@ import useFinanceHandler from "../composables/useFinanceHandler";
 import { DespesasGatewayDi, type IDespesasGateway } from "../services/ports/DespesasGateway";
 import IconInsideTable from "../components/IconInsideTable.vue";
 import DespesasDialog from "../widgets/DespesasDialog.vue";
-import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/shared/components/categorias/services/ports/CategoriasGateway";
+import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/core/services/ports/CategoriasGateway";
 import { ETipoCategory } from "@/core/@types/enums";
-import { useCategoriasStore } from "@/core/store/categoriasStore/index.";
+import { useCategoriasStore } from "@/core/store/categoriasStore/useCategoriasStore";
 import { storeToRefs } from "pinia";
 
 const loading = ref(false);
