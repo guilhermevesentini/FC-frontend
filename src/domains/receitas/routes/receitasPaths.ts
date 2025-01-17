@@ -1,6 +1,6 @@
 export const receitasPaths = [{
   path: "/receitas",
   name: "Receitas",
-  component: () => import('@/domains/receitas/views/ReceitasPage.vue'),
+  component: () => import('@/domains/receitas/ReceitasBase.vue'),
   meta: { requiresAuth: true }
 }]

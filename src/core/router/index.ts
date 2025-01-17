@@ -8,7 +8,6 @@ import { overviewPaths } from '@/domains/overview/router/overviewPaths';
 import NotFoundPage from '@/shared/components/NotFoundPage.vue';
 import { useLogout } from '../composables/useLogout';
 import { loginPaths } from '@/domains/login/router/loginPaths';
-import useGlobalLoading from '../composables/useGlobalLoading';
 
 const { logout } = useLogout();
 

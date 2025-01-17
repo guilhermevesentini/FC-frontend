@@ -83,19 +83,18 @@ import {
 } from '@element-plus/icons-vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import TableFilterableFrame from '@/shared/components/TableFilterableFrame.vue';
-import { ReceitasGatewayDi, type ReceitaInputDto, type ReceitaOutputDto, type ReceitasGateway } from '../services/ports/ReceitasGateway';
-
-import useFinanceHandler from '../../despesas/composables/useFinanceHandler';
 import { formatCurrency, formatDate } from '@/core/utils/utils';
 import ResumoLateral from '@/shared/components/ResumoLateral.vue';
-import { ReceitasFactoryDi, type IReceitasFactory } from '../ReceitasFactory';
-import { ECategoriaReceitasOptions, ETipoReceitaDrawer, ReceitasInitialState } from '../types';
 import IconInsideTable from '@/domains/despesas/components/IconInsideTable.vue';
-import ReceitasDialog from '../widgets/ReceitasDialog.vue';
-import { ElNotification } from 'element-plus';
+import { ElMessageBox, ElNotification } from 'element-plus';
 import { useCategoriasStore } from '@/core/store/categoriasStore/useCategoriasStore';
 import { storeToRefs } from 'pinia';
 import { ETipoCategory } from '@/core/@types/enums';
+import ReceitasDialog from './widgets/ReceitasDialog.vue';
+import { ETipoReceitaDrawer, ReceitasInitialState } from './types';
+import { ReceitasGatewayDi, type ReceitaInputDto, type ReceitasGateway } from './services/ports/ReceitasGateway';
+import { ReceitasFactoryDi, type IReceitasFactory } from './ReceitasFactory';
+import useFinanceHandler from '../despesas/composables/useFinanceHandler';
 
 const showDrawer = ref(false);
 
@@ -114,6 +113,13 @@ const listaDeReceitas = ref<ReceitaInputDto[]>();
 
 const categoriasStore = useCategoriasStore()
 const { categoriasList } = storeToRefs(categoriasStore)
+
+const financeHandler = useFinanceHandler();
+
+const periodo = reactive({
+  mes: new Date().getMonth() + 1,
+  ano: new Date().getFullYear()
+})
 
 const handleCategoria = (categoria: string) => {
   const findCategoria = categoriasList.value.find((cat) => cat.id == categoria)
@@ -150,8 +156,6 @@ const totalPendente = computed(() => {
   return financeHandler.obterTotal(findDespesasPagas || [])
 })
 
-const financeHandler = useFinanceHandler();
-
 const handleAdicionar = () => {
   tipoDrawer.value = ETipoReceitaDrawer.criar
   receita.value = undefined
@@ -165,13 +169,28 @@ const handleEditar = (id: string) => {
 
   const receitaSelecionada = listaDeReceitas.value?.find((receita) => receita.id === id);
 
-  if (!receitaSelecionada) return alert('erro ao selecionar')
+  if (!receitaSelecionada) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
-  if (receitaSelecionada.meses && receitaSelecionada.meses?.length <= 0) return alert('erro ao selecionar')
+  if (receitaSelecionada.meses && receitaSelecionada.meses?.length <= 0) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
   const getMonth = receitaSelecionada.meses && receitaSelecionada.meses[0] || undefined;
 
-  if (!getMonth) return alert('erro ao selecionar')
+  if (!getMonth) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
   receita.value = {
     ...receitaSelecionada,
@@ -181,47 +200,71 @@ const handleEditar = (id: string) => {
   showDrawer.value = true
 }
 
-const periodo = reactive({
-  mes: new Date().getMonth() + 1,
-  ano: new Date().getFullYear()
-})
-
 const deletarReceita = async (row: ReceitaInputDto, multiplos?: boolean) => {
   try {
-    loading.value = true
+    if (!row.id) {
+      return ElNotification({
+        title: 'Erro',
+        message: 'Erro ao selecionar a receita',
+        type: 'error',
+        duration: 5000,
+      });
+    }
 
-    if (!row.id) return ElNotification({
-      title: 'Erro',
-      message: 'Erro ao selecionar a receita',
-      type: 'error',
-      duration: 5000
-    })
+    const confirmarExclusao = async (): Promise<boolean> => {
+      return new Promise((resolve) => {
+        ElMessageBox.confirm(
+          'Tem certeza de que deseja excluir todos os registros? <br> Esta ação não poderá ser desfeita.',
+          'Confirmação',
+          {
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não',
+            type: 'warning',
+            dangerouslyUseHTMLString: true,
+          }
+        )
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
+      });
+    };
+
+    if (multiplos) {
+      const confirmado = await confirmarExclusao();
+      if (!confirmado) {
+        return;
+      }
+    }
+
+    loading.value = true;
 
     const isMultiplos = multiplos ? 99 : row.mes;
 
     const response = await receitasGateway.excluir(row.id, isMultiplos);
 
-    if (!response) return ElNotification({
-      title: 'Erro',
-      message: 'Erro ao deletar a receita',
-      type: 'error',
-      duration: 5000
-    })
+    if (!response) {
+      return ElNotification({
+        title: 'Erro',
+        message: 'Erro ao deletar a receita',
+        type: 'error',
+        duration: 5000,
+      });
+    }
 
     ElNotification({
-      title: 'success',
+      title: 'Sucesso',
       message: 'Receita deletada com sucesso',
       type: 'success',
-      duration: 5000
-    })
+      duration: 5000,
+    });
 
     await obterReceitas();
   } catch (err) {
     console.log(err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
+
 
 const formatCollumnNumber = (row: ReceitaInputDto) => {
   const valor = row.valor;

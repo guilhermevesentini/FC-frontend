@@ -50,7 +50,8 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="6" :md="6" :lg="6">
-            <el-form-item :label="despesasDetails.tipoLancamento == '3' ? 'Dia do vencimento' : 'Vencimento'" prop="vencimento">
+            <el-form-item :label="despesasDetails.tipoLancamento == '3' ? 'Dia do vencimento' : 'Vencimento'"
+              prop="vencimento">
               <el-date-picker v-model="despesasDetails.vencimento" format="DD/MM/YYYY" type="date" style="width: 100%"
                 placeholder="Selecione a data" />
             </el-form-item>
@@ -150,6 +151,8 @@ const emits = defineEmits<{
 }>();
 
 const updateConta = (id: string) => {
+  if (ETipoDespesaDrawer.editar) return
+
   despesasDetails.value.contaId = id
 }
 

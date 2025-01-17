@@ -38,9 +38,9 @@ const obterBancos = async () => {
   } catch (error) {
     console.error('Erro ao buscar as contas:', error);
   } finally {
-    const hasPrincipal = EListaContasOpt.value?.filter(item => item.contaPrincipal)[0]?.id;
+    // const hasPrincipal = EListaContasOpt.value?.filter(item => item.contaPrincipal)[0]?.id;
 
-    if (hasPrincipal) selectedValue.value = hasPrincipal
+    // if (hasPrincipal) selectedValue.value = hasPrincipal
   }
 }
 

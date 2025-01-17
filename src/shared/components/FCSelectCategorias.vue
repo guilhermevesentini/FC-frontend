@@ -53,9 +53,11 @@ watch(selectedValue, (newVal) => {
   }
 })
 
-watch(() => props.modelValue, (newVal) => {
-  if (!newVal) selectedValue.value = ''
-});
+watch(() => props, () => {
+  if (!props.modelValue) selectedValue.value = ''
+
+  selectedValue.value = props.modelValue || ''
+}, { deep: true, immediate: true });
 </script>
 
 <style lang="scss">

@@ -153,6 +153,8 @@ const emits = defineEmits<{
 }>();
 
 const updateConta = (id: string) => {
+  if (ETipoReceitaDrawer.editar) return
+
   receitaDetails.value.contaId = id
 }
 

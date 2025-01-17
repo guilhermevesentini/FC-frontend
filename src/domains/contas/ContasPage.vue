@@ -58,7 +58,7 @@ import {
 } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue';
 import { container } from '@/inversify.config';
-import { ElNotification } from 'element-plus';
+import { ElMessageBox, ElNotification } from 'element-plus';
 import Empty from '@/shared/components/Empty.vue';
 import { ContasGatewayDi, type ContaOutputDto, type ContasGateway } from './services/ports/ContasGateway';
 import AdicionarContaWidget from './widgets/AdicionarContaWidget.vue';
@@ -99,6 +99,29 @@ const obterContas = async () => {
 
 const handleDelete = async (conta: ContaOutputDto) => {
   try {
+
+    const confirmarExclusao = async (): Promise<boolean> => {
+      return new Promise((resolve) => {
+        ElMessageBox.confirm(
+          'Tem certeza de que deseja excluir todos os registros? <br> Todos os registros ficarão com a conta indefinida e <br> Esta ação não poderá ser desfeita.',
+          'Confirmação',
+          {
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não',
+            type: 'warning',
+            dangerouslyUseHTMLString: true,
+          }
+        )
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
+      });
+    };
+
+    const confirmado = await confirmarExclusao();
+    if (!confirmado) {
+      return;
+    }
+
     loading.value = true
 
     const response = await contasGateway.delete({ id: conta.id });

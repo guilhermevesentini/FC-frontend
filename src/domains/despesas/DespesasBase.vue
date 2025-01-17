@@ -79,22 +79,22 @@ import { container } from "@/inversify.config";
 import {
   Plus
 } from '@element-plus/icons-vue';
-import { ElNotification } from "element-plus";
-import { DespesaFactoryDi, type IDespesaFactory } from "../DespesaFactory";
+import { ElMessageBox, ElNotification } from "element-plus";
 import DatePeriodoPicker from "@/shared/components/DatePeriodoPicker.vue";
 import BreadCrumb from "@/shared/components/BreadCrumb.vue";
 import FCButtonIcon from "@/shared/components/buttons/Criar/FCButtonIcon.vue";
 import TableFilterableFrame from "@/shared/components/TableFilterableFrame.vue";
 import ResumoLateral from "@/shared/components/ResumoLateral.vue";
-import { DespesaInitialState, ECategoriaOptions, ETipoDespesaDrawer, type IDespesas, type IDespesasModel } from "../types";
-import useFinanceHandler from "../composables/useFinanceHandler";
-import { DespesasGatewayDi, type IDespesasGateway } from "../services/ports/DespesasGateway";
-import IconInsideTable from "../components/IconInsideTable.vue";
-import DespesasDialog from "../widgets/DespesasDialog.vue";
-import { CategoriasGatewayDi, type CategoriaDto, type CategoriasGateway } from "@/core/services/ports/CategoriasGateway";
+import { CategoriasGatewayDi, type CategoriasGateway } from "@/core/services/ports/CategoriasGateway";
 import { ETipoCategory } from "@/core/@types/enums";
 import { useCategoriasStore } from "@/core/store/categoriasStore/useCategoriasStore";
 import { storeToRefs } from "pinia";
+import DespesasDialog from "./widgets/DespesasDialog.vue";
+import { DespesaInitialState, ETipoDespesaDrawer, type IDespesas, type IDespesasModel } from "./types";
+import useFinanceHandler from "./composables/useFinanceHandler";
+import { DespesasGatewayDi, type IDespesasGateway } from "./services/ports/DespesasGateway";
+import { DespesaFactoryDi, type IDespesaFactory } from "./DespesaFactory";
+import IconInsideTable from "./components/IconInsideTable.vue";
 
 const loading = ref(false);
 const showDrawer = ref(false);
@@ -175,13 +175,28 @@ const editarDespesa = ((id: unknown) => {
 
   const despesaSelecionada = listaDeDespesas.value?.find((receita) => receita.id === id);
 
-  if (!despesaSelecionada) return alert('erro ao selecionar')
+  if (!despesaSelecionada) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
-  if (despesaSelecionada.meses && despesaSelecionada.meses?.length <= 0) return alert('erro ao selecionar')
+  if (despesaSelecionada.meses && despesaSelecionada.meses?.length <= 0) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
   const getMonth = despesaSelecionada.meses && despesaSelecionada.meses[0] || undefined;
 
-  if (!getMonth) return alert('erro ao selecionar')
+  if (!getMonth) return ElNotification({
+    title: 'error',
+    message: 'erro ao selecionar',
+    type: 'error',
+    duration: 2000
+  })
 
   Despesa.value = {
     ...despesaSelecionada,
@@ -199,14 +214,38 @@ const handleFecharDrawer = (async () => {
 
 const deletarDespesa = async (row: IDespesasModel, multiplos?: boolean) => {
   try {
-    loading.value = true
-
     if (!row.id) return ElNotification({
       title: 'Erro',
       message: 'Erro ao selecionar a despesa',
       type: 'error',
       duration: 5000
     })
+
+    const confirmarExclusao = async (): Promise<boolean> => {
+      return new Promise((resolve) => {
+        ElMessageBox.confirm(
+          'Tem certeza de que deseja excluir todos os registros? <br> Esta ação não poderá ser desfeita.',
+          'Confirmação',
+          {
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não',
+            type: 'warning',
+            dangerouslyUseHTMLString: true,
+          }
+        )
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
+      });
+    };
+
+    if (multiplos) {
+      const confirmado = await confirmarExclusao();
+      if (!confirmado) {
+        return;
+      }
+    }
+
+    loading.value = true
 
     const response = await despesasGateway.excluirDespesa(row.id, multiplos ? undefined : row.mes);
 
